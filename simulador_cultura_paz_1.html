@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador – Promover la Cultura de Paz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+
+  :root {
+    --azul:        #1565C0;
+    --azul-medio:  #1E88E5;
+    --azul-claro:  #BBDEFB;
+    --azul-suave:  #E3F2FD;
+    --teal:        #00695C;
+    --teal-claro:  #E0F2F1;
+    --naranja:     #E65100;
+    --naranja-claro:#FFF3E0;
+    --gris:        #37474F;
+    --gris-medio:  #607D8B;
+    --gris-claro:  #ECEFF1;
+    --blanco:      #FFFFFF;
+    --sombra:      0 4px 20px rgba(0,0,0,0.10);
+    --sombra-lg:   0 8px 32px rgba(0,0,0,0.14);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #E3F2FD 0%, #E0F2F1 50%, #F1F8E9 100%);
+    min-height: 100vh;
+    color: var(--gris);
+  }
+
+  /* ───── PANTALLA BIENVENIDA ───── */
+  #pantalla-inicio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .tarjeta-inicio {
+    background: var(--blanco);
+    border-radius: 24px;
+    box-shadow: var(--sombra-lg);
+    padding: 48px 40px 40px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    animation: aparecer 0.6s ease;
+  }
+
+  .icono-inicio {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--azul), var(--teal));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 36px;
+  }
+
+  .tarjeta-inicio h1 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.65rem;
+    color: var(--azul);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .tarjeta-inicio .subtitulo {
+    color: var(--gris-medio);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+  }
+
+  .badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .badge {
+    background: var(--azul-suave);
+    color: var(--azul);
+    border: 1px solid var(--azul-claro);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .campo-nombre label {
+    display: block;
+    font-weight: 700;
+    color: var(--gris);
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  .campo-nombre input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--gris-claro);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: var(--gris);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .campo-nombre input:focus { border-color: var(--azul-medio); }
+
+  .btn-primario {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--azul), var(--teal));
+    color: var(--blanco);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(21,101,192,0.35);
+  }
+  .btn-primario:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(21,101,192,0.45); }
+  .btn-primario:active { transform: translateY(0); }
+
+  /* ───── PANTALLA EXAMEN ───── */
+  #pantalla-examen { display: none; min-height: 100vh; padding: 20px; }
+
+  .examen-contenedor { max-width: 720px; margin: 0 auto; }
+
+  .cabecera-examen {
+    background: var(--blanco);
+    border-radius: 18px;
+    box-shadow: var(--sombra);
+    padding: 18px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .info-alumno { font-weight: 700; color: var(--azul); font-size: 0.95rem; }
+  .info-alumno span { color: var(--gris); font-weight: 400; font-size: 0.85rem; display: block; }
+
+  .progreso-texto { font-weight: 800; color: var(--teal); font-size: 1rem; }
+
+  .barra-progreso-wrap {
+    width: 100%;
+    background: var(--gris-claro);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .barra-progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--azul), var(--teal));
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  .tarjeta-pregunta {
+    background: var(--blanco);
+    border-radius: 20px;
+    box-shadow: var(--sombra-lg);
+    padding: 36px 32px 28px;
+    animation: deslizar 0.4s ease;
+  }
+
+  .etiqueta-formato {
+    display: inline-block;
+    background: var(--azul-suave);
+    color: var(--azul);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+  }
+
+  .num-pregunta {
+    font-size: 0.82rem;
+    color: var(--gris-medio);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .texto-pregunta {
+    font-family: 'Merriweather', serif;
+    font-size: 1.05rem;
+    color: var(--gris);
+    line-height: 1.7;
+    margin-bottom: 26px;
+  }
+
+  .opciones { display: flex; flex-direction: column; gap: 12px; }
+
+  .opcion {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--gris-claro);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    background: #FAFAFA;
+  }
+  .opcion:hover:not(.bloqueada) {
+    border-color: var(--azul-medio);
+    background: var(--azul-suave);
+    transform: translateX(4px);
+  }
+
+  .letra-opcion {
+    min-width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--gris-claro);
+    color: var(--gris-medio);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 0.88rem;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .texto-opcion { font-size: 0.95rem; line-height: 1.5; padding-top: 5px; }
+
+  .opcion.correcta  { border-color: #43A047; background: #E8F5E9; }
+  .opcion.correcta .letra-opcion { background: #43A047; color: #fff; }
+
+  .opcion.incorrecta { border-color: #EF5350; background: #FFEBEE; }
+  .opcion.incorrecta .letra-opcion { background: #EF5350; color: #fff; }
+
+  .opcion.bloqueada { cursor: default; }
+  .opcion.seleccionada { border-color: var(--azul); background: var(--azul-suave); }
+  .opcion.seleccionada .letra-opcion { background: var(--azul); color: #fff; }
+
+  .feedback {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    font-size: 0.93rem;
+    line-height: 1.6;
+    display: none;
+    animation: aparecer 0.3s ease;
+  }
+  .feedback.correcto  { background: #E8F5E9; border-left: 4px solid #43A047; color: #2E7D32; }
+  .feedback.incorrecto{ background: var(--naranja-claro); border-left: 4px solid var(--naranja); color: var(--naranja); }
+  .feedback .icono-feedback { font-size: 1.1rem; margin-right: 6px; }
+
+  .btn-siguiente {
+    display: none;
+    margin-top: 24px;
+    padding: 15px 32px;
+    background: linear-gradient(135deg, var(--teal), var(--azul));
+    color: var(--blanco);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(0,105,92,0.35);
+    float: right;
+  }
+  .btn-siguiente:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,105,92,0.45); }
+  .clearfix::after { content:''; display:table; clear:both; }
+
+  /* ───── PANTALLA RESULTADOS ───── */
+  #pantalla-resultados { display: none; min-height: 100vh; padding: 20px; }
+
+  .resultados-contenedor {
+    max-width: 580px;
+    margin: 0 auto;
+    animation: aparecer 0.6s ease;
+  }
+
+  .tarjeta-resultado {
+    background: var(--blanco);
+    border-radius: 24px;
+    box-shadow: var(--sombra-lg);
+    padding: 44px 36px 36px;
+    text-align: center;
+  }
+
+  .emoji-resultado { font-size: 64px; margin-bottom: 16px; display: block; }
+
+  .tarjeta-resultado h2 {
+    font-family: 'Merriweather', serif;
+    color: var(--azul);
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+  }
+
+  .nombre-resultado {
+    color: var(--teal);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+
+  .estadisticas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    border-radius: 16px;
+    padding: 18px 10px;
+    text-align: center;
+  }
+  .stat-card.correctas   { background: #E8F5E9; }
+  .stat-card.incorrectas { background: #FFEBEE; }
+  .stat-card.porcentaje  { background: var(--azul-suave); }
+
+  .stat-numero {
+    font-size: 2rem;
+    font-weight: 900;
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-card.correctas   .stat-numero { color: #2E7D32; }
+  .stat-card.incorrectas .stat-numero { color: #EF5350; }
+  .stat-card.porcentaje  .stat-numero { color: var(--azul); }
+
+  .stat-label { font-size: 0.8rem; font-weight: 700; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.4px; }
+
+  .barra-resultado-wrap {
+    background: var(--gris-claro);
+    border-radius: 10px;
+    height: 14px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .barra-resultado-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--azul), var(--teal));
+    transition: width 1s ease;
+  }
+  .porcentaje-label { font-size: 0.82rem; color: var(--gris-medio); text-align: right; margin-bottom: 24px; }
+
+  .mensaje-motivador {
+    background: linear-gradient(135deg, var(--azul-suave), var(--teal-claro));
+    border-radius: 14px;
+    padding: 18px 22px;
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .btn-reiniciar {
+    display: inline-block;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, var(--azul), var(--teal));
+    color: var(--blanco);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(21,101,192,0.35);
+  }
+  .btn-reiniciar:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(21,101,192,0.45); }
+
+  @keyframes aparecer {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes deslizar {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @media (max-width: 520px) {
+    .tarjeta-inicio, .tarjeta-pregunta, .tarjeta-resultado { padding: 28px 20px 22px; }
+    .tarjeta-inicio h1 { font-size: 1.35rem; }
+    .texto-pregunta { font-size: 0.97rem; }
+    .estadisticas { grid-template-columns: 1fr 1fr; }
+    .stat-card.porcentaje { grid-column: span 2; }
+    .cabecera-examen { flex-direction: column; align-items: flex-start; }
+    .btn-siguiente { float: none; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ INICIO ═══════════════════ -->
+<div id="pantalla-inicio">
+  <div class="tarjeta-inicio">
+    <div class="icono-inicio">☮️</div>
+    <h1>Promover la Cultura de Paz</h1>
+    <p class="subtitulo">Simulador de evaluación de conocimientos</p>
+    <div class="badges">
+      <span class="badge">📋 30 preguntas</span>
+      <span class="badge">⏱ A tu ritmo</span>
+      <span class="badge">📊 Resultados al final</span>
+    </div>
+    <div class="campo-nombre">
+      <label for="input-nombre">👤 Nombre del estudiante</label>
+      <input type="text" id="input-nombre" placeholder="Escribe tu nombre completo…" autocomplete="off">
+    </div>
+    <button class="btn-primario" onclick="iniciarSimulador()">🚀 Iniciar simulador</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ EXAMEN ═══════════════════ -->
+<div id="pantalla-examen">
+  <div class="examen-contenedor">
+    <div class="cabecera-examen">
+      <div>
+        <div class="info-alumno" id="cab-nombre">Estudiante</div>
+        <span id="cab-sub">Simulador · Cultura de Paz</span>
+      </div>
+      <div class="progreso-texto" id="cab-progreso">Pregunta 1 / 30</div>
+      <div class="barra-progreso-wrap" style="flex-basis:100%">
+        <div class="barra-progreso-fill" id="barra" style="width:3.3%"></div>
+      </div>
+    </div>
+
+    <div class="tarjeta-pregunta" id="tarjeta-pregunta">
+      <div class="etiqueta-formato" id="etiqueta-formato">Cuestionamiento directo</div>
+      <div class="num-pregunta" id="num-pregunta">Pregunta 1 de 30</div>
+      <div class="texto-pregunta" id="texto-pregunta"></div>
+      <div class="opciones" id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="clearfix">
+        <button class="btn-siguiente" id="btn-siguiente" onclick="siguientePregunta()">Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ RESULTADOS ═══════════════════ -->
+<div id="pantalla-resultados">
+  <div class="resultados-contenedor">
+    <div class="tarjeta-resultado">
+      <span class="emoji-resultado" id="emoji-res">🏆</span>
+      <h2>¡Examen completado!</h2>
+      <div class="nombre-resultado" id="res-nombre"></div>
+      <div class="estadisticas">
+        <div class="stat-card correctas">
+          <span class="stat-numero" id="res-correctas">0</span>
+          <div class="stat-label">✅ Correctas</div>
+        </div>
+        <div class="stat-card incorrectas">
+          <span class="stat-numero" id="res-incorrectas">0</span>
+          <div class="stat-label">❌ Incorrectas</div>
+        </div>
+        <div class="stat-card porcentaje">
+          <span class="stat-numero" id="res-pct">0%</span>
+          <div class="stat-label">🎯 Aciertos</div>
+        </div>
+      </div>
+      <div class="barra-resultado-wrap">
+        <div class="barra-resultado-fill" id="barra-res" style="width:0%"></div>
+      </div>
+      <div class="porcentaje-label" id="pct-label"></div>
+      <div class="mensaje-motivador" id="mensaje-motivador"></div>
+      <button class="btn-reiniciar" onclick="reiniciar()">🔄 Volver a intentar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const preguntas = [
+  // 1
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Con qué organización internacional colaboró la Secretaría de Educación Pública para elaborar el fichero 'Promover la Cultura de Paz'?",
+    opciones: [
+      "A) Con la Organización Mundial de la Salud (OMS).",
+      "B) Con la UNESCO y su programa de educación para el desarrollo sostenible.",
+      "C) Con el Fondo de las Naciones Unidas para la Infancia (UNICEF).",
+      "D) Con la Comisión Interamericana de Derechos Humanos (CIDH)."
+    ],
+    correcta: 2,
+    feedback: "El fichero fue elaborado de acuerdo con la UNICEF, como un proceso que permite el desarrollo de conocimientos, capacidades, actitudes y valores en las personas para resolver conflictos de manera pacífica y rechazar cualquier tipo de violencia."
+  },
+  // 2
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuáles son las siete líneas temáticas que aborda el fichero 'Promover la Cultura de Paz'?",
+    opciones: [
+      "A) Violencia, bullying, discriminación, género, derechos, paz y participación.",
+      "B) Conocimiento de derechos humanos, competencias socioemocionales, igualdad de género, valoración de la diversidad, autocuidado, toma de decisiones y participación infantil y adolescente.",
+      "C) Autoestima, empatía, asertividad, resolución de conflictos, respeto, tolerancia y solidaridad.",
+      "D) Educación sexual, prevención de adicciones, seguridad vial, nutrición, derechos humanos, convivencia y paz."
+    ],
+    correcta: 1,
+    feedback: "Las siete líneas temáticas del fichero son: 1) Conocimiento, ejercicio y respeto a los derechos humanos, 2) Desarrollo de competencias socioemocionales, 3) Promoción de la igualdad de género, 4) Valoración de la diversidad, 5) Toma de decisiones para la vida, 6) Desarrollo de habilidades para la vida (Entornos escolares seguros) y 7) Participación infantil y adolescente."
+  },
+  // 3
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué estructura tiene cada ficha del fichero para el personal docente?",
+    opciones: [
+      "A) Introducción, desarrollo, evaluación y cierre.",
+      "B) Nivel, línea temática, propósito, apuntes para el personal docente, recursos, tiempo estimado, pasos a seguir (con el alumnado, entre el colectivo docente y con las familias).",
+      "C) Objetivo, contenido, actividad, reflexión final y bibliografía.",
+      "D) Diagnóstico, planeación, ejecución, evaluación y retroalimentación."
+    ],
+    correcta: 1,
+    feedback: "Cada ficha contiene: nivel, línea temática, propósito, apuntes para el personal docente, recursos, tiempo estimado y pasos a seguir divididos en tres momentos: con el alumnado, entre el colectivo docente y con las familias."
+  },
+  // 4
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "Según los datos del Instituto Nacional para la Evaluación de la Educación (INEE 2018), ¿qué porcentaje de estudiantes de primaria declaró haber participado en situaciones de robo, daño o agresiones?",
+    opciones: [
+      "A) El 15.2% de los estudiantes de primaria.",
+      "B) El 5.7% de secundaria solamente.",
+      "C) El 8.7% de primaria y el 5.7% de secundaria.",
+      "D) El 12.3% del total del alumnado de educación básica."
+    ],
+    correcta: 2,
+    feedback: "Según el INEE 2018, el 8.7% de los estudiantes de primaria y el 5.7% de secundaria declararon haber participado en situaciones de robo, daño a las instalaciones o agresiones a compañeros."
+  },
+  // 5
+  {
+    tipo: "Completamiento",
+    texto: "Las competencias socioemocionales son aquellas que permiten comprender, expresar y regular las emociones, a fin de mantener la interacción efectiva y satisfactoria en las relaciones con los demás; también dotan a las comunidades escolares de la capacidad para…",
+    opciones: [
+      "A) …obtener mejores calificaciones y destacar académicamente sobre sus compañeros.",
+      "B) …generar respuestas más adaptativas a su entorno, con empatía, respeto y tolerancia, así como analizar las consecuencias de sus acciones.",
+      "C) …memorizar contenidos curriculares y reproducirlos en exámenes estandarizados.",
+      "D) …evitar cualquier tipo de conflicto y mantener una convivencia sin problemas en todo momento."
+    ],
+    correcta: 1,
+    feedback: "Las competencias socioemocionales dotan a las comunidades de la capacidad para generar respuestas más adaptativas a su entorno, es decir, no impulsivas, con empatía, respeto y tolerancia hacia el otro, y para analizar las consecuencias de sus acciones."
+  },
+  // 6
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué es la autoconciencia emocional, según el documento?",
+    opciones: [
+      "A) La capacidad de suprimir las emociones negativas para mantener la calma en todo momento.",
+      "B) La capacidad para reconocer qué se siente en cada momento y por qué, poder pensar en una respuesta a ese sentimiento y el raciocinio de la persona.",
+      "C) La habilidad de imitar las emociones de los demás para generar empatía en el grupo.",
+      "D) La destreza para clasificar las emociones según su intensidad y duración."
+    ],
+    correcta: 1,
+    feedback: "La autoconciencia emocional es la capacidad para reconocer qué se siente en cada momento y por qué se siente eso, poder pensar en una respuesta a ese sentimiento y el raciocinio de la persona. Es fundamental para la adquisición de otras competencias socioemocionales."
+  },
+  // 7
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿En qué consiste la regulación emocional, según el contenido del documento?",
+    opciones: [
+      "A) En eliminar las emociones desagradables para sentirse bien en todo momento.",
+      "B) En expresar todas las emociones sin filtro para fomentar la autenticidad.",
+      "C) En la capacidad de modificar la intensidad y duración de las emociones a fin de poder tener autocontrol, con el objetivo de afrontar emociones desagradables mediante la respiración, la relajación y la autogeneración de emociones agradables.",
+      "D) En identificar las emociones de los demás y responder de forma asertiva ante ellas."
+    ],
+    correcta: 2,
+    feedback: "La regulación emocional refiere la capacidad de modificar la intensidad y duración de las emociones para poder tener autocontrol de la impulsividad. Es fundamental para afrontar emociones desagradables mediante el uso de la respiración, la relajación y la autogeneración de emociones agradables, entre otras técnicas."
+  },
+  // 8
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué es la asertividad en el marco de las competencias socioemocionales?",
+    opciones: [
+      "A) La capacidad de imponer la propia opinión ante los demás sin importar el contexto.",
+      "B) La capacidad para expresar lo que se piensa y siente de forma clara, respetuosa y directa, sin agredir a nadie pero sin reprimir los sentimientos propios, respetando los derechos de los demás y los nuestros.",
+      "C) La habilidad para evitar conflictos cediendo siempre ante las demandas de los otros.",
+      "D) La destreza para negociar soluciones que beneficien únicamente a la persona que la ejerce."
+    ],
+    correcta: 1,
+    feedback: "La asertividad es la capacidad para expresar lo que se piensa y siente de forma clara, respetuosa y directa, sin agredir a nadie pero sin reprimir los sentimientos propios. Además de respetar los derechos propios, también implica respetar los derechos de los demás."
+  },
+  // 9
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es la diferencia entre 'sexo' y 'género', según el documento sobre igualdad de género?",
+    opciones: [
+      "A) El sexo y el género son conceptos sinónimos que hacen referencia a lo mismo.",
+      "B) El sexo hace referencia a las diferencias biológicas entre mujeres y hombres; el género es una construcción social y cultural que asigna roles y características 'apropiadas' según el sexo de la persona.",
+      "C) El sexo es una construcción cultural y el género es la diferencia biológica entre las personas.",
+      "D) El sexo determina las capacidades intelectuales y el género determina las habilidades físicas de cada persona."
+    ],
+    correcta: 1,
+    feedback: "El sexo hace referencia a las diferencias biológicas entre mujeres y hombres. El género es el conjunto de características y actividades asignadas a cada persona dependiendo de su sexo; es una construcción social y cultural que asigna funciones y características 'apropiadas' por la sociedad de acuerdo al sexo de la persona."
+  },
+  // 10
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué son los estereotipos de género y por qué representan un problema para el desarrollo humano?",
+    opciones: [
+      "A) Son habilidades innatas vinculadas al sexo biológico que favorecen la especialización de tareas.",
+      "B) Son características y actividades asignadas a cada persona según su sexo que obstaculizan el desarrollo de sus potencialidades al predeterminar lo que se espera de ellas.",
+      "C) Son modelos de conducta positivos que orientan el comportamiento social de manera organizada.",
+      "D) Son diferencias de aprendizaje natural que deben respetarse para no afectar la identidad personal."
+    ],
+    correcta: 1,
+    feedback: "Los estereotipos de género son características y actividades asignadas a cada persona dependiendo de su sexo. Representan un problema porque obstaculizan el desarrollo de sus potencialidades, al predeterminar lo que se espera de ellas; ejemplos: mujeres como emocionales y hombres como racionales y agresivos."
+  },
+  // 11
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué es la 'igualdad de género' y en qué se diferencia de la 'equidad de género'?",
+    opciones: [
+      "A) Son exactamente lo mismo: ambos conceptos buscan que mujeres y hombres tengan los mismos derechos.",
+      "B) La igualdad de género busca que no exista discriminación en función del sexo; la equidad de género busca compensar desventajas sociales, afectivas y económicas que impiden que exista la igualdad entre las personas.",
+      "C) La igualdad de género es una meta alcanzada en México; la equidad es el proceso para mantenerla.",
+      "D) La igualdad aplica solo al ámbito laboral y la equidad aplica al ámbito educativo."
+    ],
+    correcta: 1,
+    feedback: "La igualdad de género busca que no exista discriminación en función del sexo de las personas, mientras que la equidad de género busca realizar acciones para compensar las desventajas sociales, afectivas y económicas que impiden que exista la igualdad entre mujeres y hombres."
+  },
+  // 12
+  {
+    tipo: "Completamiento",
+    texto: "Según el documento, en el año 2016 la tasa de participación de mujeres y hombres en el nivel educativo superior era de 4.3 mujeres por cada 10 hombres, en contraste con casi 8 hombres de cada 10 aspirantes. Esto evidencia que…",
+    opciones: [
+      "A) …las mujeres prefieren estudiar carreras técnicas de menor duración.",
+      "B) …las desigualdades entre mujeres y hombres asociadas a roles de género han limitado el desarrollo personal y social de las mujeres en pleno siglo XXI.",
+      "C) …el sistema educativo mexicano es más accesible para los hombres por razones económicas.",
+      "D) …las mujeres tienen menores capacidades para acceder a la educación superior."
+    ],
+    correcta: 1,
+    feedback: "Estos datos evidencian que las desigualdades entre mujeres y hombres asociadas a estereotipos y roles de género son una realidad vigente y han limitado el desarrollo personal y social de las mujeres en pleno siglo XXI."
+  },
+  // 13
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué son las 'prácticas coeducativas' en el contexto de la igualdad de género en la escuela?",
+    opciones: [
+      "A) Son actividades exclusivas para niñas que buscan compensar desventajas históricas.",
+      "B) Son aquellas acciones realizadas por las escuelas que promueven en el alumnado habilidades de la igualdad de género, que van desde el uso de la palabra hasta la visibilización de las aportaciones de las mujeres en todos los ámbitos.",
+      "C) Son prácticas deportivas mixtas para fomentar la convivencia entre géneros.",
+      "D) Son metodologías de evaluación que eliminan diferencias entre alumnos de distintos géneros."
+    ],
+    correcta: 1,
+    feedback: "Las prácticas coeducativas son aquellas acciones realizadas por las escuelas que promueven en el alumnado habilidades de la igualdad de género; van desde el uso del lenguaje no sexista hasta la visibilización de las aportaciones de las mujeres en todos los ámbitos del conocimiento de la humanidad."
+  },
+  // 14
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué implica la 'valoración de la diversidad' como línea temática del fichero?",
+    opciones: [
+      "A) Aceptar solo las diferencias culturales, ignorando las diferencias físicas o económicas.",
+      "B) Contribuir a gestionar una convivencia pacífica e inclusiva, proponiendo actividades para que los docentes orienten hacia el análisis y valoración de las diferencias entre los estudiantes, aceptándose como únicos y teniendo en relación con el otro.",
+      "C) Eliminar todas las diferencias entre los alumnos para lograr una convivencia homogénea.",
+      "D) Clasificar a los alumnos según sus diferencias para atender sus necesidades de forma individual."
+    ],
+    correcta: 1,
+    feedback: "La valoración de la diversidad contribuye a gestionar una convivencia pacífica e inclusiva, proponiendo actividades para que los docentes orienten a los estudiantes hacia el análisis y valoración de las diferencias, advirtiéndose como únicos y valorando la relación con el otro."
+  },
+  // 15
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué se entiende por 'discriminación' según el documento sobre valoración de la diversidad?",
+    opciones: [
+      "A) La capacidad de reconocer y evaluar diferencias entre personas con criterios objetivos.",
+      "B) El trato inmerecido o desfavorable o de desprecio hacia una persona o grupo por sus características físicas, de condición social, cultural, de género, edad, discapacidad, la condición social, entre otros.",
+      "C) El proceso de selección de candidatos basado en méritos y capacidades demostradas.",
+      "D) La evaluación crítica de comportamientos que no se ajustan a las normas sociales establecidas."
+    ],
+    correcta: 1,
+    feedback: "La discriminación consiste en dar un trato inmerecido, desfavorable o de desprecio hacia una persona o grupo por alguna de sus características físicas, de condición social, cultural, de género, edad, discapacidad, la condición social, entre otros."
+  },
+  // 16
+  {
+    tipo: "Relación de elementos",
+    texto: "Relacione correctamente cada valor democrático con su descripción según el documento:\n\n1. La igualdad\n2. El respeto\n3. La solidaridad\n4. La tolerancia\n\na) Apertura para convivir con personas diferentes y aún opuestas a las propias ideas o creencias.\nb) Valoración de sí mismo con base en la influencia de la historia familiar, entorno, autoconcepto y opinión de los demás.\nc) Prestar ayuda a otras personas sin importar sus características; con su práctica se crean lazos sociales que unen a los miembros de una comunidad.\nd) Reconocer y respetar los derechos de todas las personas, sin privilegios y sin discriminación.",
+    opciones: [
+      "A) 1b, 2d, 3c, 4a",
+      "B) 1d, 2b, 3c, 4a",
+      "C) 1d, 2b, 3a, 4c",
+      "D) 1b, 2a, 3d, 4c"
+    ],
+    correcta: 1,
+    feedback: "La igualdad (1d) implica reconocer y respetar los derechos de todos sin discriminación. El respeto (2b) tiene que ver con la valoración de sí mismo y de los demás. La solidaridad (3c) es prestar ayuda sin importar las características de la persona, creando lazos sociales. La tolerancia (4a) es la apertura para convivir con quienes son diferentes."
+  },
+  // 17
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué es la inclusión en el contexto educativo, según el documento?",
+    opciones: [
+      "A) El proceso de separar a los alumnos con necesidades especiales en grupos específicos para su mejor atención.",
+      "B) Un proceso orientado a eliminar o minimizar barreras que limitan el aprendizaje y la participación de todos los alumnos, definida como un conjunto de procesos orientados hacia el reconocimiento y la propia identidad.",
+      "C) La integración únicamente de alumnos con discapacidad a las aulas regulares de educación.",
+      "D) La política educativa que garantiza el mismo número de horas de clase para todos los estudiantes."
+    ],
+    correcta: 1,
+    feedback: "La inclusión es definida como un conjunto de procesos orientados a eliminar o minimizar las barreras que limitan el aprendizaje y la participación de todo el alumnado. Tiene que ver con el reconocimiento y la valoración de la propia identidad, y permite a las personas saberse igualmente valiosas."
+  },
+  // 18
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es la característica principal de los derechos humanos según el documento?",
+    opciones: [
+      "A) Son derechos que se otorgan según el comportamiento y los méritos de cada persona.",
+      "B) Son facultades que aseguran que todo ser humano sea capaz de desarrollarse completamente; incluyen el derecho a la vida, aseguramiento de condiciones para el desarrollo integral como vivienda, alimentación, salud, educación, recreación y cultura.",
+      "C) Son privilegios exclusivos para ciudadanos que cumplen con sus obligaciones fiscales y civiles.",
+      "D) Son normas establecidas por cada gobierno nacional que pueden modificarse según las condiciones políticas."
+    ],
+    correcta: 1,
+    feedback: "Los derechos humanos son facultades que aseguran que todo ser humano sea capaz de desarrollarse completamente; incluyen el derecho a la vida, el aseguramiento de condiciones para el desarrollo integral como la vivienda, protección, alimentación, salud, educación, salud, recreación y cultura, entre otros."
+  },
+  // 19
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Por qué los derechos humanos son considerados inviolables, según el texto?",
+    opciones: [
+      "A) Porque están protegidos por organismos internacionales que pueden sancionarlos en cualquier momento.",
+      "B) Porque los derechos tienen como característica ser inviolables; nadie tiene derecho a atentar contra ellos, lesionarlos ni destruirlos. Es por ello que existen instancias para promover y proteger los derechos humanos ante la vulneración de los mismos.",
+      "C) Porque son derechos que se adquieren automáticamente al nacer en un país democrático.",
+      "D) Porque los estados nacionales tienen la obligación de garantizarlos a través de su constitución."
+    ],
+    correcta: 1,
+    feedback: "Los derechos tienen como característica ser inviolables; nadie tiene derecho a atentar contra ellos, lesionarlos ni destruirlos. Por ello existen instancias nacionales, estatales, políticas y municipales para promover y proteger los derechos humanos ante la vulneración de los mismos."
+  },
+  // 20
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué son los 'Acuerdos de Convivencia' y cuál es su importancia en la escuela?",
+    opciones: [
+      "A) Son reglamentos elaborados por las autoridades educativas que los alumnos deben acatar sin cuestionarlos.",
+      "B) Son acuerdos validados y ser tomados en cuenta por los involucrados que evitan que un reglamento se convierta en una imposición; los acuerdos de convivencia son la base para una disciplina formativa que valoriza la importancia de los reglamentos como un recurso para gestionar una convivencia pacífica.",
+      "C) Son contratos entre padres de familia y directivos que regulan la conducta de los estudiantes.",
+      "D) Son normas internacionales que cada escuela debe aplicar para obtener certificación de calidad."
+    ],
+    correcta: 1,
+    feedback: "Los Acuerdos de Convivencia son creados y validados por los involucrados; evitan que un reglamento sea una imposición y asumen la convivencia con responsabilidad. Son la base para una disciplina formativa que valora la importancia de los reglamentos escolares para gestionar una convivencia pacífica y democrática."
+  },
+  // 21
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es el propósito de la ficha 'Semáforo de las emociones' para el alumnado preescolar?",
+    opciones: [
+      "A) Que los alumnos memoricen el nombre de todas las emociones básicas para poder expresarlas correctamente.",
+      "B) Que las niñas y los niños identifiquen y reconozcan sus propias emociones mediante expresiones faciales.",
+      "C) Que los alumnos aprendan a suprimir las emociones negativas para mejorar su comportamiento.",
+      "D) Que los estudiantes evalúen las emociones de sus compañeros y las reporten al docente."
+    ],
+    correcta: 1,
+    feedback: "El propósito de la ficha 'Semáforo de las emociones' es que las niñas y los niños identifiquen y reconozcan sus propias emociones mediante expresiones faciales. Para desarrollar competencias socioemocionales, un primer paso es tener conciencia de las propias emociones, reconocerlas y expresarlas de forma asertiva."
+  },
+  // 22
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué técnica enseña la ficha 'Inhalo y exhalo' para regular emociones como el miedo, la tristeza y el enojo?",
+    opciones: [
+      "A) La técnica de ignorar las emociones negativas hasta que desaparezcan por sí solas.",
+      "B) Una técnica de respiración que los niños podrán utilizar cuando sientan una emoción intensa; al regularla, les permitirá animar a las niñas y los niños a pensar en otra cosa o realizar alguna actividad que ayude a disminuir el enojo, miedo o tristeza.",
+      "C) La técnica de confrontar directamente la fuente del estrés para eliminar la emoción negativa.",
+      "D) Una rutina de ejercicio físico intenso para canalizar las emociones a través del movimiento."
+    ],
+    correcta: 1,
+    feedback: "La ficha 'Inhalo y exhalo' enseña una técnica de respiración para regular las emociones. Al regularlas, les permitirá a los niños pensar con más claridad y ayudará a las niñas y los niños a pensar en otra cosa o realizar alguna actividad que ayude a disminuir el enojo, miedo o tristeza."
+  },
+  // 23
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué es la empatía como competencia social, según el documento?",
+    opciones: [
+      "A) La capacidad de imitar las acciones de los demás para ganar su aprobación y aceptación.",
+      "B) La capacidad para percibir, entender e incluso sentir las emociones y pensamientos de otra persona, que es enseñada principalmente por las familias y posteriormente por las personas responsables del cuidado de las niñas y los niños.",
+      "C) La habilidad de expresar los propios sentimientos de manera abierta sin considerar el impacto en los demás.",
+      "D) La aptitud para resolver conflictos sin involucrar emocionalmente a ninguna de las partes."
+    ],
+    correcta: 1,
+    feedback: "La empatía es la capacidad para percibir, entender e incluso sentir las emociones y pensamientos de otra persona. Es una competencia social básica que es enseñada primeramente por las familias y posteriormente por las personas responsables del cuidado de las niñas y los niños."
+  },
+  // 24
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Por qué es importante enseñar la asertividad (la carita Sí y la carita No) desde la edad preescolar?",
+    opciones: [
+      "A) Porque permite a los niños controlar a sus compañeros e imponer su voluntad en el grupo.",
+      "B) Porque las niñas y los niños puedan aprender a decir 'Sí o No' cuando ellos así lo deseen, por medio de la toma de decisiones sin que se sientan mal, expresar sus actitudes, deseos, opiniones y derechos de la(s) persona(s).",
+      "C) Porque evita que los niños tengan que enfrentar situaciones de conflicto en la escuela.",
+      "D) Porque sustituye la necesidad de que los adultos tomen decisiones por los menores."
+    ],
+    correcta: 1,
+    feedback: "La asertividad implica que las niñas y los niños puedan aprender a decir 'Sí o No' cuando así lo deseen, tomando decisiones sin sentirse mal, y pudiendo expresar sus actitudes, deseos, opiniones y derechos. También pueden poner en práctica el respeto del otro a través del reconocimiento, entendiendo que todos podemos opinar y ser escuchados sin afectar física o emocionalmente a los demás."
+  },
+  // 25
+  {
+    tipo: "Ordenamiento",
+    texto: "Ordene los cinco pasos para resolver un conflicto de forma pacífica, según la ficha 'Los cinco pasos para la paz':\n\n1. Respirar y recobrar la calma.\n2. Buscar ayuda de una persona adulta.\n3. Usar el diálogo para escucharse entre sí.\n4. Proponer soluciones.\n5. Elegir la solución más conveniente para todos.",
+    opciones: [
+      "A) 2, 1, 4, 3, 5",
+      "B) 1, 2, 3, 4, 5",
+      "C) 3, 1, 2, 5, 4",
+      "D) 1, 3, 4, 2, 5"
+    ],
+    correcta: 1,
+    feedback: "Los cinco pasos para resolver un conflicto de forma pacífica son en orden: A) Respirar y recobrar la calma, B) Buscar ayuda de una persona adulta, C) Usar el diálogo para escucharse entre sí, D) Proponer soluciones, E) Elegir la solución más conveniente para todos los involucrados."
+  },
+  // 26
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es la participación más autónoma que puede alcanzar una niña, niño o adolescente (NNA) según la 'escalera de la participación' de Robert Hart (1992)?",
+    opciones: [
+      "A) El nivel 6: Participación consultada e informada.",
+      "B) El nivel 7: Participación iniciada y dirigida por la población estudiantil.",
+      "C) El nivel 8: Participación iniciada por el alumnado, con decisiones compartidas con los adultos.",
+      "D) El nivel 5: Participación consultada, con decisiones compartidas con las NNA."
+    ],
+    correcta: 2,
+    feedback: "Según la escalera de la participación de Robert Hart, el nivel más alto de participación auténtica es el nivel 8: Participación iniciada por el alumnado, con decisiones compartidas con los adultos. Este nivel representa el ejercicio de participación más autónomo y genuino."
+  },
+  // 27
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué implica el 'aprender a tomar decisiones para el autocuidado' como eje temático del fichero?",
+    opciones: [
+      "A) Aprender a obedecer las instrucciones de los adultos sin cuestionarlas.",
+      "B) Promover una educación integral que favorezca la formación de un sujeto autónomo, autorregulado y convencido del bien común, de los valores que rigen la vida en sociedad y la cultura de paz, mediante el aprendizaje acerca de la toma de decisiones responsables en cuanto a la seguridad y cuidado de sí mismo y de los otros.",
+      "C) Desarrollar habilidades para evitar actividades de riesgo mediante la vigilancia de compañeros.",
+      "D) Establecer reglas estrictas que regulen el comportamiento de los estudiantes en todo momento."
+    ],
+    correcta: 1,
+    feedback: "El eje de toma de decisiones para el autocuidado busca promover una educación integral que favorezca la formación de un sujeto autónomo, autorregulado y convencido del bien común, de los valores que rigen la vida en sociedad y apegados a la legalidad y a la cultura de paz, mediante el aprendizaje de toma de decisiones responsables."
+  },
+  // 28
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué papel juega la educación en el desarrollo de entornos escolares seguros?",
+    opciones: [
+      "A) La educación debe limitarse a los contenidos académicos y dejar la seguridad a las autoridades.",
+      "B) La educación puede contribuir a generar mejores ambientes de convivencia y seguridad en el aula, aportando información y actividades didácticas para que el personal docente introduzca al alumnado al tema de la cultura de paz.",
+      "C) La educación para la seguridad solo es efectiva cuando se aplica en secundaria y preparatoria.",
+      "D) La educación debe enfocarse en sancionar conductas violentas para generar ambientes seguros."
+    ],
+    correcta: 1,
+    feedback: "La educación puede contribuir a generar mejores ambientes de convivencia y seguridad en el aula; por ello, el fichero aporta información y actividades didácticas para que el personal docente introduzca al alumnado al tema de la cultura de paz, promueva la conciencia acerca de los prejuicios y estereotipos sexistas, y reflexionen sobre cómo se han justificado socialmente."
+  },
+  // 29
+  {
+    tipo: "Completamiento",
+    texto: "En el marco de la construcción de entornos escolares seguros, las habilidades para la vida son fundamentales porque…",
+    opciones: [
+      "A) …permiten a los estudiantes competir exitosamente en el mercado laboral desde temprana edad.",
+      "B) …son habilidades cognitivas, emocionales y sociales que permiten a las niñas, niños y adolescentes crear vínculos de afecto, respeto e igualdad con los demás, y enfrentarse a factores de riesgo de su entorno cotidianamente.",
+      "C) …garantizan que los alumnos obtengan calificaciones sobresalientes en todas las asignaturas.",
+      "D) …eliminan por completo la posibilidad de que los estudiantes enfrenten situaciones de violencia."
+    ],
+    correcta: 1,
+    feedback: "Las habilidades para la vida son habilidades cognitivas, emocionales y sociales que permiten a las niñas, niños y adolescentes crear vínculos de afecto, respeto e igualdad con los demás, y enfrentarse a los factores de riesgo de su entorno cotidianamente. Son fundamentales para la construcción de entornos escolares seguros."
+  },
+  // 30
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es la conclusión central del fichero respecto al papel de la escuela en la promoción de la cultura de paz?",
+    opciones: [
+      "A) La paz solo puede lograrse a través de la intervención gubernamental y las políticas públicas nacionales.",
+      "B) La escuela debe enfocarse exclusivamente en los contenidos académicos y dejar los valores a la familia.",
+      "C) La escuela es el camino que conduce al modelo de convivencia al que aspiramos; requiere no solo de la educación formal, sino de la participación de toda la sociedad para hacer posible la transformación social basada en la libertad, el diálogo, la cooperación, la participación ciudadana, la responsabilidad, la dignidad humana, la interculturalidad y la promoción de la cultura de paz.",
+      "D) La paz escolar depende únicamente de la capacidad del docente para mantener el orden en el aula."
+    ],
+    correcta: 2,
+    feedback: "La conclusión central es que la escuela es el camino que conduce al modelo de convivencia al que se aspira; requiere no solo de la educación formal, sino de la participación de toda la sociedad para hacer posible la transformación social basada en el diálogo, la cooperación, la responsabilidad, la dignidad humana, la interculturalidad y la promoción de la cultura de paz."
+  }
+];
+
+// ════════════════════════════════════════
+//  VARIABLES DE ESTADO
+// ════════════════════════════════════════
+let nombreAlumno = "";
+let indiceActual = 0;
+let respuestasCorrectas = 0;
+let respondida = false;
+
+const letras = ["A", "B", "C", "D"];
+
+// ════════════════════════════════════════
+//  FUNCIONES
+// ════════════════════════════════════════
+function iniciarSimulador() {
+  const inp = document.getElementById("input-nombre");
+  nombreAlumno = inp.value.trim();
+  if (!nombreAlumno) {
+    inp.style.borderColor = "#EF5350";
+    inp.focus();
+    return;
+  }
+  inp.style.borderColor = "";
+  indiceActual = 0;
+  respuestasCorrectas = 0;
+  respondida = false;
+
+  document.getElementById("pantalla-inicio").style.display = "none";
+  document.getElementById("pantalla-examen").style.display = "block";
+  document.getElementById("cab-nombre").textContent = nombreAlumno;
+
+  mostrarPregunta();
+}
+
+function mostrarPregunta() {
+  respondida = false;
+  const p = preguntas[indiceActual];
+  const total = preguntas.length;
+
+  document.getElementById("cab-progreso").textContent = `Pregunta ${indiceActual + 1} / ${total}`;
+  document.getElementById("barra").style.width = `${((indiceActual + 1) / total) * 100}%`;
+  document.getElementById("etiqueta-formato").textContent = p.tipo;
+  document.getElementById("num-pregunta").textContent = `Pregunta ${indiceActual + 1} de ${total}`;
+
+  const textoEl = document.getElementById("texto-pregunta");
+  textoEl.innerHTML = p.texto.replace(/\n/g, "<br>");
+
+  const contenedor = document.getElementById("opciones");
+  contenedor.innerHTML = "";
+  p.opciones.forEach((op, i) => {
+    const div = document.createElement("div");
+    div.className = "opcion";
+    // Quitar la letra inicial "A) B) C) D)" del texto de opción para mostrar solo la letra del círculo
+    const textoOpcion = op.replace(/^[A-D]\)\s*/, "");
+    div.innerHTML = `<div class="letra-opcion">${letras[i]}</div><div class="texto-opcion">${textoOpcion}</div>`;
+    div.addEventListener("click", () => seleccionarOpcion(i, div));
+    contenedor.appendChild(div);
+  });
+
+  const fb = document.getElementById("feedback");
+  fb.style.display = "none";
+  fb.className = "feedback";
+  document.getElementById("btn-siguiente").style.display = "none";
+
+  const tarjeta = document.getElementById("tarjeta-pregunta");
+  tarjeta.style.animation = "none";
+  void tarjeta.offsetWidth;
+  tarjeta.style.animation = "deslizar 0.4s ease";
+}
+
+function seleccionarOpcion(indice, elDiv) {
+  if (respondida) return;
+  respondida = true;
+
+  const p = preguntas[indiceActual];
+  const opciones = document.querySelectorAll(".opcion");
+
+  opciones.forEach(op => op.classList.add("bloqueada"));
+
+  const fb = document.getElementById("feedback");
+
+  if (indice === p.correcta) {
+    respuestasCorrectas++;
+    elDiv.classList.add("correcta");
+    fb.className = "feedback correcto";
+    fb.innerHTML = `<span class="icono-feedback">✅</span><strong>¡Correcto!</strong> ${p.feedback}`;
+  } else {
+    elDiv.classList.add("incorrecta");
+    opciones[p.correcta].classList.add("correcta");
+    fb.className = "feedback incorrecto";
+    fb.innerHTML = `<span class="icono-feedback">❌</span><strong>Respuesta incorrecta.</strong> ${p.feedback}`;
+  }
+
+  fb.style.display = "block";
+
+  const btnSig = document.getElementById("btn-siguiente");
+  btnSig.textContent = indiceActual < preguntas.length - 1
+    ? "Siguiente pregunta →"
+    : "Ver mis resultados 🎯";
+  btnSig.style.display = "inline-block";
+}
+
+function siguientePregunta() {
+  indiceActual++;
+  if (indiceActual < preguntas.length) {
+    mostrarPregunta();
+  } else {
+    mostrarResultados();
+  }
+}
+
+function mostrarResultados() {
+  document.getElementById("pantalla-examen").style.display = "none";
+  document.getElementById("pantalla-resultados").style.display = "block";
+
+  const total = preguntas.length;
+  const incorrectas = total - respuestasCorrectas;
+  const pct = Math.round((respuestasCorrectas / total) * 100);
+
+  document.getElementById("res-nombre").textContent = nombreAlumno;
+  document.getElementById("res-correctas").textContent = respuestasCorrectas;
+  document.getElementById("res-incorrectas").textContent = incorrectas;
+  document.getElementById("res-pct").textContent = pct + "%";
+  document.getElementById("pct-label").textContent = `${respuestasCorrectas} de ${total} preguntas correctas`;
+
+  setTimeout(() => {
+    document.getElementById("barra-res").style.width = pct + "%";
+  }, 200);
+
+  let emoji, mensaje;
+  if (pct >= 90) {
+    emoji = "🏆";
+    mensaje = "¡Excelente! Tienes un dominio sobresaliente sobre la cultura de paz y las competencias socioemocionales. ¡Eres un promotor(a) de paz!";
+  } else if (pct >= 75) {
+    emoji = "🌟";
+    mensaje = "¡Muy bien! Comprendes los conceptos fundamentales de la cultura de paz. Repasa los temas donde tuviste dudas para alcanzar la excelencia.";
+  } else if (pct >= 60) {
+    emoji = "📚";
+    mensaje = "Buen esfuerzo. Vas por buen camino. Te recomendamos repasar las líneas temáticas del fichero para reforzar tu aprendizaje.";
+  } else {
+    emoji = "💪";
+    mensaje = "¡Sigue adelante! Cada intento es una oportunidad de aprendizaje. Revisa el material sobre cultura de paz y vuelve a intentarlo. ¡Tú puedes!";
+  }
+
+  document.getElementById("emoji-res").textContent = emoji;
+  document.getElementById("mensaje-motivador").textContent = mensaje;
+}
+
+function reiniciar() {
+  document.getElementById("pantalla-resultados").style.display = "none";
+  document.getElementById("pantalla-inicio").style.display = "flex";
+  document.getElementById("input-nombre").value = "";
+}
+
+document.getElementById("input-nombre").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") iniciarSimulador();
+});
+</script>
+</body>
+</html>

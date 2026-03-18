@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guía de Estudio Interactiva – Construyendo Equidad</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --verde-oscuro: #1a5c38;
+    --verde-medio: #2d8653;
+    --verde-claro: #5cb87a;
+    --verde-suave: #e8f5ee;
+    --verde-menta: #c6ebd5;
+    --dorado: #e8a820;
+    --dorado-claro: #fef3d0;
+    --blanco: #fdfefe;
+    --gris-texto: #2c3e35;
+    --gris-suave: #f0f7f3;
+    --sombra: rgba(29, 92, 56, 0.14);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--blanco);
+    color: var(--gris-texto);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde-medio) 60%, var(--verde-claro) 100%);
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #d4f5e2;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    border-radius: 50px;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(4px);
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  header h1 span { color: #a8e6c0; }
+  .header-sub {
+    color: rgba(255,255,255,0.82);
+    font-size: 1rem;
+    font-weight: 300;
+    margin-bottom: 0.25rem;
+  }
+  .header-author {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    background: rgba(255,255,255,0.13);
+    border: 1px solid rgba(255,255,255,0.28);
+    padding: 0.4rem 1.1rem;
+    border-radius: 50px;
+    color: #e8f9ef;
+    font-size: 0.92rem;
+    font-weight: 500;
+    backdrop-filter: blur(6px);
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--verde-oscuro);
+    padding: 0.6rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .progress-label { color: #a8e6c0; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+  .progress-bar-outer {
+    flex: 1; height: 6px; background: rgba(255,255,255,0.15); border-radius: 10px; overflow: hidden;
+  }
+  .progress-bar-inner {
+    height: 100%; background: linear-gradient(90deg, var(--verde-claro), var(--dorado));
+    border-radius: 10px; transition: width 0.5s ease;
+    width: 0%;
+  }
+  .progress-pct { color: #fff; font-size: 0.75rem; font-weight: 700; min-width: 2.5rem; text-align: right; }
+
+  /* ── NAV TABS ── */
+  .nav-tabs-wrap {
+    background: #fff;
+    border-bottom: 2px solid var(--verde-suave);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 16px var(--sombra);
+  }
+  .nav-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    scrollbar-width: none;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    flex-shrink: 0;
+    padding: 0.9rem 1.1rem;
+    border: none; background: transparent;
+    color: #6b8f7a;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.83rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.25s;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .nav-tab:hover { color: var(--verde-medio); background: var(--gris-suave); }
+  .nav-tab.active {
+    color: var(--verde-oscuro);
+    border-bottom-color: var(--verde-claro);
+    background: var(--verde-suave);
+  }
+  .nav-tab .tab-icon { font-size: 1rem; }
+
+  /* ── SECTIONS ── */
+  .section-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.2rem 3rem;
+  }
+  .section { display: none; animation: fadeIn 0.4s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── CARDS ── */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.8rem;
+    box-shadow: 0 4px 24px var(--sombra);
+    border: 1px solid var(--verde-suave);
+    margin-bottom: 1.4rem;
+  }
+  .card-green {
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-medio));
+    color: #fff;
+    border: none;
+  }
+  .card-gold {
+    background: linear-gradient(135deg, #f7a800, #e8c94a);
+    color: #3a2800;
+    border: none;
+  }
+  .card-mint { background: var(--verde-suave); border-color: var(--verde-menta); }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+    color: var(--verde-oscuro);
+  }
+  .card-green h2, .card-green h3, .card-gold h2, .card-gold h3 { color: inherit; }
+  .card p, .card li { font-size: 1.02rem; line-height: 1.75; }
+  .card ul { padding-left: 1.3rem; }
+  .card ul li { margin-bottom: 0.4rem; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    color: var(--verde-oscuro);
+    margin-bottom: 0.4rem;
+  }
+  .section-desc {
+    color: #5a7a67;
+    font-size: 1rem;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px dashed var(--verde-menta);
+  }
+
+  /* ── CONCEPTO CHIP ── */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    background: var(--verde-suave);
+    color: var(--verde-oscuro);
+    border: 1.5px solid var(--verde-menta);
+    border-radius: 50px;
+    padding: 0.38rem 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .chip:hover, .chip.active { background: var(--verde-medio); color: #fff; border-color: var(--verde-medio); }
+
+  /* ── ACORDEÓN ── */
+  .accordion { margin-bottom: 0.8rem; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--verde-menta); }
+  .accordion-header {
+    width: 100%; text-align: left; padding: 1.1rem 1.4rem;
+    background: var(--gris-suave);
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.02rem; font-weight: 600;
+    color: var(--verde-oscuro);
+    display: flex; justify-content: space-between; align-items: center;
+    transition: background 0.2s;
+  }
+  .accordion-header:hover { background: var(--verde-menta); }
+  .accordion-header.open { background: var(--verde-oscuro); color: #fff; }
+  .accordion-icon { font-size: 1.2rem; transition: transform 0.3s; }
+  .accordion-header.open .accordion-icon { transform: rotate(45deg); }
+  .accordion-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    background: #fff; padding: 0 1.4rem;
+    font-size: 1rem; line-height: 1.75; color: var(--gris-texto);
+  }
+  .accordion-body.open { max-height: 600px; padding: 1.1rem 1.4rem; }
+
+  /* ── GRID 2 COL ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  @media(max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* ── QUOTE CALLOUT ── */
+  .callout {
+    border-left: 5px solid var(--verde-claro);
+    background: var(--verde-suave);
+    padding: 1.1rem 1.4rem;
+    border-radius: 0 12px 12px 0;
+    margin: 1.2rem 0;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--verde-oscuro);
+    font-weight: 500;
+  }
+
+  /* ── SECUENCIA PASOS ── */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    padding: 1.2rem 0;
+    border-bottom: 1px dashed var(--verde-menta);
+    position: relative;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    flex-shrink: 0; width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-medio));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 1.05rem;
+  }
+  .step-content h4 { font-size: 1.05rem; font-weight: 700; color: var(--verde-oscuro); margin-bottom: 0.3rem; }
+  .step-content p { font-size: 0.97rem; line-height: 1.7; }
+
+  /* ── QUIZ ── */
+  .quiz-question {
+    background: var(--gris-suave);
+    border-radius: 14px; padding: 1.5rem;
+    margin-bottom: 1.4rem;
+    border: 1.5px solid var(--verde-menta);
+  }
+  .quiz-question p { font-size: 1.08rem; font-weight: 600; margin-bottom: 1rem; color: var(--verde-oscuro); }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
+  .quiz-opt {
+    padding: 0.8rem 1.1rem;
+    background: #fff;
+    border: 2px solid var(--verde-menta);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.97rem;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--gris-texto);
+  }
+  .quiz-opt:hover { border-color: var(--verde-medio); background: var(--verde-suave); }
+  .quiz-opt.correct { background: #d4edda; border-color: #28a745; color: #155724; font-weight: 600; }
+  .quiz-opt.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+  .quiz-feedback {
+    margin-top: 0.8rem; padding: 0.7rem 1rem; border-radius: 10px;
+    font-size: 0.95rem; font-weight: 500; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #d4edda; color: #155724; }
+  .quiz-feedback.fail { background: #f8d7da; color: #721c24; }
+
+  /* ── TARJETA FLIP ── */
+  .flip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+  .flip-card { perspective: 800px; height: 150px; cursor: pointer; }
+  .flip-inner {
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.55s ease;
+    position: relative;
+  }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem; text-align: center;
+  }
+  .flip-front {
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-medio));
+    color: #fff; font-weight: 700; font-size: 1rem;
+    box-shadow: 0 4px 18px var(--sombra);
+  }
+  .flip-front .flip-hint { font-size: 0.72rem; opacity: 0.75; margin-top: 0.4rem; }
+  .flip-back {
+    background: var(--dorado-claro);
+    border: 2px solid var(--dorado);
+    color: #3a2800;
+    font-size: 0.93rem; line-height: 1.55;
+    transform: rotateY(180deg);
+  }
+
+  /* ── VERDADERO/FALSO ── */
+  .tf-item {
+    background: #fff;
+    border: 1.5px solid var(--verde-menta);
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 0.9rem;
+  }
+  .tf-item p { font-size: 1rem; margin-bottom: 0.75rem; font-weight: 500; }
+  .tf-btns { display: flex; gap: 0.7rem; }
+  .tf-btn {
+    flex: 1; padding: 0.55rem; border-radius: 8px; border: 2px solid;
+    font-weight: 700; font-size: 0.95rem; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .tf-btn.v { border-color: #28a745; color: #28a745; background: #fff; }
+  .tf-btn.f { border-color: #dc3545; color: #dc3545; background: #fff; }
+  .tf-btn.v:hover, .tf-btn.v.sel { background: #28a745; color: #fff; }
+  .tf-btn.f:hover, .tf-btn.f.sel { background: #dc3545; color: #fff; }
+  .tf-result { margin-top: 0.6rem; font-size: 0.9rem; font-weight: 600; display: none; }
+  .tf-result.show { display: block; }
+
+  /* ── RESUMEN FINAL ── */
+  .score-box {
+    background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-medio));
+    color: #fff; border-radius: 20px; padding: 2rem; text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .score-num { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 900; }
+  .score-label { font-size: 1rem; opacity: 0.85; margin-top: 0.3rem; }
+
+  /* ── NAV BUTTONS ── */
+  .nav-btns {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 2rem; gap: 0.8rem; flex-wrap: wrap;
+  }
+  .btn {
+    padding: 0.75rem 1.6rem; border-radius: 50px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.97rem; font-weight: 600;
+    transition: all 0.22s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .btn-primary { background: var(--verde-oscuro); color: #fff; }
+  .btn-primary:hover { background: var(--verde-medio); transform: translateY(-2px); box-shadow: 0 6px 20px var(--sombra); }
+  .btn-outline { background: #fff; color: var(--verde-oscuro); border: 2px solid var(--verde-menta); }
+  .btn-outline:hover { background: var(--verde-suave); }
+  .btn-gold { background: var(--dorado); color: #3a2800; }
+  .btn-gold:hover { background: #f0b800; }
+
+  /* ── VALORES GRID ── */
+  .valor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.9rem; margin-bottom: 1.4rem; }
+  .valor-item {
+    background: #fff; border: 2px solid var(--verde-menta);
+    border-radius: 14px; padding: 1.1rem 0.8rem; text-align: center;
+    transition: all 0.2s; cursor: default;
+  }
+  .valor-item:hover { border-color: var(--verde-medio); background: var(--verde-suave); transform: translateY(-3px); box-shadow: 0 6px 18px var(--sombra); }
+  .valor-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+  .valor-name { font-weight: 700; font-size: 0.9rem; color: var(--verde-oscuro); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .section-container { padding: 1.4rem 0.9rem 2.5rem; }
+    .card { padding: 1.2rem; }
+    .nav-tab { padding: 0.75rem 0.8rem; font-size: 0.78rem; }
+    .flip-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── TOOLTIP ── */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-trigger {
+    background: var(--verde-medio); color: #fff; border-radius: 50%;
+    width: 20px; height: 20px; font-size: 0.72rem; font-weight: 800;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: help; margin-left: 0.3rem;
+  }
+  .tooltip-box {
+    display: none; position: absolute; bottom: 130%; left: 50%;
+    transform: translateX(-50%); background: var(--verde-oscuro); color: #fff;
+    padding: 0.5rem 0.8rem; border-radius: 8px; font-size: 0.83rem;
+    width: 200px; text-align: center; z-index: 200; line-height: 1.4;
+  }
+  .tooltip-wrap:hover .tooltip-box { display: block; }
+
+  /* ── BADGE SECCION ── */
+  .sec-badge {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    background: var(--verde-menta); color: var(--verde-oscuro);
+    border-radius: 50px; padding: 0.3rem 0.8rem;
+    font-size: 0.78rem; font-weight: 700; margin-bottom: 1rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-badge">📚 Material Pedagógico</div>
+  <h1>Guía de Estudio <span>Interactiva</span></h1>
+  <p class="header-sub">Construyendo Equidad en la Comunidad Educativa</p>
+  <div class="header-author">✏️ Prof. Francisco De Jesus Luna Benitez</div>
+</header>
+
+<!-- BARRA DE PROGRESO -->
+<div class="progress-wrap">
+  <span class="progress-label">📊 Tu avance</span>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+  <span class="progress-pct" id="progressPct">0%</span>
+</div>
+
+<!-- NAVEGACIÓN -->
+<div class="nav-tabs-wrap">
+  <div class="nav-tabs" role="tablist">
+    <button class="nav-tab active" data-sec="0"><span class="tab-icon">🏠</span>Introducción</button>
+    <button class="nav-tab" data-sec="1"><span class="tab-icon">🔑</span>Conceptos Clave</button>
+    <button class="nav-tab" data-sec="2"><span class="tab-icon">🏫</span>Colaboración</button>
+    <button class="nav-tab" data-sec="3"><span class="tab-icon">🔄</span>Secuencia</button>
+    <button class="nav-tab" data-sec="4"><span class="tab-icon">💡</span>Valores</button>
+    <button class="nav-tab" data-sec="5"><span class="tab-icon">✅</span>Práctica</button>
+  </div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="section-container">
+
+  <!-- ══ SECCIÓN 0: INTRODUCCIÓN ══ -->
+  <div class="section active" id="sec0">
+    <div class="sec-badge">📖 Sección 1 de 6</div>
+    <h2 class="section-title">Una Comunidad Educativa Promotora de Equidad</h2>
+    <p class="section-desc">Conoce el objetivo central de este material y qué es una comunidad educativa equitativa.</p>
+
+    <div class="card card-green">
+      <h2>¿De qué trata este material? 🎯</h2>
+      <p>Este texto de pedagogía propone un modelo de <strong>diálogo e intercambio</strong> entre docentes, familias y alumnos, orientado a avanzar en el derecho a la educación y a formar ciudadanos empáticos y participativos.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card card-mint">
+        <h3>🌱 ¿Qué es una comunidad equitativa?</h3>
+        <p>Una comunidad educativa es promotora de equidad cuando:</p>
+        <ul>
+          <li>Consolida lazos afectivos y genera confianza</li>
+          <li>Forma personas seguras, creativas y resilientes</li>
+          <li>Promueve la solidaridad y el buen humor</li>
+          <li>Desarrolla la autoestima de cada persona</li>
+        </ul>
+      </div>
+      <div class="card card-mint">
+        <h3>⚖️ ¿Por qué es importante la equidad?</h3>
+        <p>La inequidad está profundamente arraigada en la vida social (especialmente la de género). La escuela puede ser el espacio ideal para <strong>analizar actitudes</strong> que obstaculizan los derechos de niñas y mujeres, y construir alternativas positivas.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      "La mejor forma de promover la equidad en general y la equidad de género en particular, desde la escuela, es potenciar el diálogo, el respeto mutuo, la comprensión, la empatía y la solidaridad."
+    </div>
+
+    <div class="card">
+      <h3>🧠 Autoestima: el pilar central</h3>
+      <p>La <strong>autoestima</strong> se define como el equilibrio entre el amor propio (sin narcisismo) y el respeto por los demás. Sin autoestima se genera inseguridad y desconfianza, lo que deteriora la inteligencia emocional y la capacidad de construir relaciones positivas.</p>
+    </div>
+
+    <div class="nav-btns">
+      <span></span>
+      <button class="btn btn-primary" onclick="goTo(1)">Siguiente: Conceptos Clave →</button>
+    </div>
+  </div>
+
+  <!-- ══ SECCIÓN 1: CONCEPTOS CLAVE ══ -->
+  <div class="section" id="sec1">
+    <div class="sec-badge">🔑 Sección 2 de 6</div>
+    <h2 class="section-title">Conceptos Clave</h2>
+    <p class="section-desc">Haz clic en cada tarjeta para descubrir la definición del concepto.</p>
+
+    <div class="flip-grid" id="flipGrid">
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🌟 Autoestima<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Equilibrio entre amor propio (sin narcisismo) y respeto por los demás. Base de relaciones positivas y edificantes.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">⚖️ Equidad<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Garantía de derechos para todas las personas sin distinción. Va más allá de la igualdad formal.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🤝 Empatía<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Ponerse en los zapatos del otro. Base fundamental para construir comunidades solidarias y justas.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🏫 Comunidad Educativa<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Conjunto formado por docentes, alumnos y familias que comparten la responsabilidad de formar personas íntegras.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">💬 Diálogo<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Herramienta central para promover equidad. Permite el intercambio entre escuela y familias de forma respetuosa.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🎨 Momento Creativo<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Espacio en el aula donde los alumnos expresan sus aprendizajes mediante arte, escritura, teatro y otras formas creativas.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🏠 Tarea Familiar<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Actividad que el alumno realiza en casa con su familia, generando diálogo y fortaleciendo vínculos afectivos.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🔗 Tejido Social<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Red de relaciones y apoyo comunitario que se construye a través de la solidaridad y la colaboración colectiva.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-gold" style="margin-top:1.2rem">
+      <h3>💡 ¿Sabías que…?</h3>
+      <p>La división tradicional entre "la familia socializa y la escuela enseña" quedó obsoleta. Hoy, ambas instituciones comparten la responsabilidad de educar y se necesitan mutuamente.</p>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(0)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(2)">Siguiente: Colaboración →</button>
+    </div>
+  </div>
+
+  <!-- ══ SECCIÓN 2: COLABORACIÓN ══ -->
+  <div class="section" id="sec2">
+    <div class="sec-badge">🏫 Sección 3 de 6</div>
+    <h2 class="section-title">Colaboración entre Escuela y Familias</h2>
+    <p class="section-desc">Explora cómo se construye el vínculo entre la escuela y las familias. Haz clic en cada tema para ampliar.</p>
+
+    <div class="accordion" id="acc1">
+      <button class="accordion-header" onclick="toggleAcc(this)">
+        🎯 ¿Por qué es fundamental la colaboración? <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>La familia es fundamental en la formación afectiva y ética de niñas, niños y adolescentes. La escuela puede <strong>potenciar</strong> esta formación, pues es una estructura perfectamente legítima para interactuar con las familias de forma sistemática.</p>
+        <br>
+        <p>Las madres, padres y tutores son los modelos más influyentes para el equilibrio afectivo y la autoestima de cada estudiante. Cuando ambas instituciones trabajan juntas, se generan formas armónicas de entendimiento y empatía.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-header" onclick="toggleAcc(this)">
+        🔄 ¿Cómo ha evolucionado esta relación? <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Históricamente, la relación familia-escuela se planteaba como una <strong>división de funciones</strong>: la familia socializaba y la escuela enseñaba. Hoy esta división es artificial y obsoleta.</p>
+        <br>
+        <p>Los cambios sociales, los medios de comunicación y la tecnología han borrado esas fronteras. Hoy las relaciones familia-escuela se plantean en términos de <strong>complementariedad</strong>, compartiendo la responsabilidad de formar a las nuevas generaciones.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-header" onclick="toggleAcc(this)">
+        🎁 ¿Qué aporta la familia a la escuela? <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>La colaboración familiar enriquece a la escuela con:</p>
+        <ul style="margin-top:0.5rem; padding-left:1.3rem; line-height:2;">
+          <li>Vínculos, códigos y símbolos culturales locales</li>
+          <li>Temáticas regionales y maneras propias de discernir</li>
+          <li>Elementos de la idiosincrasia local</li>
+          <li>Anécdotas, proverbios, canciones, cuentos, leyendas e historias singulares</li>
+          <li>Expresiones artísticas únicas y tradiciones familiares</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-header" onclick="toggleAcc(this)">
+        🏛️ Asambleas-Taller con Madres y Padres <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <p>Se sugiere realizar <strong>asambleas cada 5 o 6 semanas</strong>. Estas reuniones pueden coincidir con las habituales, pero con un sentido enriquecedor diferente.</p>
+        <br>
+        <p>En cada asamblea se recomienda abordar tres preguntas clave:</p>
+        <ul style="margin-top:0.5rem; padding-left:1.3rem; line-height:2.1;">
+          <li>¿Cómo abordamos la equidad en capacidades especiales, género, nutrición y aprendizaje?</li>
+          <li>¿Qué debemos hacer para mejorar la seguridad en casa, la escuela y el trayecto?</li>
+          <li>¿Qué han aportado las tareas familiares a sus hogares, a ustedes y a la escuela?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      "Con el modelo propuesto se genera un compromiso moral protector y cohesión social: factores clave para favorecer la formación académica, cívica y ética de la comunidad educativa."
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(1)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Siguiente: Secuencia →</button>
+    </div>
+  </div>
+
+  <!-- ══ SECCIÓN 3: SECUENCIA DE ACTIVIDADES ══ -->
+  <div class="section" id="sec3">
+    <div class="sec-badge">🔄 Sección 4 de 6</div>
+    <h2 class="section-title">Secuencia de Actividades</h2>
+    <p class="section-desc">Conoce los tres elementos que conforman la secuencia pedagógica propuesta.</p>
+
+    <div class="card card-mint">
+      <h3>📋 ¿Qué es una secuencia de actividades?</h3>
+      <p>Es un ciclo de trabajo semanal o quincenal que vincula la escuela con la familia a través de tres momentos conectados, donde los alumnos son el centro de todo el proceso.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>🏁 Actividad Inicial (en el aula)</h4>
+          <p>Los alumnos dialogan, expresan ideas, crean productos y comparten su visión del mundo con sus compañeros. Leen, escriben y reflexionan sobre valores positivos que fortalecen la equidad. La comprensión lectora se activa para pensar, inventar y fortalecer afectos.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>🏠 Tarea Familiar (en casa)</h4>
+          <p>El alumno lleva a casa una actividad acordada en el aula para dialogar con su familia. La <strong>regla de oro</strong>: solo se admiten pensamientos positivos y armónicos, nunca reproches. Se presenta por escrito para dejar constancia de los afectos. Es el instrumento clave para crear condiciones de diálogo metódico.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>🎨 Momento Creativo (de vuelta al aula)</h4>
+          <p>Los alumnos regresan al aula con sus tareas y se genera un diálogo enriquecido. En la <strong>primera parte</strong>, exponen los resultados de la tarea familiar. En la <strong>segunda parte</strong>, cada alumno expresa sus conclusiones mediante una obra creativa: cuento, canción, poema, dibujo, video, teatro, cerámica u otra forma artística.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.4rem">
+      <h3>📌 Ejemplo práctico: El árbol genealógico</h3>
+      <p>Los alumnos platican en clase sobre los trabajos y oficios de sus familias elaborando un árbol genealógico. Luego, en casa, la familia completa la actividad reflexionando: ¿Cómo contribuyen estos oficios a la sociedad? ¿Cómo nos hacen personas equitativas? Al regresar, comparten y crean algo nuevo con ese material.</p>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(2)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Siguiente: Valores →</button>
+    </div>
+  </div>
+
+  <!-- ══ SECCIÓN 4: VALORES ══ -->
+  <div class="section" id="sec4">
+    <div class="sec-badge">💡 Sección 5 de 6</div>
+    <h2 class="section-title">Valores que Guían las Actividades</h2>
+    <p class="section-desc">Pasa el cursor sobre cada valor para explorar su importancia en la comunidad educativa equitativa.</p>
+
+    <div class="valor-grid">
+      <div class="valor-item"><div class="valor-icon">🤝</div><div class="valor-name">Respeto Mutuo</div></div>
+      <div class="valor-item"><div class="valor-icon">🌱</div><div class="valor-name">Solidaridad</div></div>
+      <div class="valor-item"><div class="valor-icon">❤️</div><div class="valor-name">Empatía</div></div>
+      <div class="valor-item"><div class="valor-icon">💬</div><div class="valor-name">Diálogo</div></div>
+      <div class="valor-item"><div class="valor-icon">🌟</div><div class="valor-name">Autoestima</div></div>
+      <div class="valor-item"><div class="valor-icon">🛡️</div><div class="valor-name">Asertividad</div></div>
+      <div class="valor-item"><div class="valor-icon">🎨</div><div class="valor-name">Creatividad</div></div>
+      <div class="valor-item"><div class="valor-icon">🤲</div><div class="valor-name">Colaboración</div></div>
+      <div class="valor-item"><div class="valor-icon">⚡</div><div class="valor-name">Resiliencia</div></div>
+      <div class="valor-item"><div class="valor-icon">🌍</div><div class="valor-name">Dignidad</div></div>
+      <div class="valor-item"><div class="valor-icon">😊</div><div class="valor-name">Buen Humor</div></div>
+      <div class="valor-item"><div class="valor-icon">🔍</div><div class="valor-name">Innovación</div></div>
+    </div>
+
+    <div class="callout">
+      El respeto, por ejemplo, se considera en múltiples dimensiones: a las personas, las familias, la naturaleza, la patria, la cultura, el territorio, el otro pueblo, la otra religión, la otra historia y el otro modo de ser.
+    </div>
+
+    <div class="card">
+      <h3>🧩 ¿Cómo se trabajan estos valores?</h3>
+      <p>Los valores se presentan de múltiples formas a través de las secuencias de actividades, a fin de reflexionar sobre ellos y ponerlos en práctica en la vida diaria. Se exploran mediante juegos, expresiones artísticas, temáticas variadas y diálogos que buscan soluciones creativas a situaciones cotidianas.</p>
+    </div>
+
+    <div class="card card-green">
+      <h2>🏆 Objetivo final</h2>
+      <p>Favorecer la formación de una comunidad educativa que se ponga en los zapatos del otro, que genere empatía y experimente valores de colaboración y solidaridad, construyendo así una sociedad más justa y pacífica.</p>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(3)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(5)">Siguiente: Práctica →</button>
+    </div>
+  </div>
+
+  <!-- ══ SECCIÓN 5: PRÁCTICA ══ -->
+  <div class="section" id="sec5">
+    <div class="sec-badge">✅ Sección 6 de 6</div>
+    <h2 class="section-title">Actividades de Práctica</h2>
+    <p class="section-desc">Pon a prueba lo que aprendiste con estas actividades interactivas.</p>
+
+    <!-- OPCIÓN MÚLTIPLE -->
+    <div class="card">
+      <h3>🧠 Preguntas de Opción Múltiple</h3>
+
+      <div class="quiz-question">
+        <p>1. ¿Qué elemento NO forma parte de una secuencia de actividades?</p>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','La actividad inicial forma parte de la secuencia.')">A) La actividad inicial en el aula</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','La tarea familiar es el segundo elemento de la secuencia.')">B) La tarea familiar</button>
+          <button class="quiz-opt" onclick="checkQ(this,'correct','¡Correcto! La evaluación sumativa no es parte de los tres elementos: actividad inicial, tarea familiar y momento creativo.')">C) La evaluación sumativa</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','El momento creativo es el tercer elemento clave.')">D) El momento creativo</button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-question">
+        <p>2. ¿Cuál es la "regla de oro" de la tarea familiar?</p>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','No es sobre el formato físico del trabajo.')">A) Debe entregarse siempre de forma impresa</button>
+          <button class="quiz-opt" onclick="checkQ(this,'correct','¡Exacto! Solo se admiten pensamientos positivos y armónicos, nunca reproches ni regaños.')">B) Solo se admiten pensamientos positivos y armónicos</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','La participación de toda la familia es ideal, pero no es la regla de oro.')">C) Todos los miembros de la familia deben firmarla</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','La tarea familiar no tiene un límite de extensión obligatorio.')">D) No puede tener más de una página</button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+
+      <div class="quiz-question">
+        <p>3. Según el texto, ¿qué es la autoestima?</p>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Eso describe narcisismo, no autoestima.')">A) Quererse a uno mismo por encima de los demás</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Eso es inseguridad o timidez, no autoestima.')">B) No preocuparse por la opinión de los demás</button>
+          <button class="quiz-opt" onclick="checkQ(this,'correct','¡Muy bien! Autoestima es el equilibrio entre amor propio, sin narcisismo, y respeto por los demás.')">C) El equilibrio entre amor propio (sin narcisismo) y respeto por los demás</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Eso corresponde a la definición de empatía.')">D) Ponerse en el lugar de otra persona</button>
+        </div>
+        <div class="quiz-feedback"></div>
+      </div>
+    </div>
+
+    <!-- VERDADERO / FALSO -->
+    <div class="card">
+      <h3>⚡ Verdadero o Falso</h3>
+
+      <div class="tf-item">
+        <p>La división de funciones entre familia (socialización) y escuela (enseñanza) es válida y vigente hoy en día.</p>
+        <div class="tf-btns">
+          <button class="tf-btn v" onclick="checkTF(this, false, 'Esta división quedó obsoleta. Hoy familia y escuela comparten la responsabilidad de educar.')">✔ Verdadero</button>
+          <button class="tf-btn f" onclick="checkTF(this, true, '¡Correcto! Esta división es artificial y obsoleta. Ambas instituciones son complementarias.')">✘ Falso</button>
+        </div>
+        <div class="tf-result"></div>
+      </div>
+
+      <div class="tf-item">
+        <p>El momento creativo solo admite expresiones escritas como cuentos y poemas.</p>
+        <div class="tf-btns">
+          <button class="tf-btn v" onclick="checkTF(this, false, 'El momento creativo acepta cualquier forma expresiva: dibujo, video, teatro, danza, cerámica y mucho más.')">✔ Verdadero</button>
+          <button class="tf-btn f" onclick="checkTF(this, true, '¡Correcto! El momento creativo admite múltiples formas: arte, música, danza, video, teatro, ciencia, etc.')">✘ Falso</button>
+        </div>
+        <div class="tf-result"></div>
+      </div>
+
+      <div class="tf-item">
+        <p>La escuela puede ser una estructura legítima para promover la equidad de género mediante actividades sistemáticas con las familias.</p>
+        <div class="tf-btns">
+          <button class="tf-btn v" onclick="checkTF(this, true, '¡Correcto! La escuela es presentada como una estructura estratégica de la vida social para superar formas de inequidad.')">✔ Verdadero</button>
+          <button class="tf-btn f" onclick="checkTF(this, false, 'Según el texto, la escuela SÍ puede ser una estructura legítima para promover la equidad.')">✘ Falso</button>
+        </div>
+        <div class="tf-result"></div>
+      </div>
+
+      <div class="tf-item">
+        <p>Las asambleas-taller con familias se sugieren cada 5 o 6 semanas aproximadamente.</p>
+        <div class="tf-btns">
+          <button class="tf-btn v" onclick="checkTF(this, true, '¡Exacto! El texto sugiere realizarlas cada cinco o seis semanas, o según la agenda de la escuela.')">✔ Verdadero</button>
+          <button class="tf-btn f" onclick="checkTF(this, false, 'El texto sí señala que las asambleas deben realizarse aproximadamente cada 5 o 6 semanas.')">✘ Falso</button>
+        </div>
+        <div class="tf-result"></div>
+      </div>
+    </div>
+
+    <!-- RESUMEN -->
+    <div class="score-box" id="scoreBox">
+      <div class="score-num" id="scoreNum">—</div>
+      <div class="score-label">Responde las preguntas para ver tu puntaje</div>
+    </div>
+    <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="calcScore()">📊 Ver mi puntaje final</button>
+
+    <div class="nav-btns" style="margin-top:1.5rem">
+      <button class="btn btn-outline" onclick="goTo(4)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(0)">🔁 Repasar desde el inicio</button>
+    </div>
+  </div>
+
+</div><!-- /section-container -->
+
+<script>
+  /* ── NAVEGACIÓN ── */
+  const tabs = document.querySelectorAll('.nav-tab');
+  const sections = document.querySelectorAll('.section');
+  const visited = new Set([0]);
+
+  function goTo(idx) {
+    tabs.forEach(t => t.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    tabs[idx].classList.add('active');
+    sections[idx].classList.add('active');
+    visited.add(idx);
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => goTo(i));
+  });
+
+  function updateProgress() {
+    const pct = Math.round((visited.size / tabs.length) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+  }
+
+  /* ── ACORDEÓN ── */
+  function toggleAcc(btn) {
+    const body = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    // close all in same parent card
+    btn.closest('.section').querySelectorAll('.accordion-header').forEach(h => {
+      h.classList.remove('open');
+      h.nextElementSibling.classList.remove('open');
+    });
+    if (!isOpen) {
+      btn.classList.add('open');
+      body.classList.add('open');
+    }
+  }
+
+  /* ── QUIZ OPCIÓN MÚLTIPLE ── */
+  function checkQ(btn, result, msg) {
+    const q = btn.closest('.quiz-question');
+    if (q.dataset.answered) return;
+    q.dataset.answered = 'true';
+    const fb = q.querySelector('.quiz-feedback');
+    q.querySelectorAll('.quiz-opt').forEach(b => b.style.pointerEvents = 'none');
+    if (result === 'correct') {
+      btn.classList.add('correct');
+      fb.textContent = '✅ ' + msg;
+      fb.className = 'quiz-feedback show ok';
+    } else {
+      btn.classList.add('wrong');
+      fb.textContent = '❌ ' + msg;
+      fb.className = 'quiz-feedback show fail';
+    }
+  }
+
+  /* ── VERDADERO / FALSO ── */
+  function checkTF(btn, isCorrect, msg) {
+    const item = btn.closest('.tf-item');
+    if (item.dataset.answered) return;
+    item.dataset.answered = 'true';
+    item.querySelectorAll('.tf-btn').forEach(b => b.style.pointerEvents = 'none');
+    btn.classList.add('sel');
+    const result = item.querySelector('.tf-result');
+    result.textContent = (isCorrect ? '✅ ' : '❌ ') + msg;
+    result.className = 'tf-result show ' + (isCorrect ? 'ok' : 'fail');
+    result.style.color = isCorrect ? '#155724' : '#721c24';
+    result.style.background = isCorrect ? '#d4edda' : '#f8d7da';
+    result.style.padding = '0.5rem 0.8rem';
+    result.style.borderRadius = '8px';
+  }
+
+  /* ── SCORE ── */
+  function calcScore() {
+    let correct = 0, total = 0;
+    document.querySelectorAll('.quiz-question').forEach(q => {
+      total++;
+      if (q.querySelector('.quiz-opt.correct')) correct++;
+    });
+    document.querySelectorAll('.tf-item').forEach(item => {
+      total++;
+      const res = item.querySelector('.tf-result');
+      if (res && res.textContent.startsWith('✅')) correct++;
+    });
+    const sb = document.getElementById('scoreBox');
+    document.getElementById('scoreNum').textContent = correct + '/' + total;
+    const pct = Math.round((correct / total) * 100);
+    sb.querySelector('.score-label').textContent = pct >= 70
+      ? '🎉 ¡Excelente! Dominaste el contenido (' + pct + '%)'
+      : pct >= 50
+      ? '📚 Buen intento. Repasa las secciones y vuelve a intentarlo (' + pct + '%)'
+      : '💪 Sigue estudiando, puedes mejorar. ¡Tú puedes! (' + pct + '%)';
+  }
+
+  /* ── INIT ── */
+  updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador — Plan de Estudio 2022</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+
+  :root {
+    --azul:    #1e88e5;
+    --verde:   #43a047;
+    --naranja: #fb8c00;
+    --rojo:    #e53935;
+    --morado:  #7b1fa2;
+    --amarillo:#f9a825;
+    --bg:      #f0f4ff;
+    --blanco:  #ffffff;
+    --gris:    #eceff1;
+    --texto:   #1a237e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  /* ── ENCABEZADO ── */
+  header {
+    background: linear-gradient(135deg, #1565c0 0%, #283593 50%, #4527a0 100%);
+    color: #fff;
+    padding: 18px 20px 14px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  }
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    letter-spacing: .5px;
+  }
+  header p  { font-size: .85rem; opacity: .85; margin-top: 4px; }
+  .badge-nivel {
+    display: inline-block;
+    background: var(--amarillo);
+    color: #333;
+    border-radius: 20px;
+    padding: 3px 14px;
+    font-weight: 800;
+    font-size: .78rem;
+    margin-top: 6px;
+  }
+
+  /* ── CONTENEDOR PRINCIPAL ── */
+  .contenedor {
+    max-width: 820px;
+    margin: 24px auto;
+    padding: 0 14px 40px;
+  }
+
+  /* ── BARRA DE PROGRESO ── */
+  .progreso-wrap { margin-bottom: 18px; }
+  .progreso-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--azul);
+    margin-bottom: 6px;
+  }
+  .barra-outer {
+    height: 14px;
+    background: #c5cae9;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .barra-inner {
+    height: 100%;
+    background: linear-gradient(90deg, #43a047, #66bb6a);
+    border-radius: 10px;
+    transition: width .4s ease;
+  }
+
+  /* ── TARJETA PREGUNTA ── */
+  .card-pregunta {
+    background: var(--blanco);
+    border-radius: 20px;
+    padding: 26px 24px 20px;
+    box-shadow: 0 6px 24px rgba(30,60,140,.12);
+    margin-bottom: 16px;
+    border-left: 7px solid var(--azul);
+    animation: slideIn .35s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .tipo-badge {
+    display: inline-block;
+    font-size: .74rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .tipo-sit  { background: #fff3e0; color: #e65100; border: 1.5px solid #ffcc80; }
+  .tipo-con  { background: #e3f2fd; color: #0d47a1; border: 1.5px solid #90caf9; }
+
+  .num-preg {
+    font-size: .78rem;
+    font-weight: 700;
+    color: #9e9e9e;
+    margin-bottom: 6px;
+  }
+  .texto-preg {
+    font-size: clamp(.93rem, 2.5vw, 1.05rem);
+    font-weight: 700;
+    line-height: 1.55;
+    color: #1a237e;
+  }
+
+  /* ── OPCIONES ── */
+  .opciones { margin-top: 18px; display: grid; gap: 10px; }
+
+  .opcion {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 16px;
+    border-radius: 14px;
+    border: 2.5px solid #c5cae9;
+    background: #f8f9ff;
+    cursor: pointer;
+    transition: all .2s;
+    font-size: clamp(.88rem, 2.3vw, .97rem);
+    font-weight: 600;
+    color: #37474f;
+    line-height: 1.45;
+  }
+  .opcion:hover:not(.disabled) {
+    border-color: var(--azul);
+    background: #e8eeff;
+    transform: translateX(3px);
+  }
+  .opcion .letra {
+    min-width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e3f2fd;
+    color: #1565c0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900;
+    font-size: .82rem;
+    flex-shrink: 0;
+  }
+  .opcion.correcta  { border-color: var(--verde)  !important; background: #e8f5e9; color: #1b5e20; }
+  .opcion.incorrecta{ border-color: var(--rojo)   !important; background: #ffebee; color: #b71c1c; }
+  .opcion.correcta  .letra { background: var(--verde);  color: #fff; }
+  .opcion.incorrecta .letra { background: var(--rojo);   color: #fff; }
+  .opcion.disabled  { cursor: default; }
+
+  /* ── RETROALIMENTACIÓN ── */
+  .retro {
+    margin-top: 14px;
+    padding: 13px 16px;
+    border-radius: 14px;
+    font-size: .88rem;
+    font-weight: 700;
+    line-height: 1.5;
+    display: none;
+  }
+  .retro.correcto   { background: #e8f5e9; color: #1b5e20; border-left: 5px solid var(--verde); }
+  .retro.incorrecto { background: #ffebee; color: #b71c1c; border-left: 5px solid var(--rojo); }
+
+  /* ── BOTONES ── */
+  .btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 11px 24px;
+    border-radius: 50px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: .92rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn:active { transform: scale(.96); }
+
+  .btn-sig {
+    background: linear-gradient(135deg, #1e88e5, #1565c0);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(30,120,255,.3);
+  }
+  .btn-sig:hover { box-shadow: 0 6px 16px rgba(30,120,255,.45); }
+  .btn-sig:disabled { background: #b0bec5; box-shadow: none; cursor: default; }
+
+  .btn-reiniciar {
+    background: linear-gradient(135deg, #fb8c00, #e65100);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(255,100,0,.3);
+  }
+
+  /* ── RESULTADO FINAL ── */
+  #pantalla-resultado { display: none; }
+  .resultado-card {
+    background: var(--blanco);
+    border-radius: 24px;
+    padding: 36px 28px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(30,60,140,.16);
+    animation: slideIn .4s ease;
+  }
+  .emoji-grande { font-size: 4rem; margin-bottom: 10px; }
+  .resultado-card h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    color: #1a237e;
+    margin-bottom: 8px;
+  }
+  .puntaje-grande {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 900;
+    color: var(--azul);
+    line-height: 1;
+    margin: 10px 0;
+  }
+  .puntaje-grande span { font-size: 55%; color: #78909c; }
+  .nivel-badge {
+    display: inline-block;
+    padding: 8px 24px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 1rem;
+    margin: 12px 0 18px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .stat-box {
+    padding: 14px;
+    border-radius: 16px;
+    font-weight: 800;
+  }
+  .stat-box .num  { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+  .stat-box .lab  { font-size: .75rem; margin-top: 4px; }
+  .verde-box   { background: #e8f5e9; color: #2e7d32; }
+  .rojo-box    { background: #ffebee; color: #c62828; }
+  .azul-box    { background: #e3f2fd; color: #1565c0; }
+
+  /* ── REVIEW TABLE ── */
+  .review-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #37474f;
+    text-align: left;
+    margin: 20px 0 10px;
+  }
+  .review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+    gap: 7px;
+    margin-bottom: 20px;
+  }
+  .rev-pill {
+    height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .78rem;
+    font-weight: 800;
+  }
+  .rev-ok  { background: #c8e6c9; color: #1b5e20; }
+  .rev-mal { background: #ffcdd2; color: #b71c1c; }
+
+  /* ── PIE ── */
+  footer {
+    text-align: center;
+    padding: 18px 14px 30px;
+    font-size: .78rem;
+    color: #7986cb;
+    font-weight: 700;
+    border-top: 2px dashed #c5cae9;
+    margin-top: 30px;
+  }
+  footer strong { color: #3949ab; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📖 Simulador · Plan de Estudio 2022</h1>
+  <p>Preescolar · Primaria · Secundaria — Nueva Escuela Mexicana</p>
+  <span class="badge-nivel">🏫 Nivel Primaria · 45 Preguntas</span>
+</header>
+
+<div class="contenedor">
+
+  <!-- BARRA DE PROGRESO -->
+  <div class="progreso-wrap">
+    <div class="progreso-info">
+      <span id="lbl-prog">Pregunta 1 de 45</span>
+      <span id="lbl-aciertos">✅ 0 correctas</span>
+    </div>
+    <div class="barra-outer">
+      <div class="barra-inner" id="barra" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- PANTALLA QUIZ -->
+  <div id="pantalla-quiz">
+    <div class="card-pregunta" id="card">
+      <span class="tipo-badge" id="tipo-badge"></span>
+      <div class="num-preg"  id="num-preg"></div>
+      <div class="texto-preg" id="texto-preg"></div>
+      <div class="opciones"   id="opciones"></div>
+      <div class="retro"      id="retro"></div>
+    </div>
+    <div class="btns">
+      <button class="btn btn-sig" id="btn-sig" disabled>Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA RESULTADO -->
+  <div id="pantalla-resultado">
+    <div class="resultado-card">
+      <div class="emoji-grande" id="emoji-res"></div>
+      <h2 id="titulo-res"></h2>
+      <div class="puntaje-grande" id="puntaje-res"></div>
+      <div class="nivel-badge"    id="nivel-badge-res"></div>
+
+      <div class="stats-grid">
+        <div class="stat-box verde-box">
+          <div class="num" id="s-ok"></div>
+          <div class="lab">✅ Correctas</div>
+        </div>
+        <div class="stat-box rojo-box">
+          <div class="num" id="s-mal"></div>
+          <div class="lab">❌ Incorrectas</div>
+        </div>
+        <div class="stat-box azul-box">
+          <div class="num">45</div>
+          <div class="lab">📝 Total</div>
+        </div>
+      </div>
+
+      <div class="review-title">Revisa tus respuestas:</div>
+      <div class="review-grid" id="review-grid"></div>
+
+      <button class="btn btn-reiniciar" onclick="reiniciar()">🔄 Volver a intentar</button>
+    </div>
+  </div>
+
+</div><!-- /contenedor -->
+
+<footer>
+  <strong>Material educativo elaborado por: Prof. Francisco De Jesús Luna Benítez</strong><br>
+  Nivel: Primaria · Plan de Estudio 2022 · Nueva Escuela Mexicana
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════
+   BASE DE PREGUNTAS — 45 ítems
+   correcta: índice 0=A, 1=B, 2=C, 3=D
+═══════════════════════════════════════════ */
+const preguntas = [
+
+  /* ── 1 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La maestra Elena observa que sus alumnos de 3° primaria repiten los procedimientos de división sin comprender su significado. Según el Plan de Estudio 2022, ¿cuál es la acción pedagógica más pertinente?",
+    opciones:["Poner más ejercicios de repetición hasta que los memoricen bien","Aplicar un examen sorpresa para identificar quién aprobó y quién no","Contextualizar los procedimientos en situaciones reales del entorno de los alumnos","Avanzar al siguiente contenido para no retrasar el avance del programa"],
+    correcta:2,
+    explicacion:"El Plan 2022 establece que el aprendizaje matemático debe tener un sentido humano y vincularse con experiencias concretas de la vida cotidiana de los estudiantes." },
+
+  /* ── 2 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"¿Cuántos campos formativos contempla el Plan de Estudio para la Educación Preescolar, Primaria y Secundaria 2022?",
+    opciones:["Cuatro","Seis","Tres","Cinco"],
+    correcta:0,
+    explicacion:"El Plan 2022 organiza el currículo en cuatro campos formativos: Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; y De lo Humano y lo Comunitario." },
+
+  /* ── 3 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"El maestro Rodrigo intenta aplicar la evaluación formativa. Su director le dice que lo más importante es asignar calificaciones numéricas bimestrales. Según el Plan 2022, Rodrigo debe explicarle que:",
+    opciones:["Las calificaciones numéricas son el único requisito legal válido","La evaluación formativa retroalimenta el proceso y no puede reducirse a un número","Ambas cosas significan exactamente lo mismo en el Plan 2022","La evaluación formativa solo aplica en educación preescolar, no en primaria"],
+    correcta:1,
+    explicacion:"El Plan 2022 distingue claramente evaluación formativa (que acompaña el proceso) de acreditación (que sustenta calificaciones). Reducir la evaluación a números contradice el enfoque formativo." },
+
+  /* ── 4 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"La Fase 1 del Plan de Estudio 2022 corresponde a:",
+    opciones:["Educación Preescolar 1°, 2° y 3°","Educación Primaria 1° y 2°","Educación Primaria 3° y 4°","Educación Inicial (de 0 a 2 años, 11 meses)"],
+    correcta:3,
+    explicacion:"La Fase 1 corresponde a la Educación Inicial, de 0 a 2 años 11 meses. La Fase 2 es Preescolar y las Fases 3, 4 y 5 corresponden a los grados de Primaria." },
+
+  /* ── 5 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"¿Cuántos ejes articuladores integra el currículo del Plan de Estudio 2022?",
+    opciones:["Cuatro","Cinco","Siete","Diez"],
+    correcta:2,
+    explicacion:"El Plan 2022 contempla siete ejes articuladores: Inclusión, Pensamiento Crítico, Interculturalidad Crítica, Igualdad de Género, Vida Saludable, Apropiación de las Culturas a través de la Lectura y la Escritura, y Artes y Experiencias Estéticas." },
+
+  /* ── 6 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La profesora Carmen trabaja con niños de una comunidad náhuatl y decide incluir los conocimientos sobre plantas medicinales de los abuelos. Según el Plan 2022, ¿con cuál eje articulador se relaciona más directamente esta práctica?",
+    opciones:["Interculturalidad Crítica","Vida Saludable","Igualdad de Género","Pensamiento Crítico"],
+    correcta:0,
+    explicacion:"El eje de Interculturalidad Crítica busca incorporar y valorar los saberes de pueblos indígenas y afromexicanos como parte del proceso educativo, superando la lógica colonial." },
+
+  /* ── 7 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Las disciplinas de Español, Inglés y Artes corresponden, en educación secundaria, al campo formativo de:",
+    opciones:["Saberes y Pensamiento Científico","De lo Humano y lo Comunitario","Ética, Naturaleza y Sociedades","Lenguajes"],
+    correcta:3,
+    explicacion:"En secundaria, el campo formativo Lenguajes agrupa Español, Inglés y Artes, pues todas abordan la expresión y comunicación mediante distintos sistemas de signos." },
+
+  /* ── 8 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"El profesor Pablo quiere aplicar la evaluación formativa con su grupo de 4° grado. ¿Cuál de las siguientes acciones la describe MEJOR, según el Plan 2022?",
+    opciones:["Promediar todas las calificaciones del bimestre y registrarlas en el sistema","Observar sistemáticamente el proceso de aprendizaje y dialogar con los alumnos sobre sus avances y dificultades","Comparar los resultados del grupo con los estándares nacionales de cada grado","Aplicar el mismo examen que los alumnos del ciclo anterior para comparar resultados"],
+    correcta:1,
+    explicacion:"La evaluación formativa se centra en el seguimiento del proceso de aprendizaje mediante observación sistemática y diálogo pedagógico, no en la acumulación de calificaciones." },
+
+  /* ── 9 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"En educación secundaria, las disciplinas de Geografía, Historia y Formación Cívica y Ética corresponden al campo formativo de:",
+    opciones:["Lenguajes","De lo Humano y lo Comunitario","Ética, Naturaleza y Sociedades","Saberes y Pensamiento Científico"],
+    correcta:2,
+    explicacion:"El campo de Ética, Naturaleza y Sociedades aborda la relación del ser humano con la sociedad y la naturaleza, y en secundaria incluye Geografía, Historia y Formación Cívica y Ética." },
+
+  /* ── 10 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, ¿cuál es la función principal del perfil de egreso?",
+    opciones:["Ofrecer una visión integral de los aprendizajes que los estudiantes habrán de desarrollar a lo largo de la educación básica","Establecer las calificaciones mínimas para acreditar cada grado","Definir qué asignaturas debe cursar cada estudiante por ciclo escolar","Determinar los requisitos de ingreso a la educación media superior"],
+    correcta:0,
+    explicacion:"El perfil de egreso integra capacidades y valores expresados en los ejes articuladores y los campos formativos, ofreciendo una visión del estudiante al concluir la educación básica." },
+
+  /* ── 11 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"¿Cuál de los siguientes NO es un eje articulador del Plan de Estudio 2022?",
+    opciones:["Inclusión","Vida Saludable","Pensamiento Crítico","Educación Financiera"],
+    correcta:3,
+    explicacion:"Educación Financiera no forma parte de los siete ejes articuladores. Los ejes son: Inclusión, Pensamiento Crítico, Interculturalidad Crítica, Igualdad de Género, Vida Saludable, Apropiación de las Culturas y Artes y Experiencias Estéticas." },
+
+  /* ── 12 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La directora convoca al colectivo docente para elaborar el programa analítico. Un maestro no sabe qué significa. Según el Plan 2022, la respuesta correcta es:",
+    opciones:["Copiar el programa sintético oficial y laminarlo para tenerlo visible en el aula","Contextualizar los contenidos nacionales articulándolos con problemáticas y saberes propios del contexto local","Elaborar un listado de competencias por asignatura para entregar a supervisión","Redactar los criterios de acreditación y los porcentajes de calificación del ciclo"],
+    correcta:1,
+    explicacion:"El programa analítico es la segunda etapa donde el colectivo docente contextualiza los contenidos nacionales del programa sintético a partir del conocimiento de su comunidad y grupo." },
+
+  /* ── 13 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, la escuela debe entenderse como:",
+    opciones:["Un espacio exclusivo para transmitir conocimientos formales certificados","Una institución cuyo fin es formar capital humano para el mercado laboral","Un espacio de formación democrática donde convergen saberes, comunidad y relaciones pedagógicas","Un lugar cuyo objetivo principal es preparar a los estudiantes para los exámenes nacionales"],
+    correcta:2,
+    explicacion:"El Plan 2022 concibe la escuela como un espacio de formación democrática vinculado con la comunidad-territorio, lejos de la simple transmisión de conocimientos o la formación laboral." },
+
+  /* ── 14 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, ¿a qué se refiere el 'codiseño' curricular?",
+    opciones:["A la incorporación de problemáticas, temas y saberes comunitarios locales al currículo escolar","Al diseño colaborativo de uniformes y materiales entre padres y maestros","Al diseño conjunto de exámenes entre docentes de distintas escuelas del municipio","Al acuerdo entre la SEP y las editoriales para producir los libros de texto gratuitos"],
+    correcta:0,
+    explicacion:"El codiseño permite que el colectivo docente incorpore al currículo contenidos locales y comunitarios que enriquecen los contenidos nacionales del programa sintético." },
+
+  /* ── 15 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"El maestro Gerardo divide a su grupo según los resultados de un examen en 'los que saben' y 'los que no saben' y así los trata durante todo el año. Según el Plan 2022, esta práctica:",
+    opciones:["Es la más adecuada porque permite atender diferenciadamente cada nivel","Es válida en los últimos grados de primaria donde el nivel académico ya está consolidado","Es correcta siempre que el examen haya sido revisado y autorizado por el director","Contradice el Plan 2022, pues clasificar numéricamente a los estudiantes sin considerar su proceso vulnera su derecho a la educación"],
+    correcta:3,
+    explicacion:"El Plan 2022 señala que la calificación no debe servir para clasificar a los estudiantes. La evaluación debe acompañar el proceso formativo y reconocer el contexto y condiciones de cada alumno." },
+
+  /* ── 16 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"La Fase 4 del Plan de Estudio 2022 corresponde a:",
+    opciones:["Educación Primaria 5° y 6°","Educación Preescolar completo (1°, 2° y 3°)","Educación Primaria 3° y 4°","Educación Secundaria 1°, 2° y 3°"],
+    correcta:2,
+    explicacion:"La Fase 4 abarca 3° y 4° de Primaria. La Fase 3 es 1° y 2° de Primaria; la Fase 5 es 5° y 6° de Primaria; y la Fase 6 es toda la Secundaria." },
+
+  /* ── 17 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La maestra Lucía diseña una actividad sobre el cuidado del agua que integra contenidos de ciencias, formación cívica y lenguaje. Según el Plan 2022, ¿cuál es la ventaja principal de este enfoque?",
+    opciones:["Permite reducir el número de clases diarias y ahorrar tiempo en el horario","Favorece la integración del conocimiento y vincula el aprendizaje con la realidad de los estudiantes","Cumple solo con el requisito administrativo del Consejo Técnico Escolar","Hace que los alumnos memoricen más contenidos en menos tiempo de clase"],
+    correcta:1,
+    explicacion:"El trabajo por campos formativos y ejes articuladores favorece la integración del conocimiento y permite que los aprendizajes cobren sentido en contextos reales y comunitarios." },
+
+  /* ── 18 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"En educación secundaria, el campo formativo 'De lo Humano y lo Comunitario' incluye las disciplinas de:",
+    opciones:["Tecnología, Educación Física y Educación Socioemocional/Tutoría","Español, Inglés y Artes","Geografía, Historia y Formación Cívica y Ética","Matemáticas, Biología, Física y Química"],
+    correcta:0,
+    explicacion:"El campo De lo Humano y lo Comunitario incluye en secundaria: Tecnología, Educación Física y Educación Socioemocional/Tutoría, pues aborda el desarrollo integral y comunitario." },
+
+  /* ── 19 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"Un supervisor visita la escuela y le dice a la maestra Petra que debe 'cubrir el programa' de cada materia por separado, sin vincular áreas. El Plan 2022, en realidad, propone que:",
+    opciones:["El supervisor tiene razón, el programa nacional no permite vinculación entre áreas","Los proyectos interdisciplinarios están permitidos solo en secundaria","La vinculación depende de la decisión del director de la escuela","Los campos formativos integran contenidos de distintas disciplinas y superan la fragmentación por asignaturas aisladas"],
+    correcta:3,
+    explicacion:"El Plan 2022 subraya que los campos formativos integran contenidos de múltiples disciplinas y que el trabajo por proyectos y la vinculación interdisciplinaria son su esencia." },
+
+  /* ── 20 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, la evaluación de los aprendizajes NO debe:",
+    opciones:["Basarse en la observación sistemática del proceso de aprendizaje","Servir para retroalimentar tanto al docente como al estudiante","Reducirse a una escala numérica que clasifique arbitrariamente a los estudiantes","Considerar el contexto y las condiciones de vida de cada alumno"],
+    correcta:2,
+    explicacion:"El Plan 2022 critica que la calificación numérica haya sustituido a la evaluación del proceso. La evaluación no debe reducirse a clasificar a los alumnos en una escala arbitraria." },
+
+  /* ── 21 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"En una reunión de CTE, el colectivo docente debate sobre cómo incluir en el trabajo de aula los saberes de la comunidad. Según el Plan 2022, este proceso se denomina:",
+    opciones:["Evaluación institucional bimestral","Codiseño curricular","Programa sintético nacional","Acreditación formativa por portafolio"],
+    correcta:1,
+    explicacion:"El codiseño es el proceso por el que el colectivo docente delibera sobre qué contenidos locales son necesarios para integrar al programa analítico, reconociendo la diversidad del contexto." },
+
+  /* ── 22 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, la autonomía profesional del magisterio implica principalmente:",
+    opciones:["La libertad del docente para contextualizar y tomar decisiones pedagógicas acordes a su grupo y contexto","La posibilidad de no seguir ningún programa de estudio oficial","Trabajar sin ningún tipo de supervisión por parte del director o supervisor escolar","Elegir libremente en qué días asistir a la escuela sin justificación"],
+    correcta:0,
+    explicacion:"La autonomía profesional permite al docente tomar decisiones didácticas fundamentadas sobre cómo y qué enseñar, articulando los contenidos con la realidad de sus estudiantes." },
+
+  /* ── 23 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La maestra Rita solo aplica exámenes al final de cada bimestre para asignar calificaciones y nunca da retroalimentación durante el proceso. Según el Plan 2022, esta práctica:",
+    opciones:["Es correcta si los exámenes están alineados con los contenidos del programa","Es adecuada porque la acreditación es el objetivo más importante de la evaluación","Es válida mientras el director apruebe el tipo de examen utilizado","Omite la evaluación formativa, que es esencial para acompañar y mejorar el proceso de aprendizaje"],
+    correcta:3,
+    explicacion:"La evaluación formativa no puede reemplazarse por exámenes bimestrales. Su función es retroalimentar continuamente el proceso a través del diálogo entre docente y estudiantes." },
+
+  /* ── 24 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"¿Cuál es el objeto de aprendizaje del campo formativo 'Lenguajes' según el Plan 2022?",
+    opciones:["El desarrollo de habilidades matemáticas para resolver problemas cotidianos","El estudio de la historia nacional y los valores cívicos de México","La experiencia y la interacción con el mundo a través de distintos lenguajes para expresar, conocer y comunicar","El análisis de los fenómenos naturales desde la perspectiva del pensamiento científico"],
+    correcta:2,
+    explicacion:"El campo Lenguajes tiene como objeto de aprendizaje las experiencias de interacción con el mundo a través de distintos lenguajes: oralidad, lectura, escritura, sensorialidad, lenguajes artísticos, etc." },
+
+  /* ── 25 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"El alumno Óscar comete errores frecuentes al redactar. La maestra Sandra, en lugar de bajarle la calificación, lo usa como punto de partida para que Óscar reflexione sobre su escritura. Según el Plan 2022, esta práctica corresponde a:",
+    opciones:["La acreditación mediante portafolio de evidencias al final del ciclo","La evaluación formativa, que trabaja con el error como estrategia didáctica para mejorar","La evaluación sumativa basada en comparar resultados con estándares nacionales","La aplicación del perfil de egreso para determinar el nivel de cada alumno"],
+    correcta:1,
+    explicacion:"El Plan 2022 señala que 'trabajar con el error' es un aspecto central de la evaluación formativa: permite comprender qué salió mal y acordar estrategias de mejora con el estudiante." },
+
+  /* ── 26 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"¿Cuál de los siguientes SÍ es un eje articulador del Plan de Estudio 2022?",
+    opciones:["Apropiación de las Culturas a través de la Lectura y la Escritura","Matemáticas en Contexto Comunitario","Educación Ambiental para la Sustentabilidad","Historia y Memoria Colectiva Nacional"],
+    correcta:0,
+    explicacion:"'Apropiación de las Culturas a través de la Lectura y la Escritura' es uno de los siete ejes articuladores. Su propósito es fortalecer prácticas letradas vinculadas a la diversidad cultural." },
+
+  /* ── 27 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"La Fase 6 del Plan de Estudio 2022 corresponde a:",
+    opciones:["Educación Primaria 5° y 6°","Educación Preescolar completo","Educación Primaria 3° y 4°","Educación Secundaria 1°, 2° y 3°"],
+    correcta:3,
+    explicacion:"La Fase 6 abarca toda la Educación Secundaria: 1°, 2° y 3°. Es la última fase de la educación básica obligatoria." },
+
+  /* ── 28 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"El maestro Félix quiere que sus alumnos de 6° primaria analicen críticamente noticias falsas en redes sociales. ¿Con cuál eje articulador del Plan 2022 se vincula más directamente esta intención?",
+    opciones:["Igualdad de Género","Pensamiento Crítico","Vida Saludable","Inclusión"],
+    correcta:1,
+    explicacion:"El eje de Pensamiento Crítico busca que los estudiantes cuestionen y analicen la realidad, incluyendo el uso reflexivo de las tecnologías y la información digital." },
+
+  /* ── 29 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"El campo formativo 'Saberes y Pensamiento Científico' busca que los estudiantes:",
+    opciones:["Memoricen las leyes y fórmulas científicas fundamentales de cada grado","Aprendan exclusivamente el método científico experimental","Comprendan y expliquen los fenómenos naturales y sociales usando diversos métodos y perspectivas de conocimiento","Desarrollen únicamente habilidades para aprobar exámenes de ciencias"],
+    correcta:2,
+    explicacion:"Este campo tiene como objeto la comprensión y explicación de fenómenos naturales en relación con lo social, reconociendo múltiples formas de construir y compartir conocimientos." },
+
+  /* ── 30 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, el papel de las familias en el proceso educativo:",
+    opciones:["Es fundamental para reforzar aprendizajes en casa y participar como parte de la comunidad escolar","Se limita a firmar boletas y asistir a las juntas informativas convocadas por el director","No tiene incidencia directa en los procesos de enseñanza dentro del aula","Debe restringirse para no interferir con la autonomía profesional del docente"],
+    correcta:0,
+    explicacion:"El Plan 2022 reconoce el papel esencial de las familias en el proceso formativo: refuerzan aprendizajes, transmiten valores culturales y son parte del tejido comunitario de la escuela." },
+
+  /* ── 31 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La directora Miriam observa que su personal docente trabaja de forma completamente aislada y sin ningún vínculo con la comunidad. Según el Plan 2022, ¿qué cambio estructural propone el Plan para superar esto?",
+    opciones:["Contratar más docentes para dividir mejor las responsabilidades pedagógicas","Aplicar más evaluaciones para detectar con precisión los problemas de aprendizaje","Reorganizar el horario para que los maestros tengan más tiempo individual de planeación","Colocar a la comunidad-territorio como núcleo integrador de los procesos de enseñanza y aprendizaje"],
+    correcta:3,
+    explicacion:"El Plan 2022 propone que la comunidad-territorio sea el eje articulador de la vida escolar, estableciendo relaciones de interdependencia entre escuela, familia y comunidad." },
+
+  /* ── 32 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"¿Qué son los programas sintéticos en el Plan de Estudio 2022?",
+    opciones:["Los exámenes que elabora la SEP para evaluar el aprendizaje por grado","Los libros de texto gratuitos distribuidos a todos los alumnos","El punto de partida que establece los contenidos nacionales que el colectivo docente debe contextualizar","Los reglamentos administrativos y normativos de cada escuela primaria"],
+    correcta:2,
+    explicacion:"Los programas sintéticos son los contenidos nacionales oficiales. Son incompletos por definición porque requieren que el colectivo docente los contextualice y enriquezca con contenidos locales." },
+
+  /* ── 33 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La maestra Dolores quiere que sus alumnos de 5° identifiquen y cuestionen información falsa que circula en redes sociales. ¿Con cuál eje articulador del Plan 2022 está más vinculada esta intención?",
+    opciones:["Vida Saludable","Pensamiento Crítico","Igualdad de Género","Interculturalidad Crítica"],
+    correcta:1,
+    explicacion:"El Pensamiento Crítico es el eje articulador que promueve la capacidad de cuestionar, analizar y evaluar la realidad, incluyendo la información digital y mediática." },
+
+  /* ── 34 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, ¿cuál es la diferencia entre evaluación formativa y acreditación?",
+    opciones:["La formativa acompaña el proceso de aprendizaje; la acreditación sustenta el otorgamiento de calificaciones y certificados","Son sinónimos que se usan indistintamente en distintos documentos oficiales de la SEP","La formativa aplica en primaria y la acreditación solo en educación secundaria","La formativa se hace con proyectos y la acreditación exclusivamente con exámenes"],
+    correcta:0,
+    explicacion:"El Plan 2022 establece claramente que evaluación formativa y acreditación responden a dos momentos distintos: la primera acompaña el proceso; la segunda sustenta calificaciones y certificados." },
+
+  /* ── 35 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"Una alumna con discapacidad motriz asiste a 2° de primaria. La maestra Nora pregunta qué eje articulador orienta las prácticas pedagógicas hacia la atención de esta diversidad. Según el Plan 2022, ese eje es:",
+    opciones:["Vida Saludable","Igualdad de Género","Interculturalidad Crítica","Inclusión"],
+    correcta:3,
+    explicacion:"El eje de Inclusión busca que la escuela atienda a la diversidad de condiciones, capacidades y necesidades de todos los estudiantes, garantizando el derecho a la educación sin exclusión." },
+
+  /* ── 36 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, ¿cuál es la visión del estudiante en la Nueva Escuela Mexicana?",
+    opciones:["Un receptor pasivo de conocimientos transmitidos por la o el docente","Un futuro trabajador que debe prepararse para las demandas del mercado laboral","Un sujeto histórico con derechos, capaz de conocerse, participar y transformar el mundo que le rodea","Un alumno cuyo valor académico se mide únicamente por sus calificaciones finales"],
+    correcta:2,
+    explicacion:"La Nueva Escuela Mexicana reconoce a las y los estudiantes como sujetos históricos con derechos, capaces de incidir en su realidad y de construir conocimientos desde su comunidad." },
+
+  /* ── 37 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"El maestro Héctor planea que sus alumnos de 3° entrevisten a abuelos sobre las plantas medicinales de la comunidad. ¿Qué principio del Plan 2022 sustenta directamente esta actividad?",
+    opciones:["La acreditación obligatoria al concluir el ciclo escolar mediante evidencias formales","La comunidad-territorio como fuente de saberes que enriquece el proceso formativo","La aplicación de los libros de texto gratuitos como único recurso didáctico válido","La evaluación estandarizada de los aprendizajes a nivel nacional"],
+    correcta:1,
+    explicacion:"El Plan 2022 propone que la comunidad-territorio es núcleo del proceso educativo. Los saberes de la comunidad son contenidos legítimos que deben incorporarse al trabajo de aula." },
+
+  /* ── 38 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"El eje articulador 'Artes y Experiencias Estéticas' tiene como propósito:",
+    opciones:["Favorecer la experimentación creativa y lúdica que provoque el disfrute de los elementos artísticos y estéticos","Garantizar que todos los alumnos aprendan obligatoriamente a tocar un instrumento musical","Evaluar las habilidades artísticas de los estudiantes con una calificación numérica formal","Sustituir la clase de Educación Física por actividades artísticas en todos los grados"],
+    correcta:0,
+    explicacion:"Este eje busca que los estudiantes exploren, experimenten y disfruten las artes como vehículos de expresión, comunicación e identidad, fomentando la sensibilidad y la creatividad." },
+
+  /* ── 39 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La maestra Valentina propone en el CTE incluir en el programa analítico el problema de la basura en la colonia. Un colega dice que eso 'no está en el programa nacional'. Según el Plan 2022:",
+    opciones:["El colega tiene razón porque el programa nacional no puede modificarse bajo ninguna circunstancia","Valentina debe solicitar autorización especial a la supervisión de zona antes de proceder","Solo puede incluirse si el contenido aparece explícitamente en los libros de texto gratuitos","Valentina tiene razón: el codiseño permite y promueve la incorporación de problemáticas locales al currículo"],
+    correcta:3,
+    explicacion:"El codiseño es precisamente el mecanismo del Plan 2022 para que el colectivo docente enriquezca el programa sintético con contenidos locales y comunitarios relevantes para sus estudiantes." },
+
+  /* ── 40 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"¿Cuál de los siguientes rasgos corresponde al perfil de egreso de la educación básica, según el Plan 2022?",
+    opciones:["Los egresados deben resolver exámenes de alta dificultad para ingresar a secundaria","Los egresados deben dominar al menos dos idiomas extranjeros además del español","Los egresados reconocen ser ciudadanos con derecho a una vida digna y valoran la diversidad étnica, cultural y lingüística del país","Los egresados han memorizado todos los contenidos de los programas de estudio por campo formativo"],
+    correcta:2,
+    explicacion:"El perfil de egreso contempla diez rasgos globales. Entre ellos, los estudiantes reconocen que son ciudadanos con derechos y valoran la diversidad de la nación mexicana." },
+
+  /* ── 41 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La maestra Silvia nota que sus alumnos de 1° tienen dificultades con la separación de sílabas. En lugar de marcarlos como 'rezagados', acompaña su proceso con juegos fonológicos diferenciados y registra sus avances semana a semana. Según el Plan 2022, esta acción es ejemplo de:",
+    opciones:["Acreditación basada en portafolios digitales de evidencias bimestrales","Evaluación formativa que observa el proceso de aprendizaje y lo retroalimenta continuamente","Evaluación sumativa al final del bimestre para asignar calificaciones al grupo","Aplicación del perfil de egreso de la educación primaria para rendir cuentas a los padres"],
+    correcta:1,
+    explicacion:"La evaluación formativa observa el proceso, identifica avances y dificultades, y orienta la enseñanza. Registrar los avances semana a semana y usar actividades diferenciadas es su ejemplo más claro." },
+
+  /* ── 42 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"El campo formativo 'Ética, Naturaleza y Sociedades' promueve principalmente:",
+    opciones:["La construcción de una postura ética que impulse el desarrollo de una ciudadanía participativa, comunitaria y democrática","La memorización de los artículos constitucionales y las leyes civiles nacionales","El aprendizaje exclusivo de geografía física y cartografía topográfica","La formación religiosa y moral de los estudiantes desde los valores de la nación"],
+    correcta:0,
+    explicacion:"Este campo aborda la relación del ser humano con la sociedad y la naturaleza, promoviendo una postura ética que impulse la participación ciudadana crítica y democrática." },
+
+  /* ── 43 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"El maestro Arturo quiere que sus alumnos de 4° reflexionen sobre la desigualdad de trato entre niños y niñas durante los juegos del recreo. ¿Con qué eje articulador del Plan 2022 se vincula directamente esta actividad?",
+    opciones:["Vida Saludable","Inclusión","Pensamiento Crítico","Igualdad de Género"],
+    correcta:3,
+    explicacion:"El eje de Igualdad de Género busca que los estudiantes reconozcan y cuestionen las relaciones desiguales entre géneros en todos los espacios de la vida escolar y comunitaria." },
+
+  /* ── 44 · CONOCIMIENTO ── */
+  { tipo:"📚 Conocimiento",
+    pregunta:"Según el Plan 2022, ¿cuál es el principio fundamental que rige la Nueva Escuela Mexicana?",
+    opciones:["La formación de capital humano para satisfacer las demandas del sector productivo","La competencia entre escuelas para mejorar su posición en las pruebas nacionales e internacionales","El derecho humano a la educación como principio rector de la política educativa nacional","La enseñanza memorística de contenidos para superar los promedios internacionales"],
+    correcta:2,
+    explicacion:"El Plan 2022 establece explícitamente que el derecho humano a la educación es el principio fundamental de la política educativa, según el artículo 3° constitucional." },
+
+  /* ── 45 · SITUACIÓN ── */
+  { tipo:"🏫 Situación en el aula",
+    pregunta:"La profesora Julia trabaja en una escuela donde la mitad de sus 30 alumnos habla otomí. Quiere incluir canciones y cuentos en otomí en sus actividades de lenguaje. ¿Qué respaldo encuentra en el Plan 2022?",
+    opciones:["Ninguno, porque el programa oficial solo contempla el español y el inglés como lenguas","El eje de Interculturalidad Crítica y el campo de Lenguajes, que incluyen lenguas indígenas y la diversidad lingüística","Solo tiene respaldo si cuenta con autorización expresa de la Dirección de Educación Indígena","Este tipo de actividades solo está contemplado en el nivel preescolar, no en primaria"],
+    correcta:1,
+    explicacion:"El campo de Lenguajes incluye las lenguas indígenas y el eje de Interculturalidad Crítica promueve el reconocimiento y valoración de las lenguas y culturas originarias en el proceso educativo." }
+
+]; // fin preguntas
+
+/* ═══════════════════════
+   LÓGICA DEL SIMULADOR
+═══════════════════════ */
+let actual = 0;
+let aciertos = 0;
+let historial = []; // true/false por pregunta
+
+function cargarPregunta() {
+  const p = preguntas[actual];
+  const isSit = p.tipo.includes("Situación");
+
+  // badges e info
+  document.getElementById('tipo-badge').textContent = p.tipo;
+  document.getElementById('tipo-badge').className =
+    'tipo-badge ' + (isSit ? 'tipo-sit' : 'tipo-con');
+  document.getElementById('num-preg').textContent =
+    `Pregunta ${actual + 1} de ${preguntas.length}`;
+  document.getElementById('texto-preg').textContent = p.pregunta;
+
+  // actualizar barra
+  const pct = (actual / preguntas.length) * 100;
+  document.getElementById('barra').style.width = pct + '%';
+  document.getElementById('lbl-prog').textContent =
+    `Pregunta ${actual + 1} de ${preguntas.length}`;
+  document.getElementById('lbl-aciertos').textContent =
+    `✅ ${aciertos} correctas`;
+
+  // opciones
+  const cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  const letras = ['A','B','C','D'];
+  p.opciones.forEach((txt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opcion';
+    div.innerHTML = `<span class="letra">${letras[i]}</span><span>${txt}</span>`;
+    div.onclick = () => responder(i);
+    cont.appendChild(div);
+  });
+
+  // ocultar retro
+  const retro = document.getElementById('retro');
+  retro.style.display = 'none';
+  retro.className = 'retro';
+  retro.textContent = '';
+
+  // deshabilitar siguiente
+  document.getElementById('btn-sig').disabled = true;
+
+  // animar card
+  const card = document.getElementById('card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'slideIn .35s ease';
+}
+
+function responder(sel) {
+  const p = preguntas[actual];
+  const opciones = document.querySelectorAll('.opcion');
+  const retro = document.getElementById('retro');
+  const letras = ['A','B','C','D'];
+
+  opciones.forEach(o => o.classList.add('disabled'));
+  opciones.forEach(o => o.onclick = null);
+
+  const esCorrecta = (sel === p.correcta);
+  if (esCorrecta) aciertos++;
+
+  historial[actual] = esCorrecta;
+
+  opciones[p.correcta].classList.add('correcta');
+  opciones[p.correcta].querySelector('.letra').textContent = '✓';
+
+  if (!esCorrecta) {
+    opciones[sel].classList.add('incorrecta');
+    opciones[sel].querySelector('.letra').textContent = '✗';
+  }
+
+  retro.className = 'retro ' + (esCorrecta ? 'correcto' : 'incorrecto');
+  retro.textContent = (esCorrecta ? '✅ ¡Correcto! ' : `❌ La respuesta correcta era: ${letras[p.correcta]}. `) + p.explicacion;
+  retro.style.display = 'block';
+
+  document.getElementById('lbl-aciertos').textContent = `✅ ${aciertos} correctas`;
+  document.getElementById('btn-sig').disabled = false;
+}
+
+function siguiente() {
+  actual++;
+  if (actual >= preguntas.length) {
+    mostrarResultado();
+  } else {
+    cargarPregunta();
+  }
+}
+
+function mostrarResultado() {
+  document.getElementById('pantalla-quiz').style.display = 'none';
+  document.getElementById('pantalla-resultado').style.display = 'block';
+  document.getElementById('barra').style.width = '100%';
+  document.getElementById('lbl-prog').textContent = '¡Simulador completado!';
+
+  const pct = Math.round((aciertos / preguntas.length) * 100);
+  document.getElementById('puntaje-res').innerHTML =
+    `${aciertos} <span>/ ${preguntas.length}</span>`;
+  document.getElementById('s-ok').textContent  = aciertos;
+  document.getElementById('s-mal').textContent = preguntas.length - aciertos;
+
+  let emoji = '😊', titulo = 'Buen esfuerzo', nivel = '', color = '';
+  if (pct >= 90) {
+    emoji='🏆'; titulo='¡Excelente dominio!';
+    nivel='🌟 Nivel Experto'; color='background:#fff9c4;color:#f57f17;border:2px solid #f9a825';
+  } else if (pct >= 75) {
+    emoji='🥇'; titulo='¡Muy bien!';
+    nivel='💪 Nivel Avanzado'; color='background:#e8f5e9;color:#1b5e20;border:2px solid #66bb6a';
+  } else if (pct >= 60) {
+    emoji='👍'; titulo='¡Vas bien!';
+    nivel='📘 Nivel Intermedio'; color='background:#e3f2fd;color:#0d47a1;border:2px solid #64b5f6';
+  } else {
+    emoji='📖'; titulo='Sigue estudiando';
+    nivel='🔄 Nivel Básico'; color='background:#fff3e0;color:#e65100;border:2px solid #ffb74d';
+  }
+
+  document.getElementById('emoji-res').textContent = emoji;
+  document.getElementById('titulo-res').textContent = titulo;
+  document.getElementById('nivel-badge-res').textContent = nivel;
+  document.getElementById('nivel-badge-res').style.cssText = color;
+
+  // grid de revisión
+  const grid = document.getElementById('review-grid');
+  grid.innerHTML = '';
+  historial.forEach((ok, i) => {
+    const pill = document.createElement('div');
+    pill.className = 'rev-pill ' + (ok ? 'rev-ok' : 'rev-mal');
+    pill.textContent = i + 1;
+    pill.title = `Pregunta ${i+1}: ${ok ? 'Correcta' : 'Incorrecta'}`;
+    grid.appendChild(pill);
+  });
+}
+
+function reiniciar() {
+  actual   = 0;
+  aciertos = 0;
+  historial = [];
+  document.getElementById('pantalla-resultado').style.display = 'none';
+  document.getElementById('pantalla-quiz').style.display = 'block';
+  cargarPregunta();
+}
+
+// Botón Siguiente
+document.getElementById('btn-sig').addEventListener('click', siguiente);
+
+// Iniciar
+cargarPregunta();
+</script>
+</body>
+</html>

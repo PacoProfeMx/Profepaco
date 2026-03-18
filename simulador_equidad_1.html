@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador – Construyendo Equidad</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+
+  :root {
+    --verde:       #2E7D32;
+    --verde-medio: #43A047;
+    --verde-claro: #C8E6C9;
+    --verde-suave: #E8F5E9;
+    --teal:        #00796B;
+    --teal-claro:  #E0F2F1;
+    --azul:        #1565C0;
+    --azul-claro:  #E3F2FD;
+    --naranja:     #E65100;
+    --naranja-claro:#FFF3E0;
+    --gris:        #37474F;
+    --gris-medio:  #607D8B;
+    --gris-claro:  #ECEFF1;
+    --blanco:      #FFFFFF;
+    --sombra:      0 4px 20px rgba(0,0,0,0.10);
+    --sombra-lg:   0 8px 32px rgba(0,0,0,0.14);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #E8F5E9 0%, #E0F2F1 50%, #E3F2FD 100%);
+    min-height: 100vh;
+    color: var(--gris);
+  }
+
+  /* ───── PANTALLA BIENVENIDA ───── */
+  #pantalla-inicio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .tarjeta-inicio {
+    background: var(--blanco);
+    border-radius: 24px;
+    box-shadow: var(--sombra-lg);
+    padding: 48px 40px 40px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    animation: aparecer 0.6s ease;
+  }
+
+  .icono-inicio {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--verde), var(--teal));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 36px;
+  }
+
+  .tarjeta-inicio h1 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.7rem;
+    color: var(--verde);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .tarjeta-inicio .subtitulo {
+    color: var(--gris-medio);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+  }
+
+  .badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .badge {
+    background: var(--verde-suave);
+    color: var(--verde);
+    border: 1px solid var(--verde-claro);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .campo-nombre label {
+    display: block;
+    font-weight: 700;
+    color: var(--gris);
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    text-align: left;
+  }
+
+  .campo-nombre input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--gris-claro);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: var(--gris);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .campo-nombre input:focus { border-color: var(--verde-medio); }
+
+  .btn-primario {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--verde), var(--teal));
+    color: var(--blanco);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(46,125,50,0.35);
+  }
+  .btn-primario:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,50,0.45); }
+  .btn-primario:active { transform: translateY(0); }
+
+  /* ───── PANTALLA EXAMEN ───── */
+  #pantalla-examen { display: none; min-height: 100vh; padding: 20px; }
+
+  .examen-contenedor { max-width: 720px; margin: 0 auto; }
+
+  .cabecera-examen {
+    background: var(--blanco);
+    border-radius: 18px;
+    box-shadow: var(--sombra);
+    padding: 18px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .info-alumno { font-weight: 700; color: var(--verde); font-size: 0.95rem; }
+  .info-alumno span { color: var(--gris); font-weight: 400; font-size: 0.85rem; display: block; }
+
+  .progreso-texto { font-weight: 800; color: var(--teal); font-size: 1rem; }
+
+  .barra-progreso-wrap {
+    width: 100%;
+    background: var(--gris-claro);
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .barra-progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--verde), var(--teal));
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  /* tarjeta de pregunta */
+  .tarjeta-pregunta {
+    background: var(--blanco);
+    border-radius: 20px;
+    box-shadow: var(--sombra-lg);
+    padding: 36px 32px 28px;
+    animation: deslizar 0.4s ease;
+  }
+
+  .etiqueta-formato {
+    display: inline-block;
+    background: var(--teal-claro);
+    color: var(--teal);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+  }
+
+  .num-pregunta {
+    font-size: 0.82rem;
+    color: var(--gris-medio);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .texto-pregunta {
+    font-family: 'Merriweather', serif;
+    font-size: 1.05rem;
+    color: var(--gris);
+    line-height: 1.7;
+    margin-bottom: 26px;
+  }
+
+  /* opciones */
+  .opciones { display: flex; flex-direction: column; gap: 12px; }
+
+  .opcion {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 2px solid var(--gris-claro);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    background: #FAFAFA;
+  }
+  .opcion:hover:not(.bloqueada) {
+    border-color: var(--verde-medio);
+    background: var(--verde-suave);
+    transform: translateX(4px);
+  }
+
+  .letra-opcion {
+    min-width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--gris-claro);
+    color: var(--gris-medio);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 0.88rem;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .texto-opcion { font-size: 0.95rem; line-height: 1.5; padding-top: 5px; }
+
+  /* estados */
+  .opcion.correcta  { border-color: var(--verde-medio); background: var(--verde-suave); }
+  .opcion.correcta .letra-opcion { background: var(--verde-medio); color: #fff; }
+
+  .opcion.incorrecta { border-color: #EF5350; background: #FFEBEE; }
+  .opcion.incorrecta .letra-opcion { background: #EF5350; color: #fff; }
+
+  .opcion.bloqueada { cursor: default; }
+  .opcion.seleccionada { border-color: var(--azul); background: var(--azul-claro); }
+  .opcion.seleccionada .letra-opcion { background: var(--azul); color: #fff; }
+
+  /* retroalimentación */
+  .feedback {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    font-size: 0.93rem;
+    line-height: 1.6;
+    display: none;
+    animation: aparecer 0.3s ease;
+  }
+  .feedback.correcto { background: var(--verde-suave); border-left: 4px solid var(--verde-medio); color: var(--verde); }
+  .feedback.incorrecto { background: var(--naranja-claro); border-left: 4px solid var(--naranja); color: var(--naranja); }
+  .feedback .icono-feedback { font-size: 1.1rem; margin-right: 6px; }
+
+  .btn-siguiente {
+    display: none;
+    margin-top: 24px;
+    padding: 15px 32px;
+    background: linear-gradient(135deg, var(--teal), var(--verde));
+    color: var(--blanco);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(0,121,107,0.35);
+    float: right;
+  }
+  .btn-siguiente:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,121,107,0.45); }
+  .clearfix::after { content:''; display:table; clear:both; }
+
+  /* ───── PANTALLA RESULTADOS ───── */
+  #pantalla-resultados { display: none; min-height: 100vh; padding: 20px; }
+
+  .resultados-contenedor {
+    max-width: 580px;
+    margin: 0 auto;
+    animation: aparecer 0.6s ease;
+  }
+
+  .tarjeta-resultado {
+    background: var(--blanco);
+    border-radius: 24px;
+    box-shadow: var(--sombra-lg);
+    padding: 44px 36px 36px;
+    text-align: center;
+  }
+
+  .emoji-resultado { font-size: 64px; margin-bottom: 16px; display: block; }
+
+  .tarjeta-resultado h2 {
+    font-family: 'Merriweather', serif;
+    color: var(--verde);
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+  }
+
+  .nombre-resultado {
+    color: var(--teal);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+
+  .estadisticas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    border-radius: 16px;
+    padding: 18px 10px;
+    text-align: center;
+  }
+  .stat-card.correctas  { background: var(--verde-suave); }
+  .stat-card.incorrectas{ background: #FFEBEE; }
+  .stat-card.porcentaje { background: var(--azul-claro); }
+
+  .stat-numero {
+    font-size: 2rem;
+    font-weight: 900;
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-card.correctas  .stat-numero { color: var(--verde); }
+  .stat-card.incorrectas .stat-numero { color: #EF5350; }
+  .stat-card.porcentaje  .stat-numero { color: var(--azul); }
+
+  .stat-label { font-size: 0.8rem; font-weight: 700; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.4px; }
+
+  .barra-resultado-wrap {
+    background: var(--gris-claro);
+    border-radius: 10px;
+    height: 14px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .barra-resultado-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--verde), var(--teal));
+    transition: width 1s ease;
+  }
+  .porcentaje-label { font-size: 0.82rem; color: var(--gris-medio); text-align: right; margin-bottom: 24px; }
+
+  .mensaje-motivador {
+    background: linear-gradient(135deg, var(--verde-suave), var(--teal-claro));
+    border-radius: 14px;
+    padding: 18px 22px;
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .btn-reiniciar {
+    display: inline-block;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, var(--verde), var(--teal));
+    color: var(--blanco);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(46,125,50,0.35);
+  }
+  .btn-reiniciar:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,50,0.45); }
+
+  /* ───── ANIMACIONES ───── */
+  @keyframes aparecer {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes deslizar {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ───── RESPONSIVE ───── */
+  @media (max-width: 520px) {
+    .tarjeta-inicio, .tarjeta-pregunta, .tarjeta-resultado { padding: 28px 20px 22px; }
+    .tarjeta-inicio h1 { font-size: 1.4rem; }
+    .texto-pregunta { font-size: 0.97rem; }
+    .estadisticas { grid-template-columns: 1fr 1fr; }
+    .stat-card.porcentaje { grid-column: span 2; }
+    .cabecera-examen { flex-direction: column; align-items: flex-start; }
+    .btn-siguiente { float: none; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ INICIO ═══════════════════════════ -->
+<div id="pantalla-inicio">
+  <div class="tarjeta-inicio">
+    <div class="icono-inicio">🏫</div>
+    <h1>Construyendo Equidad en la Comunidad Educativa</h1>
+    <p class="subtitulo">Simulador de evaluación de conocimientos</p>
+    <div class="badges">
+      <span class="badge">📋 30 preguntas</span>
+      <span class="badge">⏱ A tu ritmo</span>
+      <span class="badge">📊 Resultados al final</span>
+    </div>
+    <div class="campo-nombre">
+      <label for="input-nombre">👤 Nombre del estudiante</label>
+      <input type="text" id="input-nombre" placeholder="Escribe tu nombre completo…" autocomplete="off">
+    </div>
+    <button class="btn-primario" onclick="iniciarSimulador()">🚀 Iniciar simulador</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ EXAMEN ═══════════════════════════ -->
+<div id="pantalla-examen">
+  <div class="examen-contenedor">
+    <div class="cabecera-examen">
+      <div>
+        <div class="info-alumno" id="cab-nombre">Estudiante</div>
+        <span id="cab-sub">Simulador · Construyendo Equidad</span>
+      </div>
+      <div class="progreso-texto" id="cab-progreso">Pregunta 1 / 30</div>
+      <div class="barra-progreso-wrap" style="flex-basis:100%">
+        <div class="barra-progreso-fill" id="barra" style="width:3.3%"></div>
+      </div>
+    </div>
+
+    <div class="tarjeta-pregunta" id="tarjeta-pregunta">
+      <div class="etiqueta-formato" id="etiqueta-formato">Cuestionamiento directo</div>
+      <div class="num-pregunta" id="num-pregunta">Pregunta 1 de 30</div>
+      <div class="texto-pregunta" id="texto-pregunta"></div>
+      <div class="opciones" id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="clearfix">
+        <button class="btn-siguiente" id="btn-siguiente" onclick="siguientePregunta()">Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ RESULTADOS ═══════════════════════════ -->
+<div id="pantalla-resultados">
+  <div class="resultados-contenedor">
+    <div class="tarjeta-resultado">
+      <span class="emoji-resultado" id="emoji-res">🏆</span>
+      <h2>¡Examen completado!</h2>
+      <div class="nombre-resultado" id="res-nombre"></div>
+      <div class="estadisticas">
+        <div class="stat-card correctas">
+          <span class="stat-numero" id="res-correctas">0</span>
+          <div class="stat-label">✅ Correctas</div>
+        </div>
+        <div class="stat-card incorrectas">
+          <span class="stat-numero" id="res-incorrectas">0</span>
+          <div class="stat-label">❌ Incorrectas</div>
+        </div>
+        <div class="stat-card porcentaje">
+          <span class="stat-numero" id="res-pct">0%</span>
+          <div class="stat-label">🎯 Aciertos</div>
+        </div>
+      </div>
+      <div class="barra-resultado-wrap">
+        <div class="barra-resultado-fill" id="barra-res" style="width:0%"></div>
+      </div>
+      <div class="porcentaje-label" id="pct-label"></div>
+      <div class="mensaje-motivador" id="mensaje-motivador"></div>
+      <button class="btn-reiniciar" onclick="reiniciar()">🔄 Volver a intentar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  BANCO DE PREGUNTAS – 30 reactivos
+// ════════════════════════════════════════════════════════
+const preguntas = [
+  // 1
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es la condición fundamental que convierte a una comunidad educativa en promotora de equidad?",
+    opciones: [
+      "Que cuente con infraestructura moderna y tecnología de vanguardia.",
+      "Que consolide lazos afectivos, genere confianza y forme personas seguras, creativas y resilientes.",
+      "Que aplique un reglamento estricto para mantener el orden en el plantel.",
+      "Que promueva la competencia entre alumnos para elevar el rendimiento académico."
+    ],
+    correcta: 1,
+    feedback: "Una comunidad educativa es promotora de equidad cuando consolida lazos afectivos y genera confianza, formando personas con seguridad en sí mismas, creativas, colaboradoras y resilientes."
+  },
+  // 2
+  {
+    tipo: "Completamiento",
+    texto: "La autoestima se define en el texto como…",
+    opciones: [
+      "…la capacidad de destacar sobre los demás y sobresalir académicamente.",
+      "…el amor incondicional hacia uno mismo, sin importar el entorno social.",
+      "…el equilibrio entre el amor propio, sin narcisismo, y el respeto por los demás.",
+      "…la habilidad de expresar emociones en todo momento sin restricciones."
+    ],
+    correcta: 2,
+    feedback: "Según el texto, la autoestima es el equilibrio entre el amor propio, sin narcisismo, y el respeto por los demás. Sin autoestima hay inseguridad e incapacidad para dirigir las emociones."
+  },
+  // 3
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es la mejor forma de promover la equidad en general y la equidad de género en particular, desde la escuela?",
+    opciones: [
+      "Implementar sanciones contra conductas discriminatorias.",
+      "Potenciar el diálogo, el respeto mutuo, la comprensión, la empatía y la solidaridad.",
+      "Separar a niñas y niños en actividades para evitar conflictos de género.",
+      "Aplicar cuotas de participación igualitaria en todas las actividades escolares."
+    ],
+    correcta: 1,
+    feedback: "El texto señala que la mejor forma de promover la equidad, especialmente la de género, desde la escuela es potenciar el diálogo, el respeto mutuo, la comprensión, la empatía y la solidaridad."
+  },
+  // 4
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué papel juega la escuela como estructura estratégica de la vida social para superar la inequidad de género?",
+    opciones: [
+      "Únicamente enseña conocimientos académicos sin interferir en la vida social.",
+      "Sustituye a la familia en la formación moral y ética de los estudiantes.",
+      "Permite superar formas de sometimiento e inequidad promoviendo dignidad, tejido social y solidaridad.",
+      "Se encarga de vigilar y sancionar conductas que promuevan la desigualdad."
+    ],
+    correcta: 2,
+    feedback: "A través de la escuela —como estructura estratégica de la vida social— se pueden superar formas de sometimiento e inequidad mediante la promoción de dignidad, el fortalecimiento del tejido social y la solidaridad."
+  },
+  // 5
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué efecto tiene la falta de autoestima en las personas, según el contenido del texto?",
+    opciones: [
+      "Fomenta la independencia y el pensamiento crítico.",
+      "Genera inseguridad, desconfianza, deterioro de la inteligencia emocional y dificultad para equilibrar las emociones.",
+      "Produce mayor motivación para superar obstáculos.",
+      "Favorece el desarrollo de habilidades cognitivas superiores."
+    ],
+    correcta: 1,
+    feedback: "El texto indica que sin autoestima hay inseguridad en uno mismo, desconfianza en la sociedad y se deteriora la inteligencia emocional, es decir, la capacidad de equilibrar y dirigir las emociones."
+  },
+  // 6
+  {
+    tipo: "Ordenamiento",
+    texto: "Ordene los tres elementos que conforman las secuencias de actividades, según como se presentan en el texto:\n\n1. Actividad inicial  2. Tarea familiar  3. Momento creativo",
+    opciones: [
+      "A) 3, 1, 2",
+      "B) 2, 3, 1",
+      "C) 1, 2, 3",
+      "D) 2, 1, 3"
+    ],
+    correcta: 2,
+    feedback: "Las secuencias de actividades se estructuran en el siguiente orden: a) actividad inicial, b) tarea familiar y c) momento creativo."
+  },
+  // 7
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué función cumple la actividad inicial dentro de las secuencias de actividades?",
+    opciones: [
+      "Evaluar los conocimientos previos del alumno mediante exámenes escritos.",
+      "Permitir que los alumnos inicien el proceso con apoyo del docente, dialogando y reflexionando sobre valores que fortalecen la comunidad promotora de equidad.",
+      "Asignar tareas individuales para reforzar contenidos del programa oficial.",
+      "Presentar a los padres de familia los avances académicos de sus hijos."
+    ],
+    correcta: 1,
+    feedback: "Los alumnos inician el proceso con apoyo del docente mediante una actividad referida a valores positivos que fortalecen la comunidad, donde dialogan, expresan ideas y comparten su visión del mundo."
+  },
+  // 8
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Por qué la tarea familiar se considera un instrumento clave dentro de las secuencias de actividades?",
+    opciones: [
+      "Porque permite calificar el desempeño de las familias en el proceso educativo.",
+      "Porque obliga a los padres a involucrarse en el trabajo escolar para obtener una calificación.",
+      "Porque es un instrumento para crear condiciones de diálogo con las familias de forma metódica.",
+      "Porque sustituye las actividades en el aula cuando el docente está ausente."
+    ],
+    correcta: 2,
+    feedback: "La tarea familiar es un instrumento clave para crear condiciones de diálogo con las familias de forma metódica, fomentando la comunicación y colaboración entre escuela y familia."
+  },
+  // 9
+  {
+    tipo: "Completamiento",
+    texto: "En la tarea familiar, la 'regla de oro' establece que…",
+    opciones: [
+      "…solo se admiten respuestas relacionadas con los contenidos del programa escolar.",
+      "…únicamente los padres de familia deben participar, sin la intervención de los hijos.",
+      "…solo se admiten pensamientos positivos y armónicos, sin reproches ni regaños.",
+      "…la tarea debe presentarse en formato digital para facilitar su evaluación."
+    ],
+    correcta: 2,
+    feedback: "La regla de oro de la tarea familiar establece que solo se admiten pensamientos positivos y armónicos, no reproches ni regaños, lo que favorece expresiones de cariño y aprecios hacia los hijos."
+  },
+  // 10
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿En qué consiste el momento creativo dentro de las secuencias de actividades?",
+    opciones: [
+      "Es una sesión donde el docente expone contenidos de arte y música.",
+      "Es el espacio en que alumnos y maestro se reúnen nuevamente, los alumnos exponen la tarea familiar y expresan una síntesis personal y creativa sobre su historia familiar.",
+      "Es una evaluación final donde los alumnos presentan exámenes orales ante sus padres.",
+      "Es una actividad en la que el docente asigna proyectos de investigación individuales."
+    ],
+    correcta: 1,
+    feedback: "El momento creativo reúne de nuevo a alumnos y maestro; en la primera parte exponen la tarea familiar y en la segunda expresan una síntesis personal e innovadora sobre lo dialogado."
+  },
+  // 11
+  {
+    tipo: "Relación de elementos",
+    texto: "Seleccione la opción que relacione correctamente el elemento de la secuencia con su descripción:\n\n1. Actividad inicial\n2. Tarea familiar\n3. Momento creativo\n\na) Los alumnos exponen los resultados de la tarea y expresan su síntesis personal.\nb) Los alumnos dialogan, leen, escriben y reflexionan sobre valores en el aula.\nc) Los alumnos llevan a casa una actividad para dialogar con sus familiares.",
+    opciones: [
+      "A) 1c, 2b, 3a",
+      "B) 1a, 2c, 3b",
+      "C) 1b, 2c, 3a",
+      "D) 1b, 2a, 3c"
+    ],
+    correcta: 2,
+    feedback: "La actividad inicial (1b) se realiza en el aula con diálogo y reflexión; la tarea familiar (2c) se lleva a casa; y el momento creativo (3a) es cuando los alumnos exponen y sintetizan."
+  },
+  // 12
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Con qué frecuencia se sugiere desarrollar una secuencia de actividades, según el texto?",
+    opciones: [
+      "Diariamente, como parte de la rutina escolar.",
+      "Una vez al mes, en coincidencia con las reuniones de padres de familia.",
+      "Cada semana o cada quince días, según lo determine el colectivo docente.",
+      "Cada bimestre, al concluir un bloque temático."
+    ],
+    correcta: 2,
+    feedback: "Se sugiere que cada semana o cada quince días —según lo determine el colectivo docente— se desarrolle una secuencia de actividades de manera sistemática y continua."
+  },
+  // 13
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué papel tienen las madres, los padres y los tutores en el equilibrio afectivo de los estudiantes?",
+    opciones: [
+      "Son los responsables exclusivos de los resultados académicos del alumno.",
+      "Son los modelos más influyentes para lograr el equilibrio afectivo y la autoestima de cada estudiante.",
+      "Su función se limita a supervisar el cumplimiento de tareas en casa.",
+      "Son intermediarios entre los alumnos y las autoridades educativas."
+    ],
+    correcta: 1,
+    feedback: "Las madres, los padres, los tutores y otros miembros de la familia son los modelos más influyentes para lograr el equilibrio afectivo y la autoestima en cada estudiante."
+  },
+  // 14
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué aporta la colaboración de las familias a la escuela, según el texto?",
+    opciones: [
+      "Recursos económicos para financiar actividades extracurriculares.",
+      "Vínculos, códigos, símbolos, temáticas locales y regionales, formas de discernir y elementos de la idiosincrasia local.",
+      "Evaluaciones externas que complementan las calificaciones del docente.",
+      "Materiales didácticos elaborados en casa para enriquecer el aula."
+    ],
+    correcta: 1,
+    feedback: "La colaboración de las familias proporciona a la escuela vínculos, códigos, símbolos, temáticas locales y regionales, maneras propias de discernir y elementos de la idiosincrasia local."
+  },
+  // 15
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál era la perspectiva tradicional sobre la relación entre familia y escuela que históricamente fue considerada artificial?",
+    opciones: [
+      "Que ambas instituciones debían colaborar en igualdad de condiciones.",
+      "Que la familia era responsable de la socialización y la escuela de la enseñanza de conocimientos, como una división de funciones.",
+      "Que la escuela debía sustituir a la familia en la formación de valores.",
+      "Que los medios de comunicación eran la principal fuente de aprendizaje."
+    ],
+    correcta: 1,
+    feedback: "La perspectiva tradicional consideraba que la familia era la institución encargada de la socialización y la escuela la responsable de la enseñanza; división que siempre resultó artificial y fue quedando obsoleta."
+  },
+  // 16
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es el objetivo común que comparten familia y escuela en la actualidad?",
+    opciones: [
+      "Preparar a los alumnos exclusivamente para el mundo laboral.",
+      "Garantizar que los estudiantes aprueben los exámenes estandarizados.",
+      "Educar a la persona de forma integral, compartiendo la responsabilidad de formar a las nuevas generaciones.",
+      "Dividir las funciones educativas para evitar interferencias entre ambas instituciones."
+    ],
+    correcta: 2,
+    feedback: "Familia y escuela tienen el objetivo común de educar a la persona, que es única y necesita coherencia y continuidad entre los dos contextos; ambas comparten la responsabilidad de formar a las nuevas generaciones."
+  },
+  // 17
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Con qué periodicidad se sugiere realizar las asambleas-taller con madres y padres de familia?",
+    opciones: [
+      "Una vez al año, al inicio del ciclo escolar.",
+      "Cada cinco o seis semanas, o conforme lo establezca la agenda de la escuela.",
+      "Cada quince días, en coordinación con las secuencias de actividades.",
+      "Mensualmente, el último viernes hábil del mes."
+    ],
+    correcta: 1,
+    feedback: "Se sugiere realizar una asamblea de madres y padres de familia cada cinco o seis semanas, o conforme lo establezca la agenda de la escuela, pudiendo coincidir con las reuniones habituales."
+  },
+  // 18
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuáles son las tres preguntas básicas que se recomienda abordar en todas las asambleas-taller?",
+    opciones: [
+      "¿Cómo mejorar las calificaciones?, ¿cómo aplicar sanciones disciplinarias? y ¿cómo organizar los horarios escolares?",
+      "¿Cómo abordamos la equidad en diversos terrenos?, ¿qué hacer para mejorar la seguridad? y ¿qué han aportado las tareas familiares?",
+      "¿Cómo elegir al jefe de grupo?, ¿cómo distribuir los materiales? y ¿cómo planificar las salidas pedagógicas?",
+      "¿Qué programas académicos existen?, ¿cómo evaluar a los docentes? y ¿cómo financiar actividades extracurriculares?"
+    ],
+    correcta: 1,
+    feedback: "Las tres preguntas básicas de cada asamblea son: 1) ¿Cómo abordamos la equidad en diversos terrenos? 2) ¿Qué debemos hacer para mejorar la seguridad? 3) ¿Qué han aportado las tareas familiares?"
+  },
+  // 19
+  {
+    tipo: "Completamiento",
+    texto: "Las secuencias de actividades buscan que las familias y los docentes pongan en el centro de la comunidad educativa el objetivo de…",
+    opciones: [
+      "…alcanzar los más altos estándares de rendimiento académico nacional.",
+      "…lograr una escuela equitativa, promoviendo empatía, colaboración y solidaridad.",
+      "…implementar nuevas tecnologías en el proceso de enseñanza-aprendizaje.",
+      "…cumplir con los requerimientos administrativos del sistema educativo."
+    ],
+    correcta: 1,
+    feedback: "Las secuencias buscan que familias y docentes pongan en el centro el objetivo de lograr una escuela equitativa, favoreciendo empatía, valores de colaboración y solidaridad, referidos a las tradiciones y lenguajes de las familias."
+  },
+  // 20
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué efecto produce en los estudiantes el orientar los sentimientos positivos de la familia hacia ellos?",
+    opciones: [
+      "Genera dependencia emocional y dificultad para tomar decisiones autónomas.",
+      "Potencia su autoestima, fortalece su psique, vigoriza su ánimo y les ofrece un horizonte más prometedor.",
+      "Provoca comparaciones negativas entre compañeros de clase.",
+      "Limita el desarrollo de la autonomía y el pensamiento crítico."
+    ],
+    correcta: 1,
+    feedback: "Al orientar los sentimientos positivos de la familia hacia los alumnos se potencia su autoestima, se fortalece su psique, se vigoriza su ánimo y se les ofrece un horizonte más prometedor para relacionarse con su familia y el mundo."
+  },
+  // 21
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué tipo de contenido llega a la escuela a través de las tareas familiares?",
+    opciones: [
+      "Libros de texto y materiales del programa oficial de estudios.",
+      "Múltiples anécdotas, proverbios, canciones, cuentos, leyendas, historias y experiencias singulares.",
+      "Informes económicos y datos estadísticos de cada familia.",
+      "Evaluaciones de rendimiento elaboradas por los padres de familia."
+    ],
+    correcta: 1,
+    feedback: "Con las tareas familiares llegan a la escuela múltiples anécdotas, proverbios, canciones, cuentos, leyendas, historias y experiencias singulares que enriquecen el contexto cultural del aprendizaje."
+  },
+  // 22
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué se entiende por 'compromiso moral protector y de cohesión social' en el modelo propuesto?",
+    opciones: [
+      "La obligación de los docentes de vigilar el comportamiento de los estudiantes.",
+      "El acuerdo tácito de las familias de no intervenir en asuntos escolares.",
+      "Un factor generado por la colaboración escuela-familia que favorece la formación académica, cívica y ética de la comunidad.",
+      "Un reglamento escolar que establece normas de convivencia obligatorias."
+    ],
+    correcta: 2,
+    feedback: "El modelo propuesto suscita la generación de un compromiso moral protector y de cohesión social; factores clave para crear un ambiente que favorezca y fortalezca la formación académica, cívica y ética de la comunidad educativa."
+  },
+  // 23
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cómo contribuye la comprensión lectora al proceso de las actividades iniciales, según el texto?",
+    opciones: [
+      "Permite evaluar la ortografía y gramática de los alumnos.",
+      "Se limita a la lectura en voz alta de textos del libro de texto.",
+      "Progresa y se aviva al usarse para pensar, concebir, inventar, producir algo nuevo y fortalecer afectos.",
+      "Es un requisito administrativo para acreditar la asignatura de Español."
+    ],
+    correcta: 2,
+    feedback: "La comprensión lectora progresa y se aviva al usarse para pensar, concebir, inventar y producir algo nuevo que interesa, y sobre todo para expresar y fortalecer los afectos de los alumnos."
+  },
+  // 24
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuándo debe el docente acercarse más a un niño o niña cuya familia no responde a la tarea familiar?",
+    opciones: [
+      "Debe reportar la situación a las autoridades escolares para aplicar sanciones.",
+      "Debe reducir las expectativas académicas de ese alumno.",
+      "Debe acercarse más para contrarrestar la ausencia, asegurándose de que no se sienta solo y se sienta igualmente apreciado.",
+      "Debe asignar tareas alternativas solo para ese alumno para compensar la falta."
+    ],
+    correcta: 2,
+    feedback: "Cuando alguna familia no responde a la tarea familiar, el docente se acerca más a esas niñas o niños para contrarrestar la ausencia. Es importante no dejarlos solos y que se sientan igualmente apreciados."
+  },
+  // 25
+  {
+    tipo: "Relación de elementos",
+    texto: "Relacione correctamente la parte del momento creativo con su descripción:\n\n1. Primera parte\n2. Segunda parte\n\na) Los alumnos plasman una síntesis personal libre e innovadora sobre lo dialogado, practicando la equidad.\nb) Los alumnos exponen los resultados de su tarea familiar y expresan su interpretación de la historia familiar.",
+    opciones: [
+      "A) 1a, 2b",
+      "B) 1b, 2b",
+      "C) 1b, 2a",
+      "D) 1a, 2a"
+    ],
+    correcta: 2,
+    feedback: "En la primera parte (1b) los alumnos exponen la tarea familiar e interpretan su historia familiar. En la segunda parte (2a) plasman una síntesis personal libre e innovadora donde expresan reflexiones sobre la equidad."
+  },
+  // 26
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Para qué sirve presentar la tarea familiar principalmente por escrito?",
+    opciones: [
+      "Para facilitar su revisión y calificación por parte del docente.",
+      "Para que quede constancia de lo dicho y se preste a manifestar buenas cualidades, afectos, cariños y formas de relaciones armónicas.",
+      "Para cumplir con el reglamento escolar de entrega de trabajos.",
+      "Para que los alumnos desarrollen habilidades de redacción formal."
+    ],
+    correcta: 1,
+    feedback: "La tarea familiar se presenta normalmente por escrito porque con la comunicación escrita queda constancia de lo dicho, se presta más a manifestar buenas cualidades, afectos, cariños, ternuras y formas de relaciones armónicas y amorosas."
+  },
+  // 27
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué evidencia el hecho de que las actividades del texto se hayan probado en escuelas indígenas, urbanas y en diversas regiones del país?",
+    opciones: [
+      "Que solo funcionan en contextos rurales con tradiciones culturales sólidas.",
+      "Que son actividades exclusivas para zonas marginadas con altos índices de violencia.",
+      "Que tienen un amplio alcance y han sido validadas con la participación de colectivos docentes y familias de distintos contextos.",
+      "Que requieren adaptaciones costosas para poder implementarse en cada región."
+    ],
+    correcta: 2,
+    feedback: "Las actividades han sido desarrolladas con la participación de colectivos docentes y probadas en diferentes escuelas, desde indígenas hasta urbanas, y con diversas familias en muchas partes del territorio nacional durante más de dos décadas."
+  },
+  // 28
+  {
+    tipo: "Ordenamiento",
+    texto: "Ordene la secuencia lógica de la asamblea-taller, según el texto:\n\n1. Presentar el orden del día para aprobación.\n2. Mostrar materiales de la tarea familiar y momento creativo.\n3. Nombrar una secretaria/secretario para levantar el acta.\n4. Recibir sugerencias de mejora de la colaboración.",
+    opciones: [
+      "A) 2, 1, 4, 3",
+      "B) 1, 3, 2, 4",
+      "C) 3, 2, 1, 4",
+      "D) 1, 2, 3, 4"
+    ],
+    correcta: 1,
+    feedback: "La asamblea-taller comienza con la presentación y aprobación del orden del día (1), se nombra secretaria/o para el acta (3), luego se muestran los materiales (2) y finalmente se reciben sugerencias de mejora (4)."
+  },
+  // 29
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Qué efecto tiene la práctica regular de exponer y compartir las creaciones del momento creativo en los alumnos?",
+    opciones: [
+      "Genera competencia entre alumnos por obtener la mejor calificación.",
+      "Eleva la autoestima y la inteligencia emocional, además de estimular procesos asertivos y reflexión sobre los temas tratados.",
+      "Produce ansiedad al exponer sus trabajos frente a sus padres.",
+      "Limita el tiempo disponible para cubrir los contenidos del programa oficial."
+    ],
+    correcta: 1,
+    feedback: "Esta práctica regular eleva la autoestima y la inteligencia emocional, estimula procesos asertivos, es un estímulo académico y una conclusión que ayuda a reflexionar y asimilar temas de integración social."
+  },
+  // 30
+  {
+    tipo: "Cuestionamiento directo",
+    texto: "¿Cuál es la conclusión central del texto respecto al papel de la escuela en la construcción de equidad?",
+    opciones: [
+      "La escuela debe limitarse a impartir conocimientos académicos sin involucrarse en la vida social.",
+      "La equidad solo puede construirse desde las políticas gubernamentales y los programas nacionales.",
+      "La escuela, en colaboración con las familias y la comunidad, puede superar formas de inequidad promoviendo valores, diálogo y lazos afectivos que forman ciudadanos empáticos y participativos.",
+      "La equidad es responsabilidad exclusiva de las familias y no debe abordarse en el aula."
+    ],
+    correcta: 2,
+    feedback: "La conclusión central es que la escuela, en colaboración con familias y comunidad, puede avanzar en el derecho a la educación y la formación de una ciudadanía empática y participativa, superando inequidades mediante el diálogo, valores y lazos afectivos."
+  }
+];
+
+// ════════════════════════════════════════════════════════
+//  VARIABLES DE ESTADO
+// ════════════════════════════════════════════════════════
+let nombreAlumno = "";
+let indiceActual = 0;
+let respuestasCorrectas = 0;
+let respondida = false;
+
+const letras = ["A", "B", "C", "D"];
+
+// ════════════════════════════════════════════════════════
+//  FUNCIONES
+// ════════════════════════════════════════════════════════
+function iniciarSimulador() {
+  const inp = document.getElementById("input-nombre");
+  nombreAlumno = inp.value.trim();
+  if (!nombreAlumno) {
+    inp.style.borderColor = "#EF5350";
+    inp.focus();
+    return;
+  }
+  inp.style.borderColor = "";
+  indiceActual = 0;
+  respuestasCorrectas = 0;
+  respondida = false;
+
+  document.getElementById("pantalla-inicio").style.display = "none";
+  document.getElementById("pantalla-examen").style.display = "block";
+  document.getElementById("cab-nombre").textContent = nombreAlumno;
+
+  mostrarPregunta();
+}
+
+function mostrarPregunta() {
+  respondida = false;
+  const p = preguntas[indiceActual];
+  const total = preguntas.length;
+
+  // cabecera
+  document.getElementById("cab-progreso").textContent = `Pregunta ${indiceActual + 1} / ${total}`;
+  document.getElementById("barra").style.width = `${((indiceActual + 1) / total) * 100}%`;
+
+  // tarjeta
+  document.getElementById("etiqueta-formato").textContent = p.tipo;
+  document.getElementById("num-pregunta").textContent = `Pregunta ${indiceActual + 1} de ${total}`;
+
+  // Texto con saltos de línea
+  const textoEl = document.getElementById("texto-pregunta");
+  textoEl.innerHTML = p.texto.replace(/\n/g, "<br>");
+
+  // Opciones
+  const contenedor = document.getElementById("opciones");
+  contenedor.innerHTML = "";
+  p.opciones.forEach((op, i) => {
+    const div = document.createElement("div");
+    div.className = "opcion";
+    div.innerHTML = `<div class="letra-opcion">${letras[i]}</div><div class="texto-opcion">${op}</div>`;
+    div.addEventListener("click", () => seleccionarOpcion(i, div));
+    contenedor.appendChild(div);
+  });
+
+  // Ocultar feedback y botón
+  const fb = document.getElementById("feedback");
+  fb.style.display = "none";
+  fb.className = "feedback";
+  document.getElementById("btn-siguiente").style.display = "none";
+
+  // Animación
+  const tarjeta = document.getElementById("tarjeta-pregunta");
+  tarjeta.style.animation = "none";
+  void tarjeta.offsetWidth;
+  tarjeta.style.animation = "deslizar 0.4s ease";
+}
+
+function seleccionarOpcion(indice, elDiv) {
+  if (respondida) return;
+  respondida = true;
+
+  const p = preguntas[indiceActual];
+  const opciones = document.querySelectorAll(".opcion");
+
+  // Bloquear todas
+  opciones.forEach(op => op.classList.add("bloqueada"));
+
+  const fb = document.getElementById("feedback");
+
+  if (indice === p.correcta) {
+    respuestasCorrectas++;
+    elDiv.classList.add("correcta");
+    fb.className = "feedback correcto";
+    fb.innerHTML = `<span class="icono-feedback">✅</span><strong>¡Correcto!</strong> ${p.feedback}`;
+  } else {
+    elDiv.classList.add("incorrecta");
+    opciones[p.correcta].classList.add("correcta");
+    fb.className = "feedback incorrecto";
+    fb.innerHTML = `<span class="icono-feedback">❌</span><strong>Respuesta incorrecta.</strong> ${p.feedback}`;
+  }
+
+  fb.style.display = "block";
+
+  const btnSig = document.getElementById("btn-siguiente");
+  if (indiceActual < preguntas.length - 1) {
+    btnSig.textContent = "Siguiente pregunta →";
+  } else {
+    btnSig.textContent = "Ver mis resultados 🎯";
+  }
+  btnSig.style.display = "inline-block";
+}
+
+function siguientePregunta() {
+  indiceActual++;
+  if (indiceActual < preguntas.length) {
+    mostrarPregunta();
+  } else {
+    mostrarResultados();
+  }
+}
+
+function mostrarResultados() {
+  document.getElementById("pantalla-examen").style.display = "none";
+  document.getElementById("pantalla-resultados").style.display = "block";
+
+  const total = preguntas.length;
+  const incorrectas = total - respuestasCorrectas;
+  const pct = Math.round((respuestasCorrectas / total) * 100);
+
+  document.getElementById("res-nombre").textContent = nombreAlumno;
+  document.getElementById("res-correctas").textContent = respuestasCorrectas;
+  document.getElementById("res-incorrectas").textContent = incorrectas;
+  document.getElementById("res-pct").textContent = pct + "%";
+  document.getElementById("pct-label").textContent = `${respuestasCorrectas} de ${total} preguntas correctas`;
+
+  setTimeout(() => {
+    document.getElementById("barra-res").style.width = pct + "%";
+  }, 200);
+
+  // Emoji y mensaje
+  let emoji, mensaje;
+  if (pct >= 90) {
+    emoji = "🏆";
+    mensaje = "¡Excelente desempeño! Dominas muy bien los conceptos de equidad educativa. Sigue siendo un referente para tu comunidad.";
+  } else if (pct >= 75) {
+    emoji = "🌟";
+    mensaje = "¡Muy buen trabajo! Tienes una sólida comprensión del tema. Repasa los conceptos donde tuviste dudas para alcanzar la excelencia.";
+  } else if (pct >= 60) {
+    emoji = "📚";
+    mensaje = "Buen esfuerzo. Vas por buen camino. Te recomendamos repasar el material sobre equidad y secuencias de actividades para mejorar tus resultados.";
+  } else {
+    emoji = "💪";
+    mensaje = "¡No te rindas! Cada intento es una oportunidad de aprendizaje. Revisa el contenido con calma y vuelve a intentarlo. ¡Tú puedes!";
+  }
+
+  document.getElementById("emoji-res").textContent = emoji;
+  document.getElementById("mensaje-motivador").textContent = mensaje;
+}
+
+function reiniciar() {
+  document.getElementById("pantalla-resultados").style.display = "none";
+  document.getElementById("pantalla-inicio").style.display = "flex";
+  document.getElementById("input-nombre").value = "";
+}
+
+// Enter en el campo de nombre
+document.getElementById("input-nombre").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") iniciarSimulador();
+});
+</script>
+</body>
+</html>

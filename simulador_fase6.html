@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador – Programa Sintético Fase 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #e8f4fd;
+    --surface: #ffffff;
+    --surface2: #f0f7ff;
+    --border: #bcd8f5;
+    --accent: #1565c0;
+    --accent2: #1e88e5;
+    --accent-light: #42a5f5;
+    --accent-pale: #e3f2fd;
+    --green: #2e7d32;
+    --green-bg: #e8f5e9;
+    --green-border: #a5d6a7;
+    --red: #c62828;
+    --red-bg: #ffebee;
+    --red-border: #ef9a9a;
+    --yellow: #f57f17;
+    --text: #0d2b4e;
+    --muted: #4a6fa5;
+    --radius: 16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Background decoration ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -150px; right: -150px;
+    width: 550px; height: 550px;
+    background: radial-gradient(circle, rgba(30,136,229,.18) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -150px; left: -150px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(21,101,192,.12) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .wrapper {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px 16px;
+  }
+
+  /* ══ SCREENS ══ */
+  .screen { display: none; width: 100%; max-width: 720px; }
+  .screen.active { display: block; animation: fadeSlide .45s ease both; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ══ CARD ══ */
+  .card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    padding: 48px 44px;
+    box-shadow: 0 8px 40px rgba(21,101,192,.13), 0 2px 8px rgba(21,101,192,.07);
+  }
+
+  /* ══ WELCOME ══ */
+  .logo-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-pale);
+    border: 1.5px solid #90caf9;
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: .8rem; font-weight: 700;
+    color: var(--accent);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .welcome-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .welcome-title span { color: var(--accent2); }
+
+  .welcome-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  .info-chips {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 36px;
+  }
+  .chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--accent-pale);
+    border: 1.5px solid #90caf9;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: .82rem; color: var(--accent);
+    font-weight: 600;
+  }
+  .chip svg { flex-shrink: 0; }
+
+  .label {
+    display: block;
+    font-size: .82rem; font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 1rem; color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+  }
+  input[type="text"]:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(30,136,229,.15); }
+  input[type="text"]::placeholder { color: #90b4d8; }
+
+  /* ══ BUTTONS ══ */
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: #fff;
+    border: none; cursor: pointer;
+    border-radius: 12px;
+    padding: 15px 32px;
+    font-size: 1rem; font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    transition: transform .15s, box-shadow .2s;
+    box-shadow: 0 6px 20px rgba(21,101,192,.35);
+    width: 100%; margin-top: 20px;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(21,101,192,.4); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    cursor: pointer;
+    border-radius: 12px;
+    padding: 13px 28px;
+    font-size: .95rem; font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    transition: all .2s;
+    width: 100%; margin-top: 12px;
+  }
+  .btn-secondary:hover { background: var(--accent-pale); }
+
+  /* ══ QUIZ SCREEN ══ */
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap; gap: 12px;
+  }
+
+  .q-counter {
+    font-size: .85rem; font-weight: 700; color: var(--muted);
+    letter-spacing: .04em;
+  }
+  .q-counter span { color: var(--accent2); font-size: 1.1rem; }
+
+  .progress-wrap {
+    flex: 1; min-width: 120px;
+    height: 8px;
+    background: #c8dff5;
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 0 16px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 999px;
+    transition: width .4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .score-pill {
+    display: flex; align-items: center; gap: 5px;
+    background: var(--green-bg);
+    border: 1.5px solid var(--green-border);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: .8rem; font-weight: 700; color: var(--green);
+  }
+
+  .q-type-tag {
+    display: inline-block;
+    background: var(--accent-pale);
+    border: 1.5px solid #90caf9;
+    color: var(--accent);
+    font-size: .72rem; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+    border-radius: 6px;
+    padding: 3px 10px;
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    font-weight: 500;
+    margin-bottom: 28px;
+    color: var(--text);
+  }
+
+  /* ══ OPTIONS ══ */
+  .options { display: flex; flex-direction: column; gap: 12px; }
+
+  .option {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, transform .15s, box-shadow .2s;
+    text-align: left;
+  }
+  .option:hover:not(:disabled) {
+    border-color: var(--accent2);
+    background: var(--accent-pale);
+    transform: translateX(4px);
+    box-shadow: 0 3px 12px rgba(30,136,229,.12);
+  }
+  .option:disabled { cursor: default; }
+
+  .opt-letter {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: #ddeaf8;
+    border: 1.5px solid #90caf9;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem; font-weight: 800;
+    color: var(--accent);
+    transition: all .2s;
+    margin-top: 1px;
+  }
+
+  .opt-text { font-size: .95rem; line-height: 1.55; padding-top: 3px; color: var(--text); }
+
+  /* States */
+  .option.selected { border-color: var(--accent2); background: var(--accent-pale); }
+  .option.selected .opt-letter { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .option.correct { border-color: var(--green); background: var(--green-bg); }
+  .option.correct .opt-letter { background: var(--green); border-color: var(--green); color: #fff; }
+  .option.wrong { border-color: var(--red); background: var(--red-bg); }
+  .option.wrong .opt-letter { background: var(--red); border-color: var(--red); color: #fff; }
+
+  /* ══ FEEDBACK BOX ══ */
+  .feedback {
+    margin-top: 20px;
+    border-radius: 14px;
+    padding: 16px 20px;
+    font-size: .92rem;
+    line-height: 1.6;
+    display: none;
+    animation: fadeSlide .3s ease both;
+  }
+  .feedback.show { display: flex; gap: 12px; align-items: flex-start; }
+  .feedback.success { background: var(--green-bg); border: 1.5px solid var(--green-border); color: var(--green); }
+  .feedback.error   { background: var(--red-bg);   border: 1.5px solid var(--red-border);   color: var(--red); }
+  .feedback-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .feedback strong { display: block; margin-bottom: 2px; font-size: .95rem; }
+
+  .btn-next {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: #fff; border: none; cursor: pointer;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-size: .95rem; font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    transition: all .2s;
+    margin-top: 20px;
+    width: 100%;
+    box-shadow: 0 4px 16px rgba(21,101,192,.3);
+    display: none;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(21,101,192,.35); }
+  .btn-next.show { display: flex; animation: fadeSlide .3s .1s ease both; opacity: 0; animation-fill-mode: both; }
+
+  /* ══ RESULTS ══ */
+  .result-header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .trophy {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 12px;
+    animation: bounce 1s ease infinite alternate;
+  }
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-10px); }
+  }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 900;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .student-name-display {
+    color: var(--accent2);
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    border: 1.5px solid;
+  }
+  .stat-card .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 900;
+    display: block; margin-bottom: 4px;
+  }
+  .stat-card .stat-lbl {
+    font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+  }
+  .stat-card.green { background: var(--green-bg); border-color: var(--green-border); }
+  .stat-card.green .stat-val { color: var(--green); }
+  .stat-card.green .stat-lbl { color: var(--green); opacity: .7; }
+  .stat-card.red { background: var(--red-bg); border-color: var(--red-border); }
+  .stat-card.red .stat-val { color: var(--red); }
+  .stat-card.red .stat-lbl { color: var(--red); opacity: .7; }
+  .stat-card.orange { background: var(--accent-pale); border-color: #90caf9; }
+  .stat-card.orange .stat-val { color: var(--accent); }
+  .stat-card.orange .stat-lbl { color: var(--accent); opacity: .7; }
+
+  .pct-bar-wrap {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .pct-bar-label {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; font-size: .88rem; font-weight: 700; color: var(--text);
+  }
+  .pct-bar-track {
+    height: 12px; background: #c8dff5; border-radius: 999px; overflow: hidden;
+  }
+  .pct-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    width: 0;
+  }
+
+  .motivational {
+    background: linear-gradient(135deg, var(--accent-pale) 0%, #e3f2fd 100%);
+    border: 1.5px solid #90caf9;
+    border-radius: 14px;
+    padding: 18px 22px;
+    font-size: .95rem;
+    line-height: 1.6;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .motivational::before { content: '💡 '; }
+
+  /* ══ RESPONSIVE ══ */
+  @media (max-width: 600px) {
+    .card { padding: 28px 20px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid .stat-card:last-child { grid-column: 1/-1; }
+    .quiz-header { flex-direction: column; align-items: flex-start; }
+    .progress-wrap { width: 100%; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ════════════ WELCOME SCREEN ════════════ -->
+  <div class="screen active" id="screen-welcome">
+    <div class="card">
+      <div class="logo-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        SEP · Educación Secundaria
+      </div>
+      <h1 class="welcome-title">Simulador<br><span>Programa Sintético</span><br>Fase 6</h1>
+      <p class="welcome-sub">Evalúa tu conocimiento sobre el Programa Analítico, Campos Formativos, Evaluación Formativa y los planos de construcción curricular.</p>
+      <div class="info-chips">
+        <div class="chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          30 preguntas
+        </div>
+        <div class="chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Opción múltiple (4 opciones)
+        </div>
+        <div class="chip">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Retroalimentación inmediata
+        </div>
+      </div>
+      <label class="label" for="student-name">Tu nombre completo</label>
+      <input type="text" id="student-name" placeholder="Escribe tu nombre aquí..." autocomplete="off">
+      <button class="btn-primary" onclick="startQuiz()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Iniciar simulador
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════ QUIZ SCREEN ════════════ -->
+  <div class="screen" id="screen-quiz">
+    <div class="card">
+      <div class="quiz-header">
+        <div class="q-counter">Pregunta <span id="q-num">1</span> / 30</div>
+        <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:3.33%"></div></div>
+        <div class="score-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="live-score">0</span> correctas
+        </div>
+      </div>
+      <div class="q-type-tag" id="q-type-tag">Cuestionamiento directo</div>
+      <p class="q-text" id="q-text"></p>
+      <div class="options" id="options-wrap"></div>
+      <div class="feedback" id="feedback">
+        <span class="feedback-icon" id="fb-icon"></span>
+        <div><strong id="fb-title"></strong><span id="fb-body"></span></div>
+      </div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">
+        Siguiente pregunta
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════ RESULTS SCREEN ════════════ -->
+  <div class="screen" id="screen-results">
+    <div class="card">
+      <div class="result-header">
+        <span class="trophy" id="trophy-emoji">🏆</span>
+        <h2 class="result-title">Resultados del simulador</h2>
+        <p class="student-name-display" id="result-name"></p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card green"><span class="stat-val" id="r-correct">0</span><span class="stat-lbl">Correctas</span></div>
+        <div class="stat-card red"><span class="stat-val" id="r-wrong">0</span><span class="stat-lbl">Incorrectas</span></div>
+        <div class="stat-card orange"><span class="stat-val" id="r-pct">0%</span><span class="stat-lbl">Aciertos</span></div>
+      </div>
+      <div class="pct-bar-wrap">
+        <div class="pct-bar-label"><span>Porcentaje de aciertos</span><span id="r-pct2">0%</span></div>
+        <div class="pct-bar-track"><div class="pct-bar-fill" id="pct-bar-fill"></div></div>
+      </div>
+      <div class="motivational" id="motivational-msg"></div>
+      <button class="btn-primary" onclick="restartQuiz()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        Volver a intentar
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  BANK OF 30 QUESTIONS
+// ══════════════════════════════════════════════
+const questions = [
+  // 1 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es la finalidad principal de los Procesos de desarrollo de aprendizaje en el Programa Sintético de la Fase 6?",
+    options: [
+      "A) Establecer una secuencia rígida de contenidos que todos los docentes deben seguir al pie de la letra.",
+      "B) Representar recorridos o rutas posibles que dan cuenta de las formas en que las y los estudiantes se apropian de aprendizajes para comprender el mundo e intervenir en distintas situaciones.",
+      "C) Determinar los exámenes estandarizados que se aplicarán al final de cada ciclo escolar.",
+      "D) Definir el número de horas semanales que debe dedicarse a cada Campo formativo."
+    ],
+    correct: 1,
+    feedback: "Los Procesos de desarrollo de aprendizaje representan recorridos o rutas posibles —no rígidos— que muestran cómo niñas, niños y adolescentes se apropian de aprendizajes que les permiten comprender e intervenir en el mundo."
+  },
+  // 2 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuáles son los cuatro Campos formativos que integran el Programa Sintético de la Fase 6 de Educación Secundaria?",
+    options: [
+      "A) Matemáticas, Ciencias Naturales, Historia y Lengua Española.",
+      "B) Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; De lo Humano y lo Comunitario.",
+      "C) Comunicación, Pensamiento Lógico, Valores Cívicos y Expresión Artística.",
+      "D) Lenguaje y Comunicación, Exploración de la Naturaleza, Formación Cívica y Educación Física."
+    ],
+    correct: 1,
+    feedback: "El Programa Sintético de la Fase 6 organiza el currículo en cuatro Campos formativos: Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; y De lo Humano y lo Comunitario."
+  },
+  // 3 – Completamiento
+  {
+    type: "Completamiento",
+    text: "La organización curricular en Campos formativos, Contenidos y Procesos de desarrollo de aprendizaje impulsa una mayor autonomía profesional que fomenta…",
+    options: [
+      "A) …la aplicación de un programa único y universal, sin modificaciones, para garantizar la equidad entre todas las escuelas del país.",
+      "B) …el diseño de propuestas contextualizadas en las que se problematice la realidad y se atienda a las características, necesidades e intereses de niñas, niños y adolescentes.",
+      "C) …la evaluación sumativa como único criterio para valorar el desempeño de docentes y estudiantes.",
+      "D) …la reducción del tiempo frente a grupo para que el docente pueda dedicarse exclusivamente a la planeación administrativa."
+    ],
+    correct: 1,
+    feedback: "Esta organización impulsa una mayor autonomía profesional que fomenta el diseño de propuestas contextualizadas donde se problematice la realidad y se atienda a las características, necesidades e intereses de las y los estudiantes."
+  },
+  // 4 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué entiende el Programa Sintético de la Fase 6 por 'Segundo plano: Contextualización' dentro de la construcción del Programa Analítico?",
+    options: [
+      "A) La fase en la que el colectivo docente redacta los objetivos de aprendizaje en términos medibles y cuantificables.",
+      "B) La etapa en la que se asignan calificaciones numéricas a los contenidos según su dificultad.",
+      "C) El plano que permite al colectivo escolar interpretar y resignificar los Contenidos curriculares del Programa Sintético, desde sus propios términos y referencias para promover un aprendizaje situacional.",
+      "D) El proceso mediante el cual la autoridad educativa federal aprueba los programas locales antes de su implementación."
+    ],
+    correct: 2,
+    feedback: "El Segundo plano: Contextualización permite al colectivo escolar interpretar y resignificar los Contenidos curriculares del Programa Sintético desde sus propios términos y referencias, promoviendo así un aprendizaje situacional."
+  },
+  // 5 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "En el proceso de contextualización, ¿cómo se concibe 'lo nacional' dentro del currículo?",
+    options: [
+      "A) Como contenidos universales, acabados y aplicables a cualquier contexto sin necesidad de adaptación.",
+      "B) Como punto de llegada al que todos los colectivos docentes deben arribar siguiendo la misma ruta.",
+      "C) Como punto de partida y no como contenidos universales o aplicables a cualquier contexto.",
+      "D) Como un conjunto de estándares internacionales que deben priorizarse sobre las necesidades locales."
+    ],
+    correct: 2,
+    feedback: "La Contextualización implica la resignificación y apropiación del currículo nacional, entendiendo lo nacional como punto de partida y no como contenidos universales, acabados o 'aplicables a cualquier contexto'."
+  },
+  // 6 – Completamiento
+  {
+    type: "Completamiento",
+    text: "Para establecer las relaciones entre los Contenidos del Programa Sintético y la realidad de los estudiantes, el colectivo docente necesita analizar la pertinencia y las posibilidades que tienen determinados contenidos. Esto significa que…",
+    options: [
+      "A) …el docente debe limitarse a impartir los contenidos en el orden exacto en que aparecen en el Programa Sintético.",
+      "B) …se observen de manera clara las interconexiones entre los distintos conocimientos y saberes, identificando las relaciones entre el Perfil de egreso, los Ejes articuladores, las Finalidades de los Campos formativos y las Especificidades de cada Fase.",
+      "C) …se eliminen los contenidos que no sean directamente aplicables a la vida cotidiana de los estudiantes.",
+      "D) …solo se trabaje con contenidos que hayan sido aprobados por la comunidad de padres de familia en asamblea escolar."
+    ],
+    correct: 1,
+    feedback: "El colectivo docente debe observar de manera clara las interconexiones entre los distintos saberes, e identificar en el Plan de estudio 2022 y los Programas Sintéticos las relaciones entre el Perfil de egreso, los Ejes articuladores, las Finalidades de los Campos formativos y las Especificidades de cada Fase."
+  },
+  // 7 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes opciones describe correctamente los 'Contenidos sin ajustes' dentro del Programa Analítico?",
+    options: [
+      "A) Son contenidos completamente nuevos que no aparecen en el Programa Sintético y que el colectivo docente crea a partir de las necesidades locales.",
+      "B) Son contenidos que se incorporan al Programa Analítico tal como aparecen en el Programa Sintético, sin ninguna modificación.",
+      "C) Son contenidos que se eliminan del currículo porque no son pertinentes para el contexto de la comunidad escolar.",
+      "D) Son contenidos que requieren una profunda reelaboración por parte del colectivo docente antes de ser abordados con los estudiantes."
+    ],
+    correct: 1,
+    feedback: "Los Contenidos sin ajustes son aquellos que se incorporan al Programa Analítico tal como aparecen en el Programa Sintético, sin modificaciones adicionales."
+  },
+  // 8 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué caracteriza a los 'Contenidos contextualizados' en la construcción del Programa Analítico?",
+    options: [
+      "A) Son contenidos que se eliminan del Programa Sintético porque ya fueron abordados en fases anteriores.",
+      "B) Son contenidos creados íntegramente por el colectivo docente sin relación con el Programa Sintético.",
+      "C) Son contenidos que, manteniendo su esencia, requieren ser contextualizados de manera más pertinente a las condiciones particulares de las y los estudiantes y del contexto, reconociendo saberes y conocimientos locales y comunitarios.",
+      "D) Son contenidos importados de programas educativos internacionales que complementan el Programa Sintético."
+    ],
+    correct: 2,
+    feedback: "Los Contenidos contextualizados mantienen su esencia pero requieren ser contextualizados de manera más pertinente a las condiciones particulares de los estudiantes y su contexto, reconociendo saberes locales y comunitarios, así como otras formas de comprensión que no suelen considerarse dentro de una disciplina específica."
+  },
+  // 9 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué son los 'Contenidos nuevos' dentro del Programa Analítico según el Programa Sintético de la Fase 6?",
+    options: [
+      "A) Contenidos que ya existen en el Programa Sintético pero que se presentan con una nueva metodología de enseñanza.",
+      "B) Contenidos que no están presentes en el Programa Sintético y que corresponden a contenidos locales o regionales, necesarios de incorporar al Programa Analítico a partir del análisis del colectivo docente.",
+      "C) Contenidos digitales y tecnológicos que actualizan los temas del Programa Sintético.",
+      "D) Contenidos que sustituyen por completo a los del Programa Sintético cuando este no resulta pertinente para la comunidad."
+    ],
+    correct: 1,
+    feedback: "Los Contenidos nuevos son aquellos que no están presentes en el Programa Sintético y corresponden a contenidos locales o regionales que es necesario incorporar al Programa Analítico a partir del análisis realizado por el colectivo docente."
+  },
+  // 10 – Relación de elementos
+  {
+    type: "Relación de elementos",
+    text: "Seleccione la opción que relacione correctamente el tipo de contenido del Programa Analítico con su descripción.\n\nTipo de contenido:\n1. Contenidos sin ajustes\n2. Contenidos contextualizados\n3. Contenidos nuevos\n\nDescripción:\na) Se incorporan al Programa Analítico tal como aparecen en el Programa Sintético.\nb) No están en el Programa Sintético; corresponden a saberes locales o regionales.\nc) Mantienen su esencia pero se adaptan a las condiciones particulares de los estudiantes.",
+    options: [
+      "A) 1c, 2a, 3b",
+      "B) 1a, 2b, 3c",
+      "C) 1a, 2c, 3b",
+      "D) 1b, 2c, 3a"
+    ],
+    correct: 2,
+    feedback: "La relación correcta es: 1-a (sin ajustes = tal como aparecen en el Sintético), 2-c (contextualizados = mantienen esencia pero se adaptan) y 3-b (nuevos = no están en el Sintético, son locales o regionales)."
+  },
+  // 11 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es la responsabilidad del colectivo docente en el 'Tercer plano: Formulación del Programa Analítico'?",
+    options: [
+      "A) Solicitar a la SEP una nueva versión del Programa Sintético adaptada a su contexto.",
+      "B) Organizar la secuenciación y la temporalidad de los Contenidos para definir cómo se abordarán a lo largo del ciclo escolar, dado que el Programa Sintético no establece una secuenciación.",
+      "C) Evaluar a sus colegas docentes mediante rúbricas diseñadas por la autoridad educativa estatal.",
+      "D) Reproducir el Programa Sintético en su totalidad sin modificaciones para garantizar la cobertura curricular."
+    ],
+    correct: 1,
+    feedback: "En el Tercer plano: Formulación del Programa Analítico, el colectivo docente organiza la secuenciación y la temporalidad para definir cómo se abordarán los Contenidos a lo largo del ciclo escolar, ya que el Programa Sintético no establece una secuenciación para abordar los Contenidos en cada Fase."
+  },
+  // 12 – Completamiento
+  {
+    type: "Completamiento",
+    text: "Al formular el Programa Analítico, el colectivo docente además de definir la secuenciación y temporalidad deberá enunciar de manera general…",
+    options: [
+      "A) …los resultados de los exámenes estandarizados aplicados en ciclos anteriores para justificar los contenidos seleccionados.",
+      "B) …las sanciones que se aplicarán a los estudiantes que no logren los aprendizajes esperados al final de la Fase.",
+      "C) …algunas vinculaciones y metodologías (proyectos, aprendizaje basado en problemas, etc.) que se utilizarán para abordar los contenidos.",
+      "D) …los recursos económicos necesarios para la compra de materiales didácticos que se usarán durante el ciclo escolar."
+    ],
+    correct: 2,
+    feedback: "En el Tercer plano, además de la secuenciación y temporalidad, el colectivo docente enunciará de manera general algunas vinculaciones y metodologías (como proyectos o aprendizaje basado en problemas) para abordar los contenidos."
+  },
+  // 13 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué significa 'resignificación curricular' en el contexto del Programa Sintético de la Fase 6?",
+    options: [
+      "A) La eliminación de los contenidos del currículo nacional para sustituirlos por contenidos de origen internacional.",
+      "B) La apropiación del currículo nacional que realizan docentes para darle un sentido y significado particular en respuesta a las necesidades, intereses, capacidades o condiciones del colectivo docente y de sus grupos.",
+      "C) La evaluación externa que realiza la SEP para verificar que los docentes cumplan con los contenidos establecidos en el Programa Sintético.",
+      "D) El proceso por el cual los libros de texto gratuitos son actualizados año con año por la autoridad educativa federal."
+    ],
+    correct: 1,
+    feedback: "La resignificación curricular implica la apropiación del currículo nacional: los contenidos adquieren un sentido y significado particular al responder a las necesidades, intereses, capacidades o condiciones que el colectivo docente considera importantes y posibles de trabajar con sus grupos."
+  },
+  // 14 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es la función principal de la evaluación formativa según el Programa Sintético de la Fase 6?",
+    options: [
+      "A) Medir el conocimiento memorístico y calificar numéricamente a los estudiantes al final de cada unidad temática.",
+      "B) Retroalimentar el proceso educativo a través de la autorreflexión de estudiantes y docentes para identificar logros, fortalezas y aspectos a reforzar, así como para establecer compromisos personales y grupales.",
+      "C) Clasificar a los estudiantes según su rendimiento para determinar quiénes pueden avanzar al siguiente grado.",
+      "D) Certificar los aprendizajes de los estudiantes ante las autoridades educativas estatales y federales."
+    ],
+    correct: 1,
+    feedback: "La evaluación formativa tiene como función principal retroalimentar el proceso educativo a través de la autorreflexión de estudiantes y docentes, para identificar logros y fortalezas, así como aspectos a reforzar, definir acciones para superarlos y establecer compromisos personales y grupales."
+  },
+  // 15 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué característica distingue a la evaluación formativa de la evaluación sumativa, según el Programa Sintético de la Fase 6?",
+    options: [
+      "A) La evaluación formativa se aplica al final del ciclo escolar, mientras que la sumativa se aplica de manera continua.",
+      "B) La evaluación formativa no busca medir el conocimiento memorístico, no califica ni determina el trayecto escolar de las y los estudiantes; favorece su avance de acuerdo con sus propias condiciones, tiempos y formas de aprendizaje, por lo que no tiene carácter conclusivo o sumativo.",
+      "C) La evaluación formativa es aplicada únicamente por inspectores externos, mientras que la sumativa es responsabilidad del docente de aula.",
+      "D) La evaluación formativa utiliza exclusivamente exámenes escritos, mientras que la sumativa usa portafolios y proyectos."
+    ],
+    correct: 1,
+    feedback: "La evaluación formativa no busca medir el conocimiento memorístico, no califica ni determina el trayecto escolar. Favorece el avance de acuerdo con las propias condiciones, tiempos y formas de aprendizaje de cada estudiante, por lo que no tiene carácter conclusivo o sumativo."
+  },
+  // 16 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué tipo de registro se recomienda que lleven las y los docentes como parte de la evaluación formativa?",
+    options: [
+      "A) Un registro exclusivamente numérico que compare el desempeño de los estudiantes con los promedios nacionales.",
+      "B) Un registro que acompañe la observación del acercamiento que niñas, niños y adolescentes logran con el saber y el conocimiento de los Campos formativos, con qué actitud lo hacen y qué espacios les son favorables.",
+      "C) Un registro de asistencia diaria que sirva como único instrumento de evaluación durante el ciclo escolar.",
+      "D) Un registro elaborado exclusivamente por los padres de familia, para dar cuenta del aprendizaje que ocurre fuera de la escuela."
+    ],
+    correct: 1,
+    feedback: "Se recomienda que los docentes lleven un registro que acompañe la observación del acercamiento que las y los estudiantes logran con el saber y el conocimiento de los Campos formativos, considerando con qué actitud lo hacen y qué espacios les son favorables."
+  },
+  // 17 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué se requiere para llevar a cabo la evaluación formativa de manera efectiva, según el Programa Sintético?",
+    options: [
+      "A) Aplicar un único instrumento de evaluación estandarizado para garantizar la equidad entre todos los grupos.",
+      "B) Estrategias, criterios e instrumentos de evaluación variados, acordes al propósito, la situación a evaluar y las necesidades, intereses, características, habilidades y condiciones de las y los estudiantes.",
+      "C) La aprobación previa de la autoridad educativa federal antes de implementar cualquier estrategia de evaluación.",
+      "D) La participación de evaluadores externos certificados por organismos internacionales especializados en educación."
+    ],
+    correct: 1,
+    feedback: "Para la evaluación formativa se requieren estrategias, criterios e instrumentos de evaluación variados, acordes al propósito, la situación a evaluar y las necesidades, intereses, características, habilidades y condiciones de las y los estudiantes."
+  },
+  // 18 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes situaciones describe correctamente el Segundo plano: Contextualización en la construcción del Programa Analítico?",
+    options: [
+      "A) El colectivo docente entrega a la SEP un informe sobre los contenidos del Programa Sintético que no se pudieron impartir durante el ciclo escolar.",
+      "B) El colectivo docente decide la manera en la que se abordarán problemáticas detectadas en la comunidad escolar, relacionándolas con los Campos formativos del Programa Sintético.",
+      "C) El supervisor escolar revisa y aprueba la planeación didáctica de cada docente antes de que sea implementada en el aula.",
+      "D) La dirección escolar gestiona recursos materiales ante la autoridad municipal para equipar los laboratorios de ciencias."
+    ],
+    correct: 1,
+    feedback: "El Segundo plano: Contextualización implica que el colectivo docente interpreta y resignifica los Contenidos curriculares desde sus propios términos, por ejemplo, decidiendo cómo abordar problemáticas detectadas en la comunidad escolar y relacionándolas con los Campos formativos."
+  },
+  // 19 – Ordenamiento
+  {
+    type: "Ordenamiento",
+    text: "Ordene los tres planos de construcción del Programa Analítico en la secuencia correcta según el Programa Sintético de la Fase 6:\n\n1. Formulación del Programa Analítico\n2. Contextualización\n3. Diagnóstico",
+    options: [
+      "A) 1, 2, 3",
+      "B) 2, 3, 1",
+      "C) 3, 2, 1",
+      "D) 3, 1, 2"
+    ],
+    correct: 2,
+    feedback: "El orden correcto es: Primer plano: Diagnóstico (3) → Segundo plano: Contextualización (2) → Tercer plano: Formulación del Programa Analítico (1). El diagnóstico permite conocer el contexto, la contextualización resignifica los contenidos y la formulación organiza la secuencia y temporalidad."
+  },
+  // 20 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál es el papel del diagnóstico en la construcción del Programa Analítico?",
+    options: [
+      "A) Determinar la calificación final de los estudiantes para autorizar su promoción al siguiente grado escolar.",
+      "B) Analizar los contextos social, económico y cultural de la comunidad, así como las condiciones que afectan positiva o negativamente a la escuela en la consecución de sus propósitos.",
+      "C) Evaluar el desempeño del docente mediante observaciones de clase realizadas por el director y el supervisor.",
+      "D) Seleccionar los libros de texto gratuitos más adecuados para el grupo a partir de los resultados de una encuesta aplicada a las familias."
+    ],
+    correct: 1,
+    feedback: "El diagnóstico implica analizar los contextos social, económico y cultural de la comunidad, así como las condiciones que afectan positiva o negativamente a la escuela en la consecución de sus propósitos y las posibilidades de intervención de ésta."
+  },
+  // 21 – Completamiento
+  {
+    type: "Completamiento",
+    text: "Se presenta una situación escolar que corresponde al análisis diagnóstico previo a la construcción del Programa Analítico, cuando el colectivo docente en el Consejo Técnico Escolar…",
+    options: [
+      "A) …diseña los instrumentos de evaluación que se aplicarán a los estudiantes al final del primer bimestre del ciclo escolar.",
+      "B) …analiza el impacto que tienen en la vida escolar factores como el contexto socioeconómico de las familias, las condiciones de infraestructura y el acceso a recursos tecnológicos de la comunidad.",
+      "C) …elabora el horario de clases semanal para todos los grupos de la escuela asegurando la cobertura de todas las asignaturas.",
+      "D) …informa a las familias sobre las calificaciones obtenidas por los estudiantes durante el primer periodo escolar."
+    ],
+    correct: 1,
+    feedback: "El diagnóstico corresponde al Primer plano e implica analizar los contextos social, económico y cultural de la comunidad y las condiciones que afectan positiva o negativamente a la escuela, incluyendo factores del mundo, el país, la entidad federativa y la localidad."
+  },
+  // 22 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cómo se organizan los Contenidos en el Programa Analítico respecto a la contextualización?",
+    options: [
+      "A) Todos los contenidos deben contextualizarse y articularse al mismo tiempo en una única situación o tema central.",
+      "B) Los contenidos se organizan en función de las necesidades de la escuela, considerando que no todos tienen que contextualizarse ni articularse al mismo tiempo; pueden abordarse en múltiples oportunidades, desde varias dimensiones y momentos.",
+      "C) Los contenidos se organizan exclusivamente según el orden en que aparecen en el Programa Sintético, sin posibilidad de modificar su secuencia.",
+      "D) Los contenidos son seleccionados y organizados únicamente por la autoridad educativa, sin participación del colectivo docente de la escuela."
+    ],
+    correct: 1,
+    feedback: "Los Contenidos se organizan en función de las necesidades de la escuela, considerando que no todos tienen que contextualizarse ni articularse al mismo tiempo en una situación, tema o problema, ya que pueden abordarse en múltiples oportunidades, desde varias dimensiones y momentos."
+  },
+  // 23 – Relación de elementos
+  {
+    type: "Relación de elementos",
+    text: "Relacione correctamente el plano de construcción del Programa Analítico con la acción que le corresponde.\n\nPlano:\n1. Primer plano\n2. Segundo plano\n3. Tercer plano\n\nAcción:\na) Interpretar y resignificar los Contenidos curriculares del Programa Sintético desde los términos propios de la comunidad escolar.\nb) Organizar la secuenciación y temporalidad de los Contenidos para el ciclo escolar.\nc) Analizar el contexto social, económico y cultural de la comunidad escolar.",
+    options: [
+      "A) 1b, 2a, 3c",
+      "B) 1c, 2b, 3a",
+      "C) 1a, 2c, 3b",
+      "D) 1c, 2a, 3b"
+    ],
+    correct: 3,
+    feedback: "La relación correcta es: Primer plano (Diagnóstico) → 1c (analizar el contexto); Segundo plano (Contextualización) → 2a (interpretar y resignificar los Contenidos); Tercer plano (Formulación) → 3b (organizar secuenciación y temporalidad)."
+  },
+  // 24 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes afirmaciones describe mejor la evaluación formativa en el marco del Programa Sintético de la Fase 6?",
+    options: [
+      "A) Es un proceso de evaluación que ocurre únicamente al inicio y al final del ciclo escolar para medir el avance de los estudiantes.",
+      "B) Es un proceso constante y continuo que favorece el avance de los estudiantes de acuerdo con sus propias condiciones, tiempos y formas de aprendizaje, sin carácter conclusivo o sumativo.",
+      "C) Es una evaluación diseñada exclusivamente para identificar a los estudiantes con bajo rendimiento y canalizarlos a programas de apoyo especializados.",
+      "D) Es un proceso evaluativo que determina la certificación y acreditación oficial de los estudiantes ante la SEP."
+    ],
+    correct: 1,
+    feedback: "La evaluación formativa es un proceso constante y continuo que no busca medir el conocimiento memorístico, no califica ni determina el trayecto escolar. Favorece el avance de acuerdo con las propias condiciones, tiempos y formas de aprendizaje, por lo que no tiene carácter conclusivo o sumativo."
+  },
+  // 25 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Qué consecuencia tiene la resignificación curricular y apropiación del Programa Sintético por parte de las y los docentes, según el documento?",
+    options: [
+      "A) La pérdida de coherencia entre los programas de las diferentes escuelas del país, lo que dificulta la evaluación nacional.",
+      "B) La concreción de nuevas formas de enseñanza y aprendizaje, así como el reconocimiento y promoción de otras que ya están presentes en la vida cotidiana de las escuelas.",
+      "C) La necesidad de elaborar nuevos libros de texto gratuitos para cada escuela según sus particularidades contextuales.",
+      "D) La reducción del tiempo de instrucción frente a grupo para dar lugar a actividades administrativas de planeación curricular."
+    ],
+    correct: 1,
+    feedback: "La resignificación curricular y apropiación del Programa Sintético por parte de las y los docentes concretará nuevas formas de enseñanza y aprendizaje, y reconocerá y promoverá otras que ya están presentes en la vida cotidiana de las escuelas."
+  },
+  // 26 – Completamiento
+  {
+    type: "Completamiento",
+    text: "Se presenta a continuación una situación del entorno escolar que corresponde al Tercer plano: Formulación del Programa Analítico, cuando el colectivo docente en el Consejo Técnico Escolar…",
+    options: [
+      "A) …solicita a la SEP los lineamientos definitivos para la evaluación sumativa que se aplicará al término de la Fase 6.",
+      "B) …define la secuencia en que se abordarán los Contenidos del Campo formativo 'Saberes y Pensamiento Científico' a lo largo del ciclo escolar, estableciendo los tiempos y las metodologías que se utilizarán.",
+      "C) …analiza los resultados de los exámenes de diagnóstico para clasificar a los estudiantes en grupos según su nivel de desempeño inicial.",
+      "D) …redacta el informe de gestión escolar que se entregará a la autoridad educativa al concluir el ciclo lectivo."
+    ],
+    correct: 1,
+    feedback: "El Tercer plano: Formulación del Programa Analítico corresponde a cuando el colectivo docente organiza la secuenciación y la temporalidad de los Contenidos, definiendo cómo se abordarán a lo largo del ciclo escolar y enunciando vinculaciones y metodologías a utilizar."
+  },
+  // 27 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿A través de qué proceso la evaluación formativa retroalimenta el trabajo de docentes y estudiantes?",
+    options: [
+      "A) A través de la aplicación de exámenes estandarizados nacionales que permiten comparar el desempeño entre escuelas.",
+      "B) A través de la autorreflexión de estudiantes y docentes para identificar tanto logros y fortalezas que favorecieron su alcance, como aspectos que se requieren reforzar y los obstáculos que se han presentado.",
+      "C) A través de la supervisión externa de inspectores educativos que verifican el cumplimiento del programa en cada aula.",
+      "D) A través del análisis estadístico de los resultados de la evaluación PISA y otros instrumentos internacionales de medición."
+    ],
+    correct: 1,
+    feedback: "La evaluación formativa retroalimenta el proceso educativo a través de la autorreflexión de estudiantes y docentes, para identificar tanto logros y fortalezas que favorecieron su alcance, como aspectos que se requieren reforzar y los obstáculos presentados."
+  },
+  // 28 – Relación de elementos
+  {
+    type: "Relación de elementos",
+    text: "Relacione correctamente el elemento curricular del Programa Sintético con su definición.\n\nElemento:\n1. Campos formativos\n2. Contenidos\n3. Procesos de desarrollo de aprendizaje\n\nDefinición:\na) Recorridos o rutas posibles que dan cuenta de cómo niñas, niños y adolescentes se apropian de aprendizajes para comprender el mundo.\nb) Las cuatro grandes áreas de organización curricular: Lenguajes; Saberes y Pensamiento Científico; Ética, Naturaleza y Sociedades; y De lo Humano y lo Comunitario.\nc) Los saberes y conocimientos que forman parte del currículo y que el colectivo docente puede incorporar sin ajustes, contextualizar o renovar.",
+    options: [
+      "A) 1c, 2b, 3a",
+      "B) 1b, 2a, 3c",
+      "C) 1a, 2c, 3b",
+      "D) 1b, 2c, 3a"
+    ],
+    correct: 3,
+    feedback: "La relación correcta es: Campos formativos (1b) = las cuatro grandes áreas de organización curricular; Contenidos (2c) = saberes y conocimientos que pueden incorporarse con o sin ajustes; Procesos de desarrollo de aprendizaje (3a) = recorridos o rutas posibles de apropiación del conocimiento."
+  },
+  // 29 – Cuestionamiento directo
+  {
+    type: "Cuestionamiento directo",
+    text: "¿Cuál de las siguientes situaciones refleja adecuadamente la aplicación del proceso de contextualización en la construcción del Programa Analítico?",
+    options: [
+      "A) La maestra reproduce en su planeación, sin ningún cambio, los contenidos del Programa Sintético porque considera que ya están bien redactados.",
+      "B) El colectivo docente decide incorporar el estudio de los sistemas de siembra locales dentro del Campo formativo 'Saberes y Pensamiento Científico', relacionando este saber comunitario con los contenidos del Programa Sintético.",
+      "C) El director escolar selecciona los contenidos que se impartirán durante el año y los comunica a los docentes para que los implementen de manera uniforme.",
+      "D) Los docentes esperan a recibir la nueva versión actualizada del Programa Sintético de la SEP antes de iniciar la planeación didáctica del ciclo escolar."
+    ],
+    correct: 1,
+    feedback: "La contextualización implica que el colectivo docente relacione los Contenidos del Programa Sintético con las situaciones que viven cotidianamente las y los estudiantes, como saberes comunitarios, problemáticas locales, relaciones socioafectivas u otros elementos pertinentes del contexto."
+  },
+  // 30 – Ordenamiento
+  {
+    type: "Ordenamiento",
+    text: "Ordene los siguientes pasos que sigue el colectivo docente en el proceso de contextualización para establecer relaciones entre el Programa Sintético y el contexto escolar:\n\n1. Tomar decisiones sobre qué Contenidos serán sin ajustes, contextualizados o nuevos.\n2. Observar de manera clara las interconexiones entre los distintos conocimientos y saberes del Programa Sintético.\n3. Identificar las relaciones entre el Perfil de egreso, los Ejes articuladores, las Finalidades de los Campos formativos y las Especificidades de cada Fase.\n4. Analizar la pertinencia y las posibilidades de determinados contenidos para el contexto escolar.",
+    options: [
+      "A) 1, 2, 3, 4",
+      "B) 4, 3, 2, 1",
+      "C) 3, 2, 4, 1",
+      "D) 2, 4, 1, 3"
+    ],
+    correct: 2,
+    feedback: "El proceso correcto es: primero identificar las relaciones curriculares (3), luego observar las interconexiones entre saberes (2), después analizar la pertinencia de los contenidos para el contexto (4) y finalmente tomar decisiones sobre el tipo de contenidos (sin ajustes, contextualizados o nuevos) (1)."
+  }
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let studentName = "";
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  const input = document.getElementById('student-name').value.trim();
+  if (!input) {
+    document.getElementById('student-name').focus();
+    document.getElementById('student-name').style.borderColor = 'var(--red)';
+    return;
+  }
+  studentName = input;
+  currentQ = 0;
+  score = 0;
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = questions[currentQ];
+  const letters = ['A', 'B', 'C', 'D'];
+
+  document.getElementById('q-num').textContent = currentQ + 1;
+  document.getElementById('progress-bar').style.width = ((currentQ + 1) / 30 * 100) + '%';
+  document.getElementById('live-score').textContent = score;
+  document.getElementById('q-type-tag').textContent = q.type;
+  document.getElementById('q-text').innerHTML = q.text.replace(/\n/g, '<br>');
+
+  const wrap = document.getElementById('options-wrap');
+  wrap.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span class="opt-text">${opt.replace(/^[A-D]\) /, '')}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    wrap.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+
+  const btnNext = document.getElementById('btn-next');
+  btnNext.className = 'btn-next';
+  btnNext.textContent = currentQ < 29 ? 'Siguiente pregunta →' : 'Ver resultados →';
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const opts = document.querySelectorAll('.option');
+
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    if (i === idx && i !== q.correct) btn.classList.add('wrong');
+    if (i === idx) btn.classList.add('selected');
+  });
+
+  const fb = document.getElementById('feedback');
+  const fbIcon = document.getElementById('fb-icon');
+  const fbTitle = document.getElementById('fb-title');
+  const fbBody = document.getElementById('fb-body');
+
+  if (idx === q.correct) {
+    score++;
+    document.getElementById('live-score').textContent = score;
+    fb.className = 'feedback success show';
+    fbIcon.textContent = '✅';
+    fbTitle.textContent = '¡Correcto!';
+    fbBody.textContent = ' Muy bien, esa es la respuesta correcta.';
+  } else {
+    fb.className = 'feedback error show';
+    fbIcon.textContent = '❌';
+    fbTitle.textContent = 'Respuesta incorrecta.';
+    fbBody.textContent = ' ' + q.feedback;
+  }
+
+  const btnNext = document.getElementById('btn-next');
+  btnNext.className = 'btn-next show';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= 30) {
+    showResults();
+  } else {
+    showScreen('screen-quiz');
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  const pct = Math.round((score / 30) * 100);
+  document.getElementById('result-name').textContent = studentName;
+  document.getElementById('r-correct').textContent = score;
+  document.getElementById('r-wrong').textContent = 30 - score;
+  document.getElementById('r-pct').textContent = pct + '%';
+  document.getElementById('r-pct2').textContent = pct + '%';
+
+  // Trophy emoji
+  const trophy = document.getElementById('trophy-emoji');
+  if (pct >= 90) trophy.textContent = '🏆';
+  else if (pct >= 70) trophy.textContent = '🎖️';
+  else if (pct >= 50) trophy.textContent = '📚';
+  else trophy.textContent = '💪';
+
+  // Motivational message
+  const msgs = [
+    [90, "¡Excelente desempeño! Dominas muy bien los contenidos del Programa Sintético Fase 6. ¡Sigue así!"],
+    [70, "¡Buen trabajo! Tienes una comprensión sólida del material. Revisa los temas en los que tuviste dificultades para alcanzar la excelencia."],
+    [50, "Vas por buen camino. Te recomendamos repasar los planos del Programa Analítico y la evaluación formativa para reforzar tu conocimiento."],
+    [0,  "¡No te rindas! Este es solo el inicio de tu aprendizaje. Revisa el material del Programa Sintético Fase 6 y vuelve a intentarlo. ¡Tú puedes!"]
+  ];
+  const msg = msgs.find(([min]) => pct >= min)[1];
+  document.getElementById('motivational-msg').textContent = msg;
+
+  showScreen('screen-results');
+
+  // Animate bar
+  setTimeout(() => {
+    document.getElementById('pct-bar-fill').style.width = pct + '%';
+  }, 300);
+}
+
+function restartQuiz() {
+  currentQ = 0;
+  score = 0;
+  document.getElementById('student-name').value = '';
+  document.getElementById('student-name').style.borderColor = '';
+  showScreen('screen-welcome');
+}
+</script>
+</body>
+</html>

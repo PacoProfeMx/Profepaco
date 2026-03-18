@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador – Construyendo Equidad</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+  :root{
+    --verde:#2E7D32;--verde-medio:#43A047;--verde-claro:#C8E6C9;--verde-suave:#E8F5E9;
+    --teal:#00796B;--teal-claro:#E0F2F1;
+    --azul:#1565C0;--azul-claro:#E3F2FD;
+    --naranja:#E65100;--naranja-claro:#FFF3E0;
+    --gris:#37474F;--gris-medio:#607D8B;--gris-claro:#ECEFF1;
+    --blanco:#FFFFFF;
+    --sombra:0 4px 20px rgba(0,0,0,.10);--sombra-lg:0 8px 32px rgba(0,0,0,.14);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#E8F5E9 0%,#E0F2F1 50%,#E3F2FD 100%);min-height:100vh;color:var(--gris)}
+  #pantalla-inicio{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .tarjeta-inicio{background:var(--blanco);border-radius:24px;box-shadow:var(--sombra-lg);padding:48px 40px 40px;max-width:520px;width:100%;text-align:center;animation:aparecer .6s ease}
+  .icono-inicio{width:80px;height:80px;background:linear-gradient(135deg,var(--verde),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px}
+  .tarjeta-inicio h1{font-family:'Merriweather',serif;font-size:1.7rem;color:var(--verde);line-height:1.3;margin-bottom:8px}
+  .tarjeta-inicio .subtitulo{color:var(--gris-medio);font-size:.95rem;margin-bottom:28px}
+  .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+  .badge{background:var(--verde-suave);color:var(--verde);border:1px solid var(--verde-claro);border-radius:20px;padding:6px 14px;font-size:.82rem;font-weight:700}
+  .campo-nombre label{display:block;font-weight:700;color:var(--gris);margin-bottom:8px;font-size:.95rem;text-align:left}
+  .campo-nombre input{width:100%;padding:14px 18px;border:2px solid var(--gris-claro);border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;color:var(--gris);outline:none;transition:border-color .2s}
+  .campo-nombre input:focus{border-color:var(--verde-medio)}
+  .btn-primario{display:block;width:100%;margin-top:20px;padding:16px;background:linear-gradient(135deg,var(--verde),var(--teal));color:var(--blanco);border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(46,125,50,.35)}
+  .btn-primario:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(46,125,50,.45)}
+  #pantalla-examen{display:none;min-height:100vh;padding:20px}
+  .examen-contenedor{max-width:720px;margin:0 auto}
+  .cabecera-examen{background:var(--blanco);border-radius:18px;box-shadow:var(--sombra);padding:18px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .info-alumno{font-weight:700;color:var(--verde);font-size:.95rem}
+  .info-alumno span{color:var(--gris);font-weight:400;font-size:.85rem;display:block}
+  .progreso-texto{font-weight:800;color:var(--teal);font-size:1rem}
+  .barra-progreso-wrap{width:100%;background:var(--gris-claro);border-radius:10px;height:8px;overflow:hidden;margin-top:10px}
+  .barra-progreso-fill{height:100%;background:linear-gradient(90deg,var(--verde),var(--teal));border-radius:10px;transition:width .4s ease}
+  .tarjeta-pregunta{background:var(--blanco);border-radius:20px;box-shadow:var(--sombra-lg);padding:36px 32px 28px;animation:deslizar .4s ease}
+  .etiqueta-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .etiqueta-formato{display:inline-block;background:var(--teal-claro);color:var(--teal);border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .etiqueta-situacion{display:inline-block;background:#FFF8E1;color:#F57F17;border:1px solid #FFE082;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .num-pregunta{font-size:.82rem;color:var(--gris-medio);font-weight:700;margin-bottom:6px}
+  .texto-pregunta{font-family:'Merriweather',serif;font-size:1.02rem;color:var(--gris);line-height:1.75;margin-bottom:20px}
+  .situacion-box{background:#FFFDE7;border-left:4px solid #F9A825;border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:20px;font-size:.92rem;line-height:1.65;color:#4E342E}
+  .situacion-box strong{color:#E65100}
+  .opciones{display:flex;flex-direction:column;gap:12px}
+  .opcion{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border:2px solid var(--gris-claro);border-radius:14px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;background:#FAFAFA}
+  .opcion:hover:not(.bloqueada){border-color:var(--verde-medio);background:var(--verde-suave);transform:translateX(4px)}
+  .letra-opcion{min-width:32px;height:32px;border-radius:50%;background:var(--gris-claro);color:var(--gris-medio);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.88rem;flex-shrink:0;transition:background .2s,color .2s}
+  .texto-opcion{font-size:.94rem;line-height:1.5;padding-top:5px}
+  .opcion.correcta{border-color:var(--verde-medio);background:var(--verde-suave)}
+  .opcion.correcta .letra-opcion{background:var(--verde-medio);color:#fff}
+  .opcion.incorrecta{border-color:#EF5350;background:#FFEBEE}
+  .opcion.incorrecta .letra-opcion{background:#EF5350;color:#fff}
+  .opcion.bloqueada{cursor:default}
+  .feedback{margin-top:20px;padding:16px 20px;border-radius:14px;font-size:.92rem;line-height:1.6;display:none;animation:aparecer .3s ease}
+  .feedback.correcto{background:var(--verde-suave);border-left:4px solid var(--verde-medio);color:var(--verde)}
+  .feedback.incorrecto{background:var(--naranja-claro);border-left:4px solid var(--naranja);color:var(--naranja)}
+  .btn-siguiente{display:none;margin-top:24px;padding:15px 32px;background:linear-gradient(135deg,var(--teal),var(--verde));color:var(--blanco);border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(0,121,107,.35);float:right}
+  .btn-siguiente:hover{transform:translateY(-2px)}
+  .clearfix::after{content:'';display:table;clear:both}
+  #pantalla-resultados{display:none;min-height:100vh;padding:20px}
+  .resultados-contenedor{max-width:580px;margin:0 auto;animation:aparecer .6s ease}
+  .tarjeta-resultado{background:var(--blanco);border-radius:24px;box-shadow:var(--sombra-lg);padding:44px 36px 36px;text-align:center}
+  .emoji-resultado{font-size:64px;margin-bottom:16px;display:block}
+  .tarjeta-resultado h2{font-family:'Merriweather',serif;color:var(--verde);font-size:1.6rem;margin-bottom:6px}
+  .nombre-resultado{color:var(--teal);font-size:1.1rem;font-weight:700;margin-bottom:28px}
+  .estadisticas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+  .stat-card{border-radius:16px;padding:18px 10px;text-align:center}
+  .stat-card.correctas{background:var(--verde-suave)}
+  .stat-card.incorrectas{background:#FFEBEE}
+  .stat-card.porcentaje{background:var(--azul-claro)}
+  .stat-numero{font-size:2rem;font-weight:900;display:block;line-height:1;margin-bottom:4px}
+  .stat-card.correctas .stat-numero{color:var(--verde)}
+  .stat-card.incorrectas .stat-numero{color:#EF5350}
+  .stat-card.porcentaje .stat-numero{color:var(--azul)}
+  .stat-label{font-size:.8rem;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.4px}
+  .barra-resultado-wrap{background:var(--gris-claro);border-radius:10px;height:14px;overflow:hidden;margin-bottom:6px}
+  .barra-resultado-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--verde),var(--teal));transition:width 1s ease}
+  .porcentaje-label{font-size:.82rem;color:var(--gris-medio);text-align:right;margin-bottom:24px}
+  .mensaje-motivador{background:linear-gradient(135deg,var(--verde-suave),var(--teal-claro));border-radius:14px;padding:18px 22px;font-size:.97rem;font-weight:700;color:var(--teal);margin-bottom:24px;line-height:1.5}
+  .btn-reiniciar{display:inline-block;padding:14px 36px;background:linear-gradient(135deg,var(--verde),var(--teal));color:var(--blanco);border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(46,125,50,.35)}
+  .btn-reiniciar:hover{transform:translateY(-2px)}
+  @keyframes aparecer{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes deslizar{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  @media(max-width:520px){
+    .tarjeta-inicio,.tarjeta-pregunta,.tarjeta-resultado{padding:28px 20px 22px}
+    .tarjeta-inicio h1{font-size:1.35rem}
+    .estadisticas{grid-template-columns:1fr 1fr}
+    .stat-card.porcentaje{grid-column:span 2}
+    .cabecera-examen{flex-direction:column;align-items:flex-start}
+    .btn-siguiente{float:none;width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div id="pantalla-inicio">
+  <div class="tarjeta-inicio">
+    <div class="icono-inicio">🏫</div>
+    <h1>Construyendo Equidad en la Comunidad Educativa</h1>
+    <p class="subtitulo">Simulador de evaluación de conocimientos</p>
+    <div class="badges">
+      <span class="badge">📋 40 preguntas</span>
+      <span class="badge">🏫 Situaciones de aula</span>
+      <span class="badge">📊 Resultados al final</span>
+    </div>
+    <div class="campo-nombre">
+      <label for="input-nombre">👤 Nombre del estudiante</label>
+      <input type="text" id="input-nombre" placeholder="Escribe tu nombre completo…" autocomplete="off">
+    </div>
+    <button class="btn-primario" onclick="iniciarSimulador()">🚀 Iniciar simulador</button>
+  </div>
+</div>
+
+<div id="pantalla-examen">
+  <div class="examen-contenedor">
+    <div class="cabecera-examen">
+      <div>
+        <div class="info-alumno" id="cab-nombre">Estudiante</div>
+        <span id="cab-sub">Simulador · Construyendo Equidad</span>
+      </div>
+      <div class="progreso-texto" id="cab-progreso">Pregunta 1 / 40</div>
+      <div class="barra-progreso-wrap" style="flex-basis:100%">
+        <div class="barra-progreso-fill" id="barra" style="width:2.5%"></div>
+      </div>
+    </div>
+    <div class="tarjeta-pregunta" id="tarjeta-pregunta">
+      <div class="etiqueta-wrap" id="etiqueta-wrap"></div>
+      <div class="num-pregunta" id="num-pregunta"></div>
+      <div class="texto-pregunta" id="texto-pregunta"></div>
+      <div class="situacion-box" id="situacion-box" style="display:none"></div>
+      <div class="opciones" id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="clearfix">
+        <button class="btn-siguiente" id="btn-siguiente" onclick="siguientePregunta()">Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pantalla-resultados">
+  <div class="resultados-contenedor">
+    <div class="tarjeta-resultado">
+      <span class="emoji-resultado" id="emoji-res">🏆</span>
+      <h2>¡Examen completado!</h2>
+      <div class="nombre-resultado" id="res-nombre"></div>
+      <div class="estadisticas">
+        <div class="stat-card correctas"><span class="stat-numero" id="res-correctas">0</span><div class="stat-label">✅ Correctas</div></div>
+        <div class="stat-card incorrectas"><span class="stat-numero" id="res-incorrectas">0</span><div class="stat-label">❌ Incorrectas</div></div>
+        <div class="stat-card porcentaje"><span class="stat-numero" id="res-pct">0%</span><div class="stat-label">🎯 Aciertos</div></div>
+      </div>
+      <div class="barra-resultado-wrap"><div class="barra-resultado-fill" id="barra-res" style="width:0%"></div></div>
+      <div class="porcentaje-label" id="pct-label"></div>
+      <div class="mensaje-motivador" id="mensaje-motivador"></div>
+      <button class="btn-reiniciar" onclick="reiniciar()">🔄 Volver a intentar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Correctas distribuidas: A=10, B=9, C=11, D=10
+const preguntas = [
+  // 1 – correcta C
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Qué distingue a una comunidad educativa promotora de equidad de una que únicamente imparte conocimientos académicos?",
+    ops:["Que cuenta con mayor presupuesto y mejores instalaciones físicas.",
+         "Que aplica un reglamento estricto de convivencia validado por la SEP.",
+         "Que consolida lazos afectivos, genera confianza y forma personas seguras, creativas, colaboradoras y resilientes para afrontar la adversidad.",
+         "Que promueve la competencia entre alumnos como motor del rendimiento escolar."],
+    ok:2, fb:"Una comunidad educativa es promotora de equidad cuando consolida lazos afectivos y genera confianza; forma personas con seguridad en sí mismas, creativas, colaboradoras y resilientes para afrontar la adversidad y salir fortalecidas." },
+
+  // 2 – SITUACIÓN – correcta A
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la opción que mejor explica lo que ocurre:",
+    stxt:"El maestro Luis pide a sus alumnos de 5.° grado que entrevisten a un familiar sobre algún oficio que haya marcado la historia de su familia. Al día siguiente, cada alumno comparte lo descubierto frente al grupo. Tras escuchar todos los relatos, el maestro plantea: '¿De qué manera esos oficios contribuyen a la sociedad y cómo nos pueden hacer actuar con mayor equidad?'",
+    ops:["El maestro aplica correctamente la actividad inicial de una secuencia: los alumnos dialogan, expresan ideas sobre su familia y reflexionan sobre valores de equidad, dando significado real a la lectoescritura y al contexto cultural.",
+         "El maestro realiza una actividad exclusiva de Ciencias Sociales para cubrir el bloque temático.",
+         "El maestro evalúa el nivel socioeconómico familiar para reportarlo a la dirección.",
+         "El maestro improvisó porque no contaba con planeación para esa sesión."],
+    ok:0, fb:"Esta es la actividad inicial: los alumnos inician con apoyo del docente, dialogan y expresan ideas sobre situaciones de su entorno, crean productos y comparten su visión del mundo. En estas actividades leen y escriben, dando a la lectoescritura funciones significativas." },
+
+  // 3 – correcta D
+  { tipo:"Completamiento", sit:false,
+    txt:"Según el texto, la autoestima es el equilibrio entre…",
+    ops:["…la inteligencia emocional y la capacidad cognitiva de cada persona.",
+         "…la obediencia a las normas sociales y la expresión libre de las emociones.",
+         "…el éxito académico y las relaciones afectivas con el docente.",
+         "…el amor propio, sin narcisismo, y el respeto por los demás."],
+    ok:3, fb:"La autoestima es el equilibrio entre amor propio, sin narcisismo, y respeto por los demás. Sin autoestima hay inseguridad en uno mismo y desconfianza en la sociedad, lo que deteriora la inteligencia emocional." },
+
+  // 4 – SITUACIÓN – correcta C
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la respuesta que mejor la interpreta:",
+    stxt:"La maestra Sofía solicita a sus alumnos que la tarea familiar sea escrita. Pone como condición que la nota debe expresar únicamente pensamientos positivos sobre el alumno, sin mencionar reproches ni regaños. Al recibir las notas, varios niños que normalmente se muestran callados participan con entusiasmo al compartirlas.",
+    ops:["La maestra limita la expresión familiar al prohibir cualquier crítica constructiva en la nota.",
+         "La maestra comete un error pedagógico al no considerar las dificultades reales de los alumnos.",
+         "La maestra aplica correctamente la 'regla de oro' de la tarea familiar: solo pensamientos positivos y armónicos, sin reproches; la comunicación escrita favorece que la familia manifieste afectos, cariños y aprecios, lo que potencia la autoestima del alumno.",
+         "La maestra busca únicamente cumplir con el reglamento de entrega de trabajos escolares."],
+    ok:2, fb:"La regla de oro de la tarea familiar establece que solo se admiten pensamientos positivos y armónicos, no reproches ni regaños. Presentarla por escrito queda como constancia y se presta a manifestar buenas cualidades, afectos, cariños, ternuras y relaciones armónicas y amorosas." },
+
+  // 5 – correcta A
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Cuál es la razón principal por la que la inequidad de género está 'fuertemente introyectada' en la vida personal y social, según el texto?",
+    ops:["Porque es parte de la vida cotidiana en la mayoría de los hogares, lo que la normaliza y dificulta su erradicación.",
+         "Porque los programas educativos no incluyen contenidos sobre equidad de género.",
+         "Porque los medios de comunicación promueven activamente los estereotipos de género.",
+         "Porque las familias se oponen a que la escuela aborde estos temas con sus hijos."],
+    ok:0, fb:"El texto señala que el sometimiento y la violencia hacia la mujer, desgraciadamente, es parte de la vida cotidiana en la mayoría de los hogares. No obstante, es posible abrir caminos de solución y esperanza promoviendo el análisis de actitudes que obstaculizan los derechos de niñas y mujeres." },
+
+  // 6 – SITUACIÓN – correcta D
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y selecciona la interpretación correcta:",
+    stxt:"La maestra Carla divide su clase en dos momentos: primero, cada alumno de 6.° grado expone el resultado de la tarea que realizó con su familia (una leyenda local). Segundo, les pide que creen individualmente un poema, dibujo o historia breve sobre lo que más les impactó de ese relato familiar y cómo lo relacionan con vivir con equidad.",
+    ops:["La maestra realiza una clase de literatura sin conexión con los valores de la comunidad.",
+         "La maestra improvisa porque no tiene material didáctico disponible para esa sesión.",
+         "La maestra aplica la primera parte del momento creativo, pero omite la segunda parte esencial.",
+         "La maestra desarrolla correctamente el momento creativo en sus dos partes: exposición de la tarea familiar y síntesis personal libre e innovadora donde el alumno expresa sus reflexiones sobre la equidad."],
+    ok:3, fb:"El momento creativo tiene dos partes: en la primera los alumnos exponen los resultados de su tarea familiar; en la segunda, mediante una síntesis racional y afectiva, expresan su interpretación personal sobre la historia de su familia, practicando la equidad a través de distintos lenguajes." },
+
+  // 7 – correcta B
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"El texto afirma que la escuela puede superar formas de sometimiento, subordinación e inequidad. ¿A través de qué mecanismo lo logra?",
+    ops:["Mediante la aplicación de sanciones disciplinarias a quienes reproduzcan conductas desiguales.",
+         "Promoviendo condiciones de dignidad y el fortalecimiento del tejido social y la solidaridad.",
+         "Separando a los grupos de alumnos según sus condiciones socioeconómicas para atenderlos mejor.",
+         "Implementando programas de becas que compensen las desventajas económicas de las familias."],
+    ok:1, fb:"A través de la escuela —en tanto estructura estratégica de la vida social— podemos superar paulatinamente formas de sometimiento, subordinación e inequidad, como la de género, mediante la promoción de condiciones de dignidad y el fortalecimiento del tejido social y la solidaridad." },
+
+  // 8 – SITUACIÓN – correcta A
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la respuesta más precisa:",
+    stxt:"El maestro Rodrigo detecta que Juan, un alumno de 4.° grado, nunca trae la tarea familiar y sus padres no asisten a las reuniones. En lugar de registrar una falta o reducir la calificación de Juan, el maestro le hace preguntas sobre su familia durante las actividades del aula, lo integra en los proyectos grupales y se asegura de que participe activamente sintiéndose valorado.",
+    ops:["El maestro actúa correctamente: cuando una familia no responde a la tarea familiar, el docente debe acercarse más al alumno para contrarrestar la ausencia, garantizando que no se sienta solo ni menos apreciado que sus compañeros.",
+         "El maestro comete una falta pedagógica al no reportar la situación de Juan a los servicios de apoyo.",
+         "El maestro perjudica al grupo al dedicar tiempo extra a Juan en detrimento de los demás alumnos.",
+         "El maestro debería sancionar a los padres de Juan por incumplir con las actividades escolares."],
+    ok:0, fb:"Cuando alguna familia no responde a la tarea familiar, el docente se acerca más a esas niñas o niños para contrarrestar la ausencia. Es importante no dejarlos solos y que se sientan igualmente apreciados. El maestro no debe ignorar esta situación ni generar diferencias visibles." },
+
+  // 9 – correcta C
+  { tipo:"Ordenamiento", sit:false,
+    txt:"Ordene correctamente los tres elementos que conforman las secuencias de actividades tal como se describen en el texto:",
+    ops:["Momento creativo → Tarea familiar → Actividad inicial.",
+         "Tarea familiar → Actividad inicial → Momento creativo.",
+         "Actividad inicial → Tarea familiar → Momento creativo.",
+         "Actividad inicial → Momento creativo → Tarea familiar."],
+    ok:2, fb:"Las secuencias contienen tres elementos en los que los alumnos son centrales: a) la actividad inicial, b) la tarea familiar, y c) el momento creativo. Este orden es fundamental para que la secuencia funcione de forma coherente." },
+
+  // 10 – SITUACIÓN – correcta D
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y selecciona la interpretación más adecuada:",
+    stxt:"La maestra Patricia trabaja en una escuela indígena en Chiapas. Adapta las secuencias usando canciones y refranes en tzotzil aportados por las familias en la tarea familiar. En el momento creativo, los alumnos recrean esas canciones en su lengua materna y también en español, y el colectivo docente guarda estas producciones para integrarlas en un cancionero del ciclo escolar.",
+    ops:["La maestra viola los lineamientos del programa oficial al usar materiales no autorizados por la SEP.",
+         "La maestra comete un error metodológico porque las secuencias deben aplicarse igual en todos los contextos.",
+         "La maestra improvisa porque no cuenta con los materiales del programa y recurre a lo que tiene disponible.",
+         "La maestra aplica correctamente las secuencias, adaptando los contenidos al contexto cultural y lingüístico; los docentes podrán adaptar los contenidos a los alumnos que atienden. El cancionero ejemplifica cómo las producciones del momento creativo forman parte de la vida escolar."],
+    ok:3, fb:"Los docentes podrán adaptar los contenidos y materiales educativos a los alumnos que atienden, a sus condiciones y gustos. Las secuencias ofrecen diversidad de temas que cada colectivo puede adaptar con base en su experiencia, cultura y talentos. La lengua materna enriquece el diálogo entre escuela y familia." },
+
+  // 11 – correcta A
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"Según el texto, ¿cuál es el efecto específico de orientar los sentimientos positivos de la familia hacia el alumno?",
+    ops:["Potencia su autoestima, fortalece su psique, vigoriza su ánimo y le ofrece un horizonte más prometedor para relacionarse con su familia y el mundo.",
+         "Genera competencia entre los alumnos por obtener mayor reconocimiento familiar.",
+         "Desarrolla exclusivamente habilidades de comunicación oral y escrita.",
+         "Sustituye la necesidad del docente de generar vínculos afectivos con el estudiante."],
+    ok:0, fb:"Es muy importante orientar los sentimientos positivos hacia los alumnos: con ello se potencia su autoestima, se fortalece su psique, se vigoriza su ánimo y se les ofrece un horizonte más prometedor para relacionarse con su familia y el mundo. Ayuda a reflexionar y convertir en sentido común formas de enaltecer a la familia." },
+
+  // 12 – SITUACIÓN – correcta C
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la respuesta correcta:",
+    stxt:"La directora de una primaria convoca a una asamblea-taller. Al iniciar, presenta el orden del día y pide al grupo que lo apruebe; nombra a un padre de familia como secretario para levantar el acta; muestra las producciones del momento creativo de los alumnos; pide a los asistentes sugerencias de mejora; y cierra planteando: ¿Cómo abordamos la equidad en género y nutrición?, ¿qué hacemos para mejorar la seguridad escolar?, ¿qué han aportado las tareas familiares?",
+    ops:["La directora organiza una reunión burocrática ordinaria sin diferencias pedagógicas relevantes.",
+         "La directora omite elementos clave: debería haber iniciado mostrando las producciones antes de aprobar el orden del día.",
+         "La directora conduce correctamente la asamblea-taller: presenta y aprueba el orden del día, designa secretaria/o, muestra los materiales del momento creativo, recibe sugerencias y aborda las tres preguntas básicas que deben estar presentes en todas las asambleas.",
+         "La directora comete un error al permitir que los padres vean trabajos de los alumnos sin haber solicitado permiso previo."],
+    ok:2, fb:"La asamblea-taller debe: presentar el orden del día para aprobación, nombrar secretaria/o para el acta, mostrar materiales de la tarea familiar y momento creativo, recibir sugerencias de mejora y abordar las tres preguntas básicas: equidad, seguridad y aportación de las tareas familiares." },
+
+  // 13 – correcta B
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Cuál es la diferencia fundamental entre la tarea familiar y una tarea escolar convencional?",
+    ops:["La tarea familiar se califica mientras que la tarea escolar convencional no genera ninguna evaluación.",
+         "La tarea familiar es un instrumento para crear condiciones de diálogo con las familias de forma metódica, priorizando pensamientos positivos y armónicos; no es una actividad de refuerzo académico.",
+         "La tarea familiar la diseña la dirección escolar mientras que la convencional la diseña el docente.",
+         "La tarea familiar se realiza únicamente en festividades escolares como el Día de Muertos o la Independencia."],
+    ok:1, fb:"La tarea familiar es un instrumento clave para crear condiciones de diálogo con las familias de forma metódica. Se rige por la regla de oro (solo pensamientos positivos) y se presenta preferentemente por escrito. No es una tarea de refuerzo académico, sino un puente afectivo y cultural entre la escuela y la familia." },
+
+  // 14 – SITUACIÓN – correcta D
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y selecciona la interpretación más adecuada:",
+    stxt:"Después de varias semanas aplicando las secuencias de actividades, la maestra Irene nota cambios en su grupo: los niños hablan con orgullo de sus familias, son más solidarios entre sí y participan con mayor seguridad. Un alumno antes callado hoy presenta con entusiasmo la copla que su abuelo le enseñó, y sus compañeros lo aplauden.",
+    ops:["Los cambios observados son producto exclusivo de la madurez natural de los alumnos a lo largo del ciclo.",
+         "Los cambios se deben a que la maestra modificó su forma de calificar, generando mayor motivación.",
+         "Los cambios son temporales y se revertirán una vez que concluya la aplicación de las secuencias.",
+         "Los cambios son el efecto esperado de las secuencias: orientar los sentimientos positivos de la familia hacia el alumno potencia su autoestima, fortalece su psique y le ofrece un horizonte más prometedor. También ayuda a recordar y reflexionar sobre formas de enaltecer a la familia y hace la vida más alegre."],
+    ok:3, fb:"Al orientar los sentimientos positivos de la familia hacia los alumnos se potencia su autoestima, se fortalece su psique, se vigoriza su ánimo. Además, ayuda a recordar, reflexionar y convertir en sentido común diversas formas de enaltecer a la familia, a las hijas y los hijos y a la sociedad en general, y hace la vida más alegre." },
+
+  // 15 – Relación – correcta A
+  { tipo:"Relación de elementos", sit:false,
+    txt:"Seleccione la opción que relacione correctamente el elemento de la secuencia con su descripción:\n\n1. Actividad inicial\n2. Tarea familiar\n3. Momento creativo\n\na) Los alumnos leen, escriben, dialogan y reflexionan en el aula sobre valores de equidad.\nb) Los alumnos llevan a casa una actividad acordada para dialogar con sus familiares.\nc) Los alumnos exponen la tarea familiar y plasman una síntesis personal libre e innovadora.",
+    ops:["1a, 2b, 3c",
+         "1c, 2a, 3b",
+         "1b, 2c, 3a",
+         "1a, 2c, 3b"],
+    ok:0, fb:"La actividad inicial (1a) se realiza en el aula: leen, escriben y reflexionan. La tarea familiar (2b) se lleva a casa para dialogar con la familia. El momento creativo (3c) cierra la secuencia: los alumnos exponen y sintetizan con creatividad." },
+
+  // 16 – SITUACIÓN – correcta C
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la interpretación correcta:",
+    stxt:"El maestro Enrique trabaja el tema 'oficios de la comunidad' con alumnos de 3.° grado. Les pide que lean un texto breve sobre un artesano de su región, luego que escriban una carta imaginaria dirigida a ese artesano explicando por qué su oficio es valioso para la comunidad y qué les gustaría preguntarle. Al terminar, comparten sus cartas en voz alta.",
+    ops:["El maestro realiza únicamente una actividad de escritura creativa sin relación con la equidad.",
+         "El maestro evalúa la comprensión lectora de sus alumnos con fines de diagnóstico.",
+         "El maestro usa la comprensión lectora de forma significativa: esta progresa y se aviva al usarse para pensar, concebir e inventar cosas nuevas, para expresar y fortalecer afectos. Las cartas son símbolos de aprecio que generan compromisos con la sociedad, la familia y consigo mismos.",
+         "El maestro improvisa porque no cuenta con el material programado para esa sesión."],
+    ok:2, fb:"La comprensión lectora progresa y se aviva al usarse para pensar, concebir, inventar y producir algo nuevo que interesa y, sobre todo, para expresar y fortalecer nuestros afectos. En este proceso se generan múltiples símbolos de aprecio, modos de pensar e imaginar la vida armónica y proyectos comunes entre docentes y familias." },
+
+  // 17 – correcta D
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Cuál de los siguientes elementos NO forma parte de los tres componentes centrales de las secuencias de actividades descritos en el texto?",
+    ops:["La actividad inicial.",
+         "La tarea familiar.",
+         "El momento creativo.",
+         "La evaluación bimestral con rúbrica de desempeño."],
+    ok:3, fb:"Las secuencias contienen tres elementos en los que los alumnos son centrales: a) la actividad inicial, b) la tarea familiar, y c) el momento creativo. La evaluación bimestral con rúbrica no forma parte de la estructura de las secuencias descrita en el texto." },
+
+  // 18 – SITUACIÓN – correcta A
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y selecciona la respuesta más precisa:",
+    stxt:"El colectivo docente de la Escuela Primaria 'Sor Juana' debate la periodicidad de las secuencias. La maestra Rosa propone aplicarlas diariamente. El maestro Alberto sugiere hacerlo mensualmente. La directora Claudia propone implementarlas cada semana o cada quince días, de manera sistemática y continua, para fortalecer la colaboración con los centros escolares.",
+    ops:["La directora Claudia tiene razón: el texto sugiere desarrollar las secuencias cada semana o cada quince días —según lo determine el colectivo docente— de manera sistemática y continua.",
+         "El maestro Alberto tiene razón porque la periodicidad mensual permite mayor profundidad en cada secuencia.",
+         "La maestra Rosa tiene razón porque la aplicación diaria genera mayor impacto en los alumnos.",
+         "Las tres propuestas son igualmente válidas porque el texto no establece ninguna periodicidad específica."],
+    ok:0, fb:"Se sugiere que cada semana o cada quince días —según lo determine el colectivo docente— se desarrolle una secuencia de actividades en la que se solicite a todas las familias una sencilla tarea familiar, y que estas actividades se realicen de manera sistemática y continua." },
+
+  // 19 – correcta B
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Cuál es el propósito de que las producciones del momento creativo sean individuales en principio, pero puedan organizarse también en grupos?",
+    ops:["Para que los docentes puedan calificar con mayor facilidad el desempeño de cada alumno.",
+         "Para que los alumnos desarrollen primero su síntesis personal y luego puedan compartir y enriquecer el trabajo colectivo cuando el grupo o el docente lo considere necesario.",
+         "Para evitar que los alumnos más avanzados realicen el trabajo de sus compañeros.",
+         "Para cumplir con los lineamientos curriculares que exigen tanto actividades individuales como grupales."],
+    ok:1, fb:"Las producciones infantiles del momento creativo son en principio individuales. Sin embargo, también pueden organizarse en grupos para realizar este trabajo-juego cuando así parezca necesario o cuando los estudiantes así lo sugieran, enriqueciendo el proceso creativo y social." },
+
+  // 20 – SITUACIÓN – correcta C
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la respuesta correcta:",
+    stxt:"La maestra Lucía advierte que al compartir las producciones del momento creativo frente al grupo, sus alumnos mejoran su confianza, se escuchan más entre sí y muestran mayor disposición para aprender. Decide exponer los mejores trabajos durante la asamblea con padres de familia. Sin embargo, se pregunta: ¿debería seleccionar solo los más sobresalientes?",
+    ops:["Sí, la maestra solo debe exponer los mejores trabajos para motivar la excelencia en el grupo.",
+         "No, la maestra debe omitir la exposición para no generar presión innecesaria sobre los alumnos.",
+         "No, la maestra debe asegurarse de que nadie quede sin exponer alguno de sus trabajos, señalando logros grandes y pequeños ante las autoridades y, si es posible, en presencia de sus creadores.",
+         "Sí, la maestra debe pedir a los padres de familia que voten por los mejores trabajos en la asamblea."],
+    ok:2, fb:"Nadie debe quedarse sin exponer alguno de sus trabajos. En el contexto de cada exposición deben señalarse los logros, grandes y pequeños, ante las autoridades y, si es posible, en presencia de sus creadores. Esto eleva la autoestima y la inteligencia emocional de todos los alumnos." },
+
+  // 21 – correcta D
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Qué aportan específicamente las tareas familiares a la escuela, más allá del aspecto académico?",
+    ops:["Estadísticas socioeconómicas útiles para gestionar apoyos federales para las familias.",
+         "Materiales de evaluación que complementan las calificaciones registradas por el docente.",
+         "Recursos tecnológicos que modernizan la práctica pedagógica del colectivo docente.",
+         "Vínculos, códigos, símbolos, temáticas locales y regionales, maneras propias de discernir y elementos de la idiosincrasia local que enriquecen el contexto cultural del aprendizaje."],
+    ok:3, fb:"La colaboración de las familias proporciona a la escuela vínculos, códigos, símbolos, temáticas locales y regionales, maneras propias de discernir y elementos de la idiosincrasia local, entre otras grandes ventajas. Todo esto habla del contexto cultural y de la simbología en la que viven los estudiantes en sus hogares." },
+
+  // 22 – SITUACIÓN – correcta A
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la interpretación más adecuada:",
+    stxt:"La maestra Verónica trabaja con su grupo el tema de la inequidad de género. Organiza equipos y pide que enlisten: ¿quién lava la ropa en casa?, ¿quién toma las decisiones económicas?, ¿quién cuida a los enfermos? Luego reflexionan: ¿estas diferencias son naturales o aprendidas?, ¿qué aspectos convendría modificar para actuar con mayor equidad?",
+    ops:["La maestra trabaja correctamente la inequidad de género: promueve el análisis de actitudes que obstaculizan los derechos de niñas y mujeres, tomando en cuenta aspectos clave para minar las formas de dominación: respeto mutuo, colaboración, ternura, apoyo recíproco y cuidado del otro.",
+         "La maestra introduce temas inapropiados para la edad de los alumnos de educación primaria.",
+         "La maestra genera conflictos familiares al cuestionar la distribución de tareas en los hogares.",
+         "La maestra debe abordar este tema solo con las alumnas, no con todo el grupo."],
+    ok:0, fb:"Es posible enfrentar la inequidad de género al promover sistemáticamente el análisis de actitudes que obstaculizan los derechos de niñas y mujeres. En las actividades propuestas se toman en cuenta aspectos clave: diversas modalidades de respeto mutuo, colaboración en casa, ternura en hombres y mujeres, apoyo recíproco, amistad y cuidado del otro." },
+
+  // 23 – correcta C
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"La relación familia-escuela se planteaba en el pasado desde una 'perspectiva de división de funciones'. ¿Cómo se plantea hoy, según el texto?",
+    ops:["Desde una perspectiva en la que la escuela asume todas las funciones de socialización que antes correspondían a la familia.",
+         "Desde una perspectiva de subordinación, donde la familia debe acatar las decisiones de la escuela.",
+         "Desde una perspectiva de complementariedad, donde ambas instituciones comparten la responsabilidad de formar a las nuevas generaciones.",
+         "Desde una perspectiva de competencia, donde ambas instituciones disputan la influencia sobre el alumno."],
+    ok:2, fb:"Las relaciones familia-escuela se plantean actualmente en términos de complementariedad: ninguna de las dos puede afrontar en solitario el reto que supone la educación. Familia y escuela comparten la responsabilidad de formar a las nuevas generaciones y tienen el objetivo común de educar a la persona, que es única." },
+
+  // 24 – correcta B
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Qué se entiende por 'compromiso moral protector y de cohesión social' en el modelo de colaboración propuesto?",
+    ops:["Un contrato formal entre escuela y familias que establece responsabilidades legales específicas.",
+         "Un factor generado por la colaboración escuela-familia que es importante para la creación de un ambiente que favorezca la formación académica, cívica y ética de la comunidad.",
+         "Un reglamento interno elaborado por el colectivo docente para regular la convivencia escolar.",
+         "Un programa gubernamental de seguimiento al desempeño de las familias en las actividades escolares."],
+    ok:1, fb:"Con el modelo propuesto se suscita la generación de un compromiso moral protector y de cohesión social; factores que son muy importantes para la creación de un ambiente que favorezca y fortalezca la formación académica, cívica y ética de la comunidad educativa y su entorno." },
+
+  // 25 – SITUACIÓN – correcta D
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y selecciona la respuesta correcta:",
+    stxt:"En la asamblea-taller, la directora observa que varios padres de familia narran con emoción cómo al escribir la tarea familiar descubrieron cosas que nunca le habían dicho a sus hijos. Un padre comenta: 'Al saber que la nota se iba a leer en clase, me aseguré de escribir solo cosas bonitas'. Otra madre agrega: 'Mi hija guardó la nota; dice que la lee cuando se siente triste'.",
+    ops:["El formato escrito de la tarea familiar es un error porque no todos los padres saben escribir bien.",
+         "Los padres están condicionados por el formato y no expresan sus sentimientos reales.",
+         "Las reacciones de los padres muestran que la tarea escrita genera presión innecesaria en las familias.",
+         "Las reacciones ilustran por qué la tarea se presenta normalmente por escrito: quien la envía sabe que se comentará, expondrá y archivará, por lo que prefiere un tono amable; esto orienta el imaginario familiar hacia modelos de armonía y unidad que fortalecen la autoestima del alumno."],
+    ok:3, fb:"Al poner por escrito las narraciones, el imaginario familiar tiende a orientarse hacia los modelos ideales de armonía hogareña y de unidad familiar. Quien envía la tarea familiar sabe que se va a comentar, a exponer, a archivar y preferirá un tono amable, lo que potencia la autoestima del alumno." },
+
+  // 26 – correcta A
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Cuáles son las tres preguntas básicas que el texto recomienda abordar en TODAS las asambleas-taller?",
+    ops:["¿Cómo abordamos la equidad en diversos terrenos?, ¿qué debemos hacer para mejorar la seguridad en casa, escuela y trayecto?, y ¿qué han aportado las tareas familiares a sus hogares y a la escuela?",
+         "¿Cómo mejorar las calificaciones?, ¿cómo reducir el ausentismo?, y ¿cómo distribuir mejor los materiales escolares?",
+         "¿Cómo evaluar a los docentes?, ¿cómo participar en actividades extracurriculares?, y ¿cómo gestionar los recursos de la escuela?",
+         "¿Qué actividades recreativas proponer?, ¿cómo organizar las guardias de padres?, y ¿cómo mejorar la alimentación escolar?"],
+    ok:0, fb:"Las tres preguntas básicas que deben abordarse en todas las asambleas son: 1) ¿Cómo abordamos la equidad en terrenos como capacidades especiales, género y nutrición? 2) ¿Qué debemos hacer para mejorar la seguridad en casa, escuela y trayecto? 3) ¿Qué han aportado las tareas familiares a sus hogares, a cada uno y a la escuela?" },
+
+  // 27 – SITUACIÓN – correcta B
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la respuesta que mejor la explica:",
+    stxt:"El colectivo docente de la escuela debate si las asambleas-taller deben realizarse en horarios diferentes a las reuniones de padres habituales. La subdirectora propone aprovechar las reuniones ya programadas pero transformarlas: darles un sentido distinto y de provecho, donde el centro sean siempre las niñas, niños y adolescentes, y que incluyan la exposición de las producciones del momento creativo.",
+    ops:["La subdirectora se equivoca: las asambleas-taller deben convocarse en horarios independientes para no confundirlas con las reuniones ordinarias.",
+         "La subdirectora está en lo correcto: las asambleas-taller pueden coincidir con las reuniones habituales, pero dándoles un sentido distinto y de provecho para los participantes, buscando siempre que el centro sean las niñas, los niños y adolescentes.",
+         "La subdirectora propone algo inviable porque los padres ya están cansados con las reuniones ordinarias.",
+         "La subdirectora viola el reglamento escolar al modificar el formato oficial de las reuniones de padres."],
+    ok:1, fb:"Se sugiere que las asambleas-taller coincidan con las reuniones que habitualmente se realizan en los planteles, pero dándoles un sentido distinto y de provecho para los diferentes participantes, buscando siempre que el centro sean las niñas, los niños y adolescentes, compartiendo experiencias y enriqueciendo la vida de los asistentes." },
+
+  // 28 – correcta C
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Qué papel juega la elaboración del árbol genealógico de oficios como actividad inicial, según el ejemplo del texto?",
+    ops:["Sirve exclusivamente para que los alumnos practiquen el dibujo y la representación gráfica.",
+         "Permite al docente identificar el nivel socioeconómico de las familias para solicitar apoyos.",
+         "Detona una reflexión sobre la historia familiar que lleva a un conocimiento cada vez más elaborado, generando preguntas y comentarios sobre los trabajos y oficios de la familia y su contribución a la sociedad.",
+         "Es una actividad de evaluación diagnóstica que permite conocer los conocimientos previos del alumno."],
+    ok:2, fb:"Cuando los maestros trabajan el árbol genealógico de oficios, pueden detonar una reflexión con preguntas y comentarios, y con ello comienza un conocimiento cada vez más elaborado de la historia familiar. Esta actividad conecta el aprendizaje con el contexto cultural y afectivo del alumno." },
+
+  // 29 – correcta D
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Qué justifica, según el texto, recolectar y archivar las tareas familiares, especialmente cuando presentan valores que fortalecen los vínculos entre los integrantes de la familia?",
+    ops:["Para utilizarlas como evidencia de la participación de los padres en la evaluación docente.",
+         "Para que la SEP pueda verificar el nivel cultural de las comunidades escolares del país.",
+         "Para utilizarlas como material de diagnóstico socioeconómico en los programas de apoyo escolar.",
+         "Porque reflejan el contexto cultural y la simbología en la que viven los estudiantes en sus hogares; los alumnos deben archivarlas, escribir y recrear sus temáticas mediante géneros literarios, aplicaciones matemáticas y otras formas expresivas."],
+    ok:3, fb:"Todo esto habla del contexto cultural y de la simbología en la que viven los estudiantes en sus hogares. Será importante que los alumnos archiven estas riquezas, que escriban y recreen sus temáticas mediante diversos géneros literarios, aplicaciones matemáticas, experimentos científicos, perspectivas geográficas, representaciones históricas y teatrales, entre otras." },
+
+  // 30 – SITUACIÓN – correcta A
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la respuesta más precisa:",
+    stxt:"El maestro Gerardo lleva varios meses con las secuencias de actividades. Nota que, con el tiempo, las tareas familiares traen cada vez más materiales interesantes: coplas, recetas antiguas, fotografías históricas y relatos de migración. El maestro guarda todo y lo organiza en un archivo de la comunidad que comparte con el grupo en diversas asignaturas.",
+    ops:["El maestro ejemplifica correctamente la recomendación del texto: es importante coleccionar estas tareas, sobre todo cuando presentan valores que fortalecen los vínculos. Los alumnos deben archivarlas y recrear sus temáticas mediante géneros literarios, matemáticas, historia y otras formas expresivas.",
+         "El maestro incumple los lineamientos porque está usando materiales no autorizados en otras asignaturas.",
+         "El maestro pierde tiempo archivando materiales que no tienen valor curricular.",
+         "El maestro viola la privacidad de las familias al guardar y compartir sus materiales personales con el grupo."],
+    ok:0, fb:"Será importante pedir a las familias que el producto de la tarea se evidencie por medio de alguna expresión artística, especialmente si es propia de la localidad. Es importante coleccionar estas tareas, sobre todo cuando presenten valores que fortalezcan los vínculos entre los integrantes, y que los alumnos las archiven y recreen mediante diversas formas expresivas." },
+
+  // 31 – correcta C
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿A qué se refiere el texto cuando afirma que las secuencias de actividades 'propician la formación de redes de apoyo comunitario'?",
+    ops:["A la creación de grupos de WhatsApp entre padres de familia para compartir información escolar.",
+         "A la organización de cooperativas de padres que financian materiales para la escuela.",
+         "A la generación de conexiones de recursos personales y sociales útiles que crean un ambiente solidario y un sistema de vigilancia social frente a posibles peligros y problemas.",
+         "A la formación de comités de padres que participan en la vigilancia del comportamiento de los alumnos."],
+    ok:2, fb:"Las secuencias de actividades propician la formación de redes de apoyo comunitario para actuar frente a los problemas, así como conexiones de recursos personales y sociales útiles que son generadores de un ambiente solidario y de un sistema de vigilancia social frente a posibles peligros y problemas." },
+
+  // 32 – correcta B
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"El texto menciona que las actividades propuestas 'han sido probadas en diferentes escuelas, desde indígenas hasta ubicadas en zonas urbanas, durante más de dos décadas'. ¿Qué implica esto para el docente que las utiliza?",
+    ops:["Que las actividades son perfectas y no requieren ninguna adaptación al contexto del docente.",
+         "Que las actividades han sido validadas en contextos muy diversos, lo que da confianza al docente; sin embargo, cada colectivo puede y debe crear otras actividades con base en su experiencia, cultura y talentos.",
+         "Que las actividades solo son aplicables en escuelas con características similares a las que las desarrollaron originalmente.",
+         "Que el docente debe aplicarlas exactamente como están escritas, sin ninguna modificación."],
+    ok:1, fb:"Las actividades propuestas se han desarrollado con la participación de colectivos docentes y se han probado en diferentes escuelas durante más de dos décadas. Los docentes podrán adaptar los contenidos y materiales educativos a los alumnos que atienden, a sus condiciones y gustos, y crear otras secuencias con base en su experiencia." },
+
+  // 33 – SITUACIÓN – correcta D
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y selecciona la respuesta más adecuada:",
+    stxt:"La maestra Consuelo imparte 2.° grado en una escuela urbana. Cada quince días aplica una secuencia. Esta vez, la actividad inicial consiste en que los alumnos escuchen una historia sobre una niña que ayuda a su vecina anciana, luego escriban cómo se sintieron y qué harían ellos en esa situación. Al final del día llevan una nota a casa para que sus familiares escriban un ejemplo de solidaridad en su familia.",
+    ops:["La maestra comete un error porque la actividad inicial y la tarea familiar deben tratarse en sesiones completamente separadas.",
+         "La maestra realiza únicamente una actividad de lectura y escritura sin relación con los valores de equidad.",
+         "La maestra aplica correctamente la actividad inicial, pero omite el elemento más importante: el momento creativo.",
+         "La maestra aplica correctamente la estructura de la secuencia: la actividad inicial (reflexión sobre valores en el aula) anticipa y prepara la tarea familiar (diálogo con la familia sobre solidaridad), cumpliendo la función de que los alumnos tengan 'ejemplos y razones, según su edad' para dialogar con su familia."],
+    ok:3, fb:"Antes de solicitar la tarea, niñas, niños y adolescentes han platicado en la actividad inicial aspectos de su familia con sus compañeros y se han preparado para dialogar con sus parientes. Han reflexionado junto con sus maestros sobre las temáticas tratadas; ya tienen ejemplos y razones, según su edad y sus capacidades, así podrán platicar con su familia." },
+
+  // 34 – correcta A
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Cuál de las siguientes afirmaciones describe mejor el rol de la escuela frente a la inequidad de género, según el texto?",
+    ops:["La escuela puede avanzar en la garantía de los derechos de niñas y mujeres mediante el análisis sistemático de actitudes que los obstaculizan, abordando el respeto mutuo, la colaboración, la ternura y el apoyo recíproco.",
+         "La escuela debe limitarse a informar sobre la inequidad de género sin intervenir en las dinámicas familiares.",
+         "La escuela tiene un papel secundario porque la inequidad de género se resuelve únicamente desde políticas gubernamentales.",
+         "La escuela solo puede abordar la inequidad de género en los niveles de secundaria y media superior."],
+    ok:0, fb:"El trabajo en el aula y en la comunidad educativa no acabará en breve con las múltiples dimensiones de la relación de violencia y sumisión de la mujer. No obstante, es posible abrir caminos de solución y esperanza. Las actividades propuestas toman en cuenta aspectos clave como el respeto mutuo, la colaboración, la ternura, el apoyo recíproco y el cuidado del otro." },
+
+  // 35 – SITUACIÓN – correcta B
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la interpretación correcta:",
+    stxt:"El maestro Félix organiza una exposición en el pasillo escolar con los trabajos del momento creativo: pinturas, poemas y maquetas que los alumnos elaboraron sobre las tradiciones de sus familias. Durante la asamblea, los padres de familia recorren la exposición. Varios se emocionan al reconocer sus propias tradiciones reflejadas en las obras. Un padre comenta: 'No sabía que mi hijo guardaba eso de nuestra familia'.",
+    ops:["El maestro organiza la exposición solo para cumplir un requisito administrativo de evidencias.",
+         "La exposición ejemplifica el efecto esperado del momento creativo: la comunidad aprecia cómo la escuela valora sus tradiciones y remembranzas, sus recuerdos de amistad, paz, cuidado y solidaridad. Para los alumnos, ver sus creaciones expuestas y compartidas es un estímulo académico y eleva su autoestima.",
+         "El maestro comete un error al exponer trabajos personales de las familias sin su consentimiento formal.",
+         "La exposición genera un efecto contraproducente porque no todos los alumnos tienen el mismo nivel artístico."],
+    ok:1, fb:"La comunidad apreciará cómo la escuela valora sus tradiciones y remembranzas, sus recuerdos de amistad, de paz, cuidado, solidaridad y de otros valores positivos. Para los alumnos, ver sus creaciones expuestas y compartidas es un gusto. También es un estímulo académico, una especie de conclusión y un ingrediente más para reflexionar sobre los temas tratados." },
+
+  // 36 – correcta C
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Por qué es importante, según el texto, que en las exposiciones de trabajos se señalen los logros grandes y pequeños 'ante las autoridades y, si es posible, en presencia de sus creadores'?",
+    ops:["Para que las autoridades evalúen el desempeño docente con base en la calidad de los trabajos.",
+         "Para que los alumnos con mejores trabajos reciban premios que los motiven a seguir esforzándose.",
+         "Porque nadie debe quedarse sin exponer alguno de sus trabajos; esto reconoce el esfuerzo individual, eleva la autoestima de todos los alumnos y establece una práctica regular que estimula el aprendizaje y la inteligencia emocional.",
+         "Para cumplir con los lineamientos administrativos de evidencias del programa escolar."],
+    ok:2, fb:"Nadie debe quedarse sin exponer alguno de sus trabajos. En el contexto de cada exposición deben señalarse los logros, grandes y pequeños, ante las autoridades y, si es posible, en presencia de sus creadores. Esta práctica regular tiende a elevar la autoestima y la inteligencia emocional." },
+
+  // 37 – SITUACIÓN – correcta D
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y elige la respuesta más adecuada:",
+    stxt:"El Consejo Técnico Escolar debate si las actividades del fichero son aplicables solo en escuelas 'bien organizadas'. La maestra Esperanza argumenta que, al contrario, estas actividades son especialmente valiosas en contextos difíciles porque generan redes de apoyo. Menciona que han sido probadas en escuelas indígenas, zonas urbanas marginadas y en la zona conurbada de la Ciudad de México.",
+    ops:["La maestra Esperanza se equivoca: las actividades requieren condiciones escolares ideales para funcionar.",
+         "La maestra Esperanza exagera porque las actividades fueron diseñadas solo para escuelas urbanas con recursos.",
+         "La maestra Esperanza confunde el propósito de las actividades, que es exclusivamente cultural y no social.",
+         "La maestra Esperanza tiene razón: las actividades han sido probadas en muy diversas condiciones y contextos durante más de dos décadas, especialmente en la zona conurbada de la Ciudad de México y en el sureste del país; están diseñadas para adaptarse a cualquier contexto."],
+    ok:3, fb:"Las actividades propuestas se han desarrollado con la participación de colectivos docentes y se han probado en diferentes escuelas, desde indígenas hasta ubicadas en zonas urbanas, y con diversos tipos de familias en muchas partes del territorio nacional, durante más de dos décadas. Especialmente en la zona conurbada de la Ciudad de México y en el sureste del país." },
+
+  // 38 – correcta A
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"¿Qué función cumple el 'colectivo docente' dentro del modelo de trabajo propuesto en el texto?",
+    ops:["Es el grupo que analiza, adapta e implementa las secuencias de actividades, dialogando sobre cómo ha sido la relación con las familias y cómo podrían vincularse mejor con la escuela para avanzar en la equidad.",
+         "Es el grupo responsable exclusivamente de evaluar el desempeño académico de los alumnos.",
+         "Es el órgano administrativo que gestiona los recursos materiales del plantel.",
+         "Es el equipo que diseña los exámenes bimestrales y establece los criterios de acreditación."],
+    ok:0, fb:"El fichero ofrece a los colectivos docentes espacios de diálogo para reflexionar sobre cómo ha sido la relación con las familias de los alumnos, cuáles son los contenidos usuales de diálogo, de qué manera estas colaboran en la educación de sus hijos y de qué otras maneras podrían vincularse la familia y la escuela." },
+
+  // 39 – correcta B
+  { tipo:"Cuestionamiento directo", sit:false,
+    txt:"El texto afirma que 'la mejor forma de promover la equidad en general y la equidad de género en particular, desde la escuela, es potenciar el diálogo'. ¿Cuál de los siguientes valores complementa ese diálogo según el texto?",
+    ops:["La disciplina, la autoridad y la obediencia a las normas del sistema educativo.",
+         "El respeto mutuo, la comprensión, la empatía y la solidaridad, que son la base de una sociedad justa y pacífica.",
+         "La competencia académica, la meritocracia y el reconocimiento del esfuerzo individual.",
+         "La tolerancia cero ante las conductas que reproduzcan desigualdad en el aula."],
+    ok:1, fb:"La mejor forma de promover la equidad en general y la equidad de género en particular, desde la escuela, es potenciar el diálogo, el respeto mutuo, la comprensión, la empatía y la solidaridad, que son la base de una sociedad justa y pacífica." },
+
+  // 40 – SITUACIÓN – correcta C
+  { tipo:"Situación en el aula", sit:true,
+    txt:"Lee la situación y selecciona la respuesta que mejor la explica:",
+    stxt:"La maestra Dolores lleva un año aplicando las secuencias de actividades. Al evaluar el proceso con su colectivo docente, concluyen que el vínculo con las familias se ha fortalecido, los alumnos muestran mayor autoestima y seguridad, y la comunidad escolar ha generado lazos afectivos más sólidos. Sin embargo, algunos docentes preguntan: '¿Esto realmente tiene que ver con el derecho a la educación?'",
+    ops:["No, las secuencias son actividades complementarias que no guardan relación con el derecho a la educación.",
+         "Solo parcialmente: el derecho a la educación se refiere únicamente a acceso y cobertura, no a las formas de convivencia.",
+         "Sí: el modelo contribuye a avanzar en el derecho a la educación y en la formación de una ciudadanía empática y participativa; la escuela promotora de equidad forma personas con seguridad en sí mismas, creativas, colaboradoras y resilientes, lo cual es parte esencial de una educación integral.",
+         "No es posible saberlo porque el texto no establece una relación directa entre las secuencias y los derechos educativos."],
+    ok:2, fb:"El colectivo docente encontrará aquí un modelo de diálogo e intercambio con las familias —con amplia participación de los alumnos— que contribuya a avanzar en el derecho a la educación y en la formación de una ciudadanía empática y participativa. Una comunidad educativa promotora de equidad forma personas seguras, creativas, colaboradoras y resilientes." }
+];
+
+let nombreAlumno="",indiceActual=0,respuestasCorrectas=0,respondida=false;
+const letras=["A","B","C","D"];
+
+function iniciarSimulador(){
+  const inp=document.getElementById("input-nombre");
+  nombreAlumno=inp.value.trim();
+  if(!nombreAlumno){inp.style.borderColor="#EF5350";inp.focus();return;}
+  inp.style.borderColor="";
+  indiceActual=0;respuestasCorrectas=0;respondida=false;
+  document.getElementById("pantalla-inicio").style.display="none";
+  document.getElementById("pantalla-examen").style.display="block";
+  document.getElementById("cab-nombre").textContent=nombreAlumno;
+  mostrarPregunta();
+}
+
+function mostrarPregunta(){
+  respondida=false;
+  const p=preguntas[indiceActual],total=preguntas.length;
+  document.getElementById("cab-progreso").textContent=`Pregunta ${indiceActual+1} / ${total}`;
+  document.getElementById("barra").style.width=`${((indiceActual+1)/total)*100}%`;
+  document.getElementById("num-pregunta").textContent=`Pregunta ${indiceActual+1} de ${total}`;
+  const wrap=document.getElementById("etiqueta-wrap");
+  wrap.innerHTML=`<span class="etiqueta-formato">${p.tipo}</span>`;
+  if(p.sit) wrap.innerHTML+=`<span class="etiqueta-situacion">🏫 Situación de aula</span>`;
+  document.getElementById("texto-pregunta").innerHTML=p.txt.replace(/\n/g,"<br>");
+  const sb=document.getElementById("situacion-box");
+  if(p.sit&&p.stxt){sb.style.display="block";sb.innerHTML=`<strong>📌 Situación:</strong> ${p.stxt}`;}
+  else{sb.style.display="none";}
+  const cont=document.getElementById("opciones");cont.innerHTML="";
+  p.ops.forEach((op,i)=>{
+    const div=document.createElement("div");div.className="opcion";
+    div.innerHTML=`<div class="letra-opcion">${letras[i]}</div><div class="texto-opcion">${op}</div>`;
+    div.addEventListener("click",()=>seleccionar(i,div));
+    cont.appendChild(div);
+  });
+  const fb=document.getElementById("feedback");fb.style.display="none";fb.className="feedback";
+  document.getElementById("btn-siguiente").style.display="none";
+  const t=document.getElementById("tarjeta-pregunta");t.style.animation="none";void t.offsetWidth;t.style.animation="deslizar .4s ease";
+}
+
+function seleccionar(idx,elDiv){
+  if(respondida)return;respondida=true;
+  const p=preguntas[indiceActual];
+  document.querySelectorAll(".opcion").forEach(o=>o.classList.add("bloqueada"));
+  const fb=document.getElementById("feedback");
+  if(idx===p.ok){
+    respuestasCorrectas++;elDiv.classList.add("correcta");
+    fb.className="feedback correcto";
+    fb.innerHTML=`✅ <strong>¡Correcto!</strong> ${p.fb}`;
+  } else {
+    elDiv.classList.add("incorrecta");
+    document.querySelectorAll(".opcion")[p.ok].classList.add("correcta");
+    fb.className="feedback incorrecto";
+    fb.innerHTML=`❌ <strong>Incorrecto.</strong> ${p.fb}`;
+  }
+  fb.style.display="block";
+  const btn=document.getElementById("btn-siguiente");
+  btn.textContent=indiceActual<preguntas.length-1?"Siguiente pregunta →":"Ver mis resultados 🎯";
+  btn.style.display="inline-block";
+}
+
+function siguientePregunta(){
+  indiceActual++;
+  if(indiceActual<preguntas.length)mostrarPregunta();else mostrarResultados();
+}
+
+function mostrarResultados(){
+  document.getElementById("pantalla-examen").style.display="none";
+  document.getElementById("pantalla-resultados").style.display="block";
+  const total=preguntas.length,inc=total-respuestasCorrectas,pct=Math.round((respuestasCorrectas/total)*100);
+  document.getElementById("res-nombre").textContent=nombreAlumno;
+  document.getElementById("res-correctas").textContent=respuestasCorrectas;
+  document.getElementById("res-incorrectas").textContent=inc;
+  document.getElementById("res-pct").textContent=pct+"%";
+  document.getElementById("pct-label").textContent=`${respuestasCorrectas} de ${total} preguntas correctas`;
+  setTimeout(()=>{document.getElementById("barra-res").style.width=pct+"%";},200);
+  let e,m;
+  if(pct>=90){e="🏆";m="¡Excelente desempeño! Dominas muy bien los conceptos de equidad educativa. ¡Eres un referente para tu comunidad!";}
+  else if(pct>=75){e="🌟";m="¡Muy buen trabajo! Tienes una sólida comprensión del tema. Repasa los conceptos donde tuviste dudas para alcanzar la excelencia.";}
+  else if(pct>=60){e="📚";m="Buen esfuerzo. Vas por buen camino. Te recomendamos repasar el material sobre equidad y secuencias de actividades.";}
+  else{e="💪";m="¡No te rindas! Cada intento es una oportunidad de aprendizaje. Revisa el contenido con calma y vuelve a intentarlo.";}
+  document.getElementById("emoji-res").textContent=e;
+  document.getElementById("mensaje-motivador").textContent=m;
+}
+
+function reiniciar(){
+  document.getElementById("pantalla-resultados").style.display="none";
+  document.getElementById("pantalla-inicio").style.display="flex";
+  document.getElementById("input-nombre").value="";
+}
+document.getElementById("input-nombre").addEventListener("keypress",e=>{if(e.key==="Enter")iniciarSimulador();});
+</script>
+</body>
+</html>

@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guía de Estudio – Cultura de Paz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root{
+  --rosa:#c0392b;
+  --rosa-med:#e74c3c;
+  --rosa-claro:#fdecea;
+  --rosa-borde:#f5c6c2;
+  --morado:#6c3483;
+  --morado-claro:#f5eef8;
+  --verde:#1e8449;
+  --verde-claro:#eafaf1;
+  --dorado:#d4ac0d;
+  --dorado-claro:#fef9e7;
+  --azul:#1a5276;
+  --azul-claro:#eaf2ff;
+  --gris-bg:#f9f5f4;
+  --gris-texto:#2c2c2c;
+  --blanco:#fff;
+  --sombra:rgba(192,57,43,.12);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gris-bg);color:var(--gris-texto);overflow-x:hidden}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,#6c3483 0%,#c0392b 55%,#e67e22 100%);
+  padding:2.6rem 1.5rem 2.2rem;text-align:center;position:relative;overflow:hidden;
+}
+header::after{
+  content:'☮';position:absolute;right:-20px;bottom:-30px;
+  font-size:12rem;opacity:.06;line-height:1;
+}
+.hdr-badge{
+  display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.38);
+  color:#fde8ff;font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:.35rem 1rem;border-radius:50px;margin-bottom:.9rem;backdrop-filter:blur(6px);
+}
+header h1{
+  font-family:'Fraunces',serif;font-size:clamp(1.7rem,5vw,3rem);color:#fff;
+  line-height:1.2;margin-bottom:.4rem;text-shadow:0 2px 14px rgba(0,0,0,.25);
+}
+header h1 span{color:#ffe0a0}
+.hdr-sub{color:rgba(255,255,255,.82);font-size:1rem;font-weight:300;margin-bottom:.2rem}
+.hdr-autor{
+  display:inline-flex;align-items:center;gap:.5rem;margin-top:.85rem;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+  padding:.4rem 1.1rem;border-radius:50px;color:#fff2f2;font-size:.9rem;font-weight:600;
+}
+
+/* ── PROGRESS ── */
+.prog-wrap{background:#3d0c1d;padding:.55rem 1.2rem;display:flex;align-items:center;gap:.75rem}
+.prog-lbl{color:#f5a9a9;font-size:.73rem;font-weight:700;white-space:nowrap}
+.prog-outer{flex:1;height:6px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden}
+.prog-inner{height:100%;background:linear-gradient(90deg,#e74c3c,#f39c12);border-radius:10px;transition:width .5s ease;width:0%}
+.prog-pct{color:#fff;font-size:.73rem;font-weight:800;min-width:2.5rem;text-align:right}
+
+/* ── NAV ── */
+.nav-wrap{background:#fff;border-bottom:2px solid var(--rosa-borde);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px var(--sombra)}
+.nav-tabs{display:flex;overflow-x:auto;max-width:1000px;margin:0 auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{
+  flex-shrink:0;padding:.9rem 1.05rem;border:none;background:transparent;
+  color:#8a6060;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;
+  cursor:pointer;border-bottom:3px solid transparent;transition:all .22s;white-space:nowrap;
+  display:flex;align-items:center;gap:.35rem;
+}
+.nav-tab:hover{color:var(--rosa-med);background:var(--rosa-claro)}
+.nav-tab.active{color:var(--rosa);border-bottom-color:var(--rosa-med);background:var(--rosa-claro)}
+
+/* ── SECCIONES ── */
+.sec-wrap{max-width:1000px;margin:0 auto;padding:2rem 1.2rem 3rem}
+.section{display:none;animation:fadeUp .4s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:#fff;border-radius:16px;padding:1.8rem;box-shadow:0 4px 24px var(--sombra);border:1.5px solid var(--rosa-borde);margin-bottom:1.4rem}
+.card-rojo{background:linear-gradient(135deg,var(--rosa),var(--rosa-med));color:#fff;border:none}
+.card-morado{background:linear-gradient(135deg,var(--morado),#9b59b6);color:#fff;border:none}
+.card-verde{background:linear-gradient(135deg,var(--verde),#27ae60);color:#fff;border:none}
+.card-gold{background:linear-gradient(135deg,#d4ac0d,#f1c40f);color:#3a2800;border:none}
+.card-mint{background:var(--rosa-claro);border-color:var(--rosa-borde)}
+.card-azul{background:var(--azul-claro);border-color:#aac4e6}
+.card h2{font-family:'Fraunces',serif;font-size:1.45rem;margin-bottom:.75rem}
+.card h3{font-family:'Fraunces',serif;font-size:1.1rem;margin-bottom:.45rem;color:var(--rosa)}
+.card-rojo h3,.card-morado h3,.card-verde h3,.card-gold h3,.card-rojo h2,.card-morado h2,.card-verde h2{color:inherit}
+.card p,.card li{font-size:1.01rem;line-height:1.78}
+.card ul{padding-left:1.3rem}
+.card ul li{margin-bottom:.4rem}
+
+/* ── SECTION TITLE ── */
+.sec-title{font-family:'Fraunces',serif;font-size:clamp(1.35rem,3.5vw,2rem);color:var(--rosa);margin-bottom:.35rem}
+.sec-desc{color:#7a4a48;font-size:.98rem;margin-bottom:1.8rem;padding-bottom:1rem;border-bottom:2px dashed var(--rosa-borde)}
+.sec-badge{display:inline-flex;align-items:center;gap:.35rem;background:var(--rosa-claro);color:var(--rosa);border-radius:50px;padding:.3rem .85rem;font-size:.76rem;font-weight:700;margin-bottom:.9rem;text-transform:uppercase;letter-spacing:.08em}
+
+/* ── GRID 2 ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:650px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ── CALLOUT ── */
+.callout{border-left:5px solid var(--rosa-med);background:var(--rosa-claro);padding:1.1rem 1.4rem;border-radius:0 12px 12px 0;margin:1.2rem 0;font-size:1.05rem;font-style:italic;color:var(--rosa);font-weight:600}
+
+/* ── ACORDEÓN ── */
+.accordion{margin-bottom:.8rem;border-radius:12px;overflow:hidden;border:1.5px solid var(--rosa-borde)}
+.acc-hdr{width:100%;text-align:left;padding:1.05rem 1.3rem;background:#fff8f7;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--rosa);display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.acc-hdr:hover{background:var(--rosa-borde)}
+.acc-hdr.open{background:var(--rosa);color:#fff}
+.acc-icon{font-size:1.2rem;transition:transform .3s}
+.acc-hdr.open .acc-icon{transform:rotate(45deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;background:#fff;padding:0 1.4rem;font-size:1rem;line-height:1.75;color:var(--gris-texto)}
+.acc-body.open{max-height:700px;padding:1.1rem 1.4rem}
+
+/* ── COMPETENCIA CARDS ── */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.4rem}
+.comp-item{background:#fff;border:2px solid var(--rosa-borde);border-radius:14px;padding:1.2rem .9rem;text-align:center;transition:all .22s;cursor:default}
+.comp-item:hover{border-color:var(--rosa-med);background:var(--rosa-claro);transform:translateY(-3px);box-shadow:0 8px 20px var(--sombra)}
+.comp-icon{font-size:2rem;margin-bottom:.45rem}
+.comp-name{font-weight:800;font-size:.88rem;color:var(--rosa);margin-bottom:.25rem}
+.comp-def{font-size:.78rem;color:#666;line-height:1.5}
+
+/* ── PASOS / STEPS ── */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:1.1rem;align-items:flex-start;padding:1.2rem 0;border-bottom:1px dashed var(--rosa-borde)}
+.step:last-child{border-bottom:none}
+.step-num{flex-shrink:0;width:42px;height:42px;background:linear-gradient(135deg,var(--rosa),var(--rosa-med));border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1rem}
+.step h4{font-size:1.03rem;font-weight:700;color:var(--rosa);margin-bottom:.3rem}
+.step p{font-size:.97rem;line-height:1.72}
+
+/* ── FLIP CARDS ── */
+.flip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:1rem}
+.flip-card{perspective:800px;height:155px;cursor:pointer}
+.flip-inner{width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s ease;position:relative}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;text-align:center}
+.flip-front{background:linear-gradient(135deg,var(--morado),#9b59b6);color:#fff;font-weight:700;font-size:.98rem;box-shadow:0 4px 18px var(--sombra)}
+.flip-hint{font-size:.68rem;opacity:.75;margin-top:.35rem}
+.flip-back{background:var(--dorado-claro);border:2px solid var(--dorado);color:#3a2800;font-size:.9rem;line-height:1.55;transform:rotateY(180deg)}
+
+/* ── FICHAS ── */
+.ficha-card{background:#fff;border-radius:16px;border-left:6px solid var(--rosa-med);box-shadow:0 4px 20px var(--sombra);padding:1.5rem;margin-bottom:1.2rem;transition:transform .2s}
+.ficha-card:hover{transform:translateY(-2px)}
+.ficha-header{display:flex;align-items:center;gap:.8rem;margin-bottom:.9rem}
+.ficha-num{width:38px;height:38px;background:var(--rosa-med);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;flex-shrink:0}
+.ficha-title{font-family:'Fraunces',serif;font-size:1.1rem;color:var(--rosa)}
+.ficha-meta{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem}
+.ficha-tag{background:var(--rosa-claro);color:var(--rosa);border-radius:50px;padding:.25rem .75rem;font-size:.76rem;font-weight:700}
+.ficha-tag.morado{background:var(--morado-claro);color:var(--morado)}
+.ficha-tag.verde{background:var(--verde-claro);color:var(--verde)}
+.ficha-tag.azul{background:var(--azul-claro);color:var(--azul)}
+.ficha-body{font-size:.97rem;line-height:1.75;color:#444}
+
+/* ── QUIZ ── */
+.quiz-q{background:#fff8f7;border-radius:14px;padding:1.4rem;margin-bottom:1.3rem;border:1.5px solid var(--rosa-borde)}
+.quiz-q p{font-size:1.06rem;font-weight:700;margin-bottom:.9rem;color:var(--rosa)}
+.quiz-opts{display:flex;flex-direction:column;gap:.55rem}
+.quiz-opt{padding:.78rem 1rem;background:#fff;border:2px solid var(--rosa-borde);border-radius:10px;cursor:pointer;font-size:.96rem;transition:all .2s;text-align:left;font-family:'Plus Jakarta Sans',sans-serif;color:var(--gris-texto)}
+.quiz-opt:hover{border-color:var(--rosa-med);background:var(--rosa-claro)}
+.quiz-opt.correct{background:#d4edda;border-color:#28a745;color:#155724;font-weight:700}
+.quiz-opt.wrong{background:#f8d7da;border-color:#dc3545;color:#721c24}
+.quiz-fb{margin-top:.75rem;padding:.65rem 1rem;border-radius:10px;font-size:.93rem;font-weight:600;display:none}
+.quiz-fb.show{display:block}
+.quiz-fb.ok{background:#d4edda;color:#155724}
+.quiz-fb.fail{background:#f8d7da;color:#721c24}
+
+/* ── TF ── */
+.tf-item{background:#fff;border:1.5px solid var(--rosa-borde);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:.9rem}
+.tf-item p{font-size:.99rem;margin-bottom:.7rem;font-weight:600}
+.tf-btns{display:flex;gap:.7rem}
+.tf-btn{flex:1;padding:.55rem;border-radius:8px;border:2px solid;font-weight:800;font-size:.94rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s}
+.tf-btn.v{border-color:#28a745;color:#28a745;background:#fff}
+.tf-btn.f{border-color:#dc3545;color:#dc3545;background:#fff}
+.tf-btn.v:hover,.tf-btn.v.sel{background:#28a745;color:#fff}
+.tf-btn.f:hover,.tf-btn.f.sel{background:#dc3545;color:#fff}
+.tf-res{margin-top:.55rem;font-size:.88rem;font-weight:700;display:none;padding:.45rem .8rem;border-radius:8px}
+.tf-res.show{display:block}
+
+/* ── LINEAS TEMÁTICAS ── */
+.linea-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:.9rem;margin-bottom:1.4rem}
+.linea-item{background:#fff;border:2px solid var(--rosa-borde);border-radius:14px;padding:1.1rem .8rem;text-align:center;transition:all .22s;cursor:default}
+.linea-item:hover{border-color:var(--rosa-med);background:var(--rosa-claro);transform:translateY(-3px);box-shadow:0 6px 16px var(--sombra)}
+.linea-icon{font-size:1.9rem;margin-bottom:.4rem}
+.linea-name{font-weight:700;font-size:.85rem;color:var(--rosa);line-height:1.3}
+
+/* ── SCORE ── */
+.score-box{background:linear-gradient(135deg,var(--morado),var(--rosa));color:#fff;border-radius:20px;padding:2rem;text-align:center;margin-bottom:1.5rem}
+.score-num{font-family:'Fraunces',serif;font-size:4rem;font-weight:900}
+.score-lbl{font-size:1rem;opacity:.88;margin-top:.3rem}
+
+/* ── NAV BTNS ── */
+.nav-btns{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;gap:.8rem;flex-wrap:wrap}
+.btn{padding:.75rem 1.6rem;border-radius:50px;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.96rem;font-weight:700;transition:all .22s;display:inline-flex;align-items:center;gap:.4rem}
+.btn-primary{background:var(--rosa);color:#fff}
+.btn-primary:hover{background:var(--rosa-med);transform:translateY(-2px);box-shadow:0 6px 20px var(--sombra)}
+.btn-outline{background:#fff;color:var(--rosa);border:2px solid var(--rosa-borde)}
+.btn-outline:hover{background:var(--rosa-claro)}
+.btn-gold{background:var(--dorado);color:#3a2800}
+.btn-morado{background:var(--morado);color:#fff}
+.btn-morado:hover{background:#9b59b6}
+
+/* ── ESCALERA PARTICIPACIÓN ── */
+.escalera{display:flex;flex-direction:column-reverse;gap:.5rem;padding:1rem 0}
+.esc-item{display:flex;align-items:center;gap:.9rem}
+.esc-bar{height:38px;background:linear-gradient(90deg,var(--rosa-claro),var(--rosa-borde));border-radius:0 10px 10px 0;display:flex;align-items:center;padding-left:.8rem;font-size:.85rem;font-weight:700;color:var(--rosa);border-left:4px solid var(--rosa-med);transition:all .3s}
+.esc-num{flex-shrink:0;width:28px;height:28px;background:var(--rosa-med);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+
+@media(max-width:480px){
+  .sec-wrap{padding:1.4rem .9rem 2.5rem}
+  .card{padding:1.2rem}
+  .nav-tab{padding:.75rem .8rem;font-size:.77rem}
+  .flip-grid{grid-template-columns:1fr 1fr}
+  .comp-grid,.linea-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr-badge">🕊️ Pedagogía para la Paz</div>
+  <h1>Guía de Estudio <span>Interactiva</span></h1>
+  <p class="hdr-sub">Promover la Cultura de Paz en la Escuela</p>
+  <div class="hdr-autor">✏️ Prof. Francisco De Jesus Luna Benitez</div>
+</header>
+
+<!-- PROGRESO -->
+<div class="prog-wrap">
+  <span class="prog-lbl">📊 Tu avance</span>
+  <div class="prog-outer"><div class="prog-inner" id="progBar"></div></div>
+  <span class="prog-pct" id="progPct">0%</span>
+</div>
+
+<!-- NAVEGACIÓN -->
+<div class="nav-wrap">
+  <div class="nav-tabs" role="tablist">
+    <button class="nav-tab active" data-sec="0"><span>🏠</span>Introducción</button>
+    <button class="nav-tab" data-sec="1"><span>🧠</span>Competencias SE</button>
+    <button class="nav-tab" data-sec="2"><span>⚖️</span>Igualdad Género</button>
+    <button class="nav-tab" data-sec="3"><span>🌈</span>Diversidad</button>
+    <button class="nav-tab" data-sec="4"><span>📋</span>Fichas Didácticas</button>
+    <button class="nav-tab" data-sec="5"><span>🙋</span>Participación</button>
+    <button class="nav-tab" data-sec="6"><span>✅</span>Práctica</button>
+  </div>
+</div>
+
+<div class="sec-wrap">
+
+  <!-- ══ 0: INTRODUCCIÓN ══ -->
+  <div class="section active" id="sec0">
+    <div class="sec-badge">📖 Sección 1 de 7</div>
+    <h2 class="sec-title">¿Qué es la Cultura de Paz?</h2>
+    <p class="sec-desc">Fundamentos del fichero pedagógico y su propósito en la comunidad escolar.</p>
+
+    <div class="card card-rojo">
+      <h2>🕊️ Objetivo General</h2>
+      <p>Este fichero pedagógico busca que el personal docente desarrolle <strong>conocimientos, actitudes y valores</strong> en las personas para resolver conflictos de manera pacífica, rechazar cualquier tipo de violencia y generar condiciones hacia la paz, tanto a nivel personal como social.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card card-mint">
+        <h3>🌱 ¿Qué es la Paz?</h3>
+        <p>La paz es el camino que conduce al modelo de convivencia al que aspira la humanidad. Requiere la <strong>transformación social</strong> para hacer posible la participación democrática, la libertad, el diálogo, la cooperación, la responsabilidad ciudadana y el respeto a los derechos humanos.</p>
+      </div>
+      <div class="card card-mint">
+        <h3>📚 ¿A quién va dirigido?</h3>
+        <p>El fichero está dirigido a los tres niveles educativos: <strong>preescolar, primaria y secundaria</strong>. Contiene 64 fichas distribuidas entre los tres niveles, con una ficha introductoria para cada una de las 7 líneas temáticas.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🗂️ Las 7 Líneas Temáticas del Fichero</h3>
+      <div class="linea-grid">
+        <div class="linea-item"><div class="linea-icon">🧠</div><div class="linea-name">Competencias Socioemocionales</div></div>
+        <div class="linea-item"><div class="linea-icon">♀️</div><div class="linea-name">Igualdad de Género</div></div>
+        <div class="linea-item"><div class="linea-icon">🌈</div><div class="linea-name">Valoración de la Diversidad</div></div>
+        <div class="linea-item"><div class="linea-icon">⚖️</div><div class="linea-name">Derechos Humanos</div></div>
+        <div class="linea-item"><div class="linea-icon">🛡️</div><div class="linea-name">Autocuidado</div></div>
+        <div class="linea-item"><div class="linea-icon">🙋</div><div class="linea-name">Participación Infantil</div></div>
+        <div class="linea-item"><div class="linea-icon">🏫</div><div class="linea-name">Entornos Escolares Seguros</div></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      "La paz para que sea efectiva tiene que considerarse como un proceso continuo y sistemático, donde se involucre a la comunidad entera."
+    </div>
+
+    <div class="card card-gold">
+      <h3>⚠️ El contexto que lo motiva</h3>
+      <p>En México, el 8.7% de estudiantes de primaria y el 5.7% de secundaria declararon haber participado en situaciones de violencia como robo, daño a instalaciones, intimidación a compañeros o peleas. Ante esto, desarrollar competencias socioemocionales en las escuelas es una respuesta imprescindible.</p>
+    </div>
+
+    <div class="nav-btns">
+      <span></span>
+      <button class="btn btn-primary" onclick="goTo(1)">Siguiente: Competencias SE →</button>
+    </div>
+  </div>
+
+  <!-- ══ 1: COMPETENCIAS SOCIOEMOCIONALES ══ -->
+  <div class="section" id="sec1">
+    <div class="sec-badge">🧠 Sección 2 de 7</div>
+    <h2 class="sec-title">Competencias Socioemocionales (CSE)</h2>
+    <p class="sec-desc">Habilidades esenciales para convivir, aprender y construir la paz. Haz clic en cada competencia.</p>
+
+    <div class="comp-grid">
+      <div class="comp-item">
+        <div class="comp-icon">🌟</div>
+        <div class="comp-name">Autoestima</div>
+        <div class="comp-def">Valoración de uno mismo. Influye en el éxito académico y el bienestar personal.</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-icon">🪞</div>
+        <div class="comp-name">Autoconciencia Emocional</div>
+        <div class="comp-def">Reconocer qué se siente y por qué en cada momento.</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-icon">🎛️</div>
+        <div class="comp-name">Regulación Emocional</div>
+        <div class="comp-def">Modificar intensidad y duración de emociones. Incluye respiración y autorregeneración.</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-icon">❤️</div>
+        <div class="comp-name">Empatía</div>
+        <div class="comp-def">Comprender las emociones de otra persona actuando de manera vivenciada.</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-icon">🗣️</div>
+        <div class="comp-name">Asertividad</div>
+        <div class="comp-def">Expresar pensamientos de forma clara y directa, sin agredir ni reprimir los sentimientos propios.</div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-icon">🤝</div>
+        <div class="comp-name">Resolución de Conflictos</div>
+        <div class="comp-def">Afrontar conflictos de forma pacífica para que todas las partes obtengan beneficios.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      Las CSE permiten comprender, expresar y regular las emociones, mantener relaciones satisfactorias, generar respuestas adaptativas y tolerar la frustración.
+    </div>
+
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">🧩 ¿Por qué son tan importantes las CSE? <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <p>El trabajo sobre el aprendizaje social y emocional de niñas, niños y adolescentes (NNA) contribuye a la disminución de problemas de conducta y a la mejora de la autoestima. Los tutores y las figuras educativas también son fundamentales, ya que las competencias socioemocionales se reflejan y aprenden en los comportamientos cotidianos que observan e imitan.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">🌡️ ¿Qué es la Regulación Emocional? <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <p>Es la capacidad de modificar la <strong>intensidad y duración</strong> de las emociones a fin de poder tener un autocontrol de la impulsividad. Se trata de una habilidad para afrontar emociones desagradables mediante el uso de la respiración, la relajación y la autogeneración de emociones agradables, entre otras técnicas. Existen distintas técnicas: laberintos, mandalas y el cuento "La tortuga".</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">⚠️ Límite de las CSE en contextos de desigualdad <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <p>Es importante reconocer que el trabajo con las CSE no es suficiente para eliminar las competencias socioemocionales que originan en condiciones de pobreza, violencia y discriminación sufrida por distintos grupos de población. La escuela también tiene que <strong>trabajar en otros aspectos</strong> que contrarresten las desigualdades preexistentes.</p>
+      </div>
+    </div>
+
+    <div class="card card-morado" style="margin-top:1.2rem">
+      <h2>🎯 Técnica: "Inhalo y exhalo"</h2>
+      <p>Una estrategia concreta para regular emociones como el miedo, la tristeza y el enojo es la <strong>técnica de respiración con piedras</strong>: el alumno toma una piedra decorada, la inhala suavemente, recorre un laberinto sosteniéndola y la exhala al llegar a la meta. Esta práctica genera calma antes de actuar por impulso.</p>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(0)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(2)">Siguiente: Igualdad de Género →</button>
+    </div>
+  </div>
+
+  <!-- ══ 2: IGUALDAD DE GÉNERO ══ -->
+  <div class="section" id="sec2">
+    <div class="sec-badge">⚖️ Sección 3 de 7</div>
+    <h2 class="sec-title">Promover la Igualdad de Género</h2>
+    <p class="sec-desc">Conceptos fundamentales sobre género, estereotipos y cómo la escuela puede construir igualdad.</p>
+
+    <div class="flip-grid" id="flipG">
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">♂️♀️ Sexo vs. Género<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">El <b>sexo</b> son diferencias biológicas. El <b>género</b> es lo que la sociedad construye culturalmente: roles, funciones y características "apropiadas" según el sexo.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🏷️ Estereotipos de Género<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">Características y actividades asignadas a cada persona según su sexo. Son obstáculos que impiden desarrollar sus potencialidades reales.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">⚡ Igualdad vs. Equidad<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">La <b>igualdad</b> busca que no exista discriminación. La <b>equidad</b> realiza acciones para compensar las desventajas sociales entre mujeres y hombres.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🏫 Papel de la Escuela<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">La escuela es un espacio idóneo para preparar a NNA para ser empáticos, asumir derechos y obligaciones como compromisos que deben ser respetados y protegidos.</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🛑 Violencia de Género<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">La prevalencia de violencia de pareja en mujeres de 15 años o más fue del 43.9% a nivel nacional (incluye violencia sexual, emocional y física).</div>
+        </div>
+      </div>
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">🔨 Nuevas Masculinidades<div class="flip-hint">Toca para ver</div></div>
+          <div class="flip-face flip-back">El docente puede ser un punto de vista para construir nuevos modelos de ser hombre, basados en relaciones equitativas, el trabajo en equipo y la visibilización de las aportaciones de las mujeres.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.2rem">
+      <h3>📊 Datos de la realidad en México</h3>
+      <div class="grid2">
+        <div style="background:var(--rosa-claro);border-radius:12px;padding:1rem;border-left:4px solid var(--rosa-med)">
+          <p style="font-size:1.9rem;font-weight:900;color:var(--rosa)">4.3</p>
+          <p style="font-size:.9rem">mujeres por cada 10 hombres logran <strong>educación superior</strong></p>
+        </div>
+        <div style="background:var(--morado-claro);border-radius:12px;padding:1rem;border-left:4px solid var(--morado)">
+          <p style="font-size:1.9rem;font-weight:900;color:var(--morado)">43.9%</p>
+          <p style="font-size:.9rem">de mujeres de 15+ años han vivido <strong>violencia de pareja</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-verde" style="margin-top:1.2rem">
+      <h2>✅ Prácticas Coeducativas</h2>
+      <p>Son las acciones realizadas por las escuelas que promueven en el alumnado habilidades, actitudes y valores a favor de la igualdad de género: el trabajo en equipo, la cooperación, actividades extracurriculares sin distinción de sexo, la música, el deporte, el arte; erradicando el lenguaje sexista y visibilizando las aportaciones de las mujeres en todos los ámbitos.</p>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(1)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Siguiente: Diversidad →</button>
+    </div>
+  </div>
+
+  <!-- ══ 3: DIVERSIDAD ══ -->
+  <div class="section" id="sec3">
+    <div class="sec-badge">🌈 Sección 4 de 7</div>
+    <h2 class="sec-title">Valoración de la Diversidad</h2>
+    <p class="sec-desc">La diversidad como riqueza. Conceptos clave sobre inclusión, discriminación y valores democráticos.</p>
+
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">🌍 ¿Qué es la Diversidad? <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <p>La convivencia escolar es el escenario donde convergen diferentes opiniones, intereses, gustos y características personales y culturales. Enriquecer tanto la identidad individual como la colectiva construye la capacidad de respetar los derechos de todas las personas.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">🚫 ¿Qué es la Discriminación? <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <p>Consiste en dar un trato <strong>desfavorable o de desprecio</strong> inmerecido a una persona o grupo por alguna de sus características físicas, su origen étnico, su condición social, discapacidad, religión, etc. De acuerdo con la ENADIS 2017, el 40.3% de la población indígena declaró haber sido discriminada.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">🤝 Valores Democráticos para la Convivencia <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <ul style="padding-left:1.2rem;line-height:2.1">
+          <li><strong>Igualdad y tolerancia:</strong> Reconocer y respetar los derechos de todas las personas, sin privilegios ni discriminación.</li>
+          <li><strong>El respeto</strong> supone reconocimiento como sujeto de derecho a cada persona, con sus respectivas necesidades.</li>
+          <li><strong>La solidaridad</strong> consiste en ayudar a otros sin esperar nada a cambio, creando lazos entre distintos grupos sociales.</li>
+          <li><strong>La tolerancia</strong> es la apertura para convivir pacíficamente con personas diferentes y aun opuestas a las propias ideas.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">📚 La inclusión como condición del aprendizaje <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <p>La inclusión es definida como procesos orientados a <strong>eliminar o minimizar las barreras</strong> que limitan el aprendizaje y la participación de todo el alumnado. Implica la valoración de la propia identidad y la de las demás, lo que permite conocer, comprender, valorar a las personas distintas a la vez.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      La educación debe transformarse de un instrumento reproductor de desventajas a uno que permita revertir situaciones de discriminación y favorecer la vida en comunidad escolar igualitaria.
+    </div>
+
+    <div class="card card-morado">
+      <h2>🌟 Prácticas Inclusivas en la Enseñanza</h2>
+      <p>Son aquellas actividades que se realizan dentro y fuera del aula, donde se observa la <strong>colaboración del personal docente</strong> con el alumnado, y la práctica de los valores democráticos como el respeto, la solidaridad y los derechos humanos. Se basan en el compromiso con el aprendizaje de las alumnas y los alumnos.</p>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(2)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Siguiente: Fichas Didácticas →</button>
+    </div>
+  </div>
+
+  <!-- ══ 4: FICHAS DIDÁCTICAS ══ -->
+  <div class="section" id="sec4">
+    <div class="sec-badge">📋 Sección 5 de 7</div>
+    <h2 class="sec-title">Fichas Didácticas: Ejemplos</h2>
+    <p class="sec-desc">Conoce cómo están estructuradas las fichas del fichero y sus ejemplos más representativos.</p>
+
+    <div class="card card-azul">
+      <h3 style="color:var(--azul)">🗂️ Estructura de cada ficha</h3>
+      <div class="grid2" style="margin-top:.8rem">
+        <ul style="padding-left:1.2rem;line-height:2.1;font-size:.95rem">
+          <li><strong>Nivel:</strong> Preescolar, Primaria o Secundaria</li>
+          <li><strong>Línea temática:</strong> El área de trabajo</li>
+          <li><strong>Propósito:</strong> Lo que se busca lograr</li>
+          <li><strong>Tiempo estimado:</strong> 30 a 40 minutos</li>
+        </ul>
+        <ul style="padding-left:1.2rem;line-height:2.1;font-size:.95rem">
+          <li><strong>Recursos:</strong> Materiales necesarios</li>
+          <li><strong>Con el alumnado:</strong> Pasos a seguir</li>
+          <li><strong>Entre el colectivo docente:</strong> Reflexión</li>
+          <li><strong>Con las familias:</strong> Extensión al hogar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ficha-card">
+      <div class="ficha-header">
+        <div class="ficha-num">1</div>
+        <div class="ficha-title">🚦 Semáforo de las Emociones</div>
+      </div>
+      <div class="ficha-meta">
+        <span class="ficha-tag">Preescolar</span>
+        <span class="ficha-tag morado">Competencias SE</span>
+        <span class="ficha-tag verde">30-40 min</span>
+      </div>
+      <div class="ficha-body">
+        <p><strong>Propósito:</strong> Que las niñas y los niños identifiquen y reconozcan sus propias emociones mediante expresiones faciales.</p>
+        <p style="margin-top:.6rem"><strong>Actividad:</strong> Se presentan recortes de rostros y figuras que muestran diferentes emociones (enojo, miedo, alegría, tristeza). Los alumnos identifican la emoción, la nombran y reflexionan sobre situaciones que las provocan. Se usa un "semáforo emocional" en el tablero donde cada niño pone la inicial de su nombre según cómo se siente ese día.</p>
+      </div>
+    </div>
+
+    <div class="ficha-card">
+      <div class="ficha-header">
+        <div class="ficha-num">2</div>
+        <div class="ficha-title">🌬️ Inhalo y Exhalo</div>
+      </div>
+      <div class="ficha-meta">
+        <span class="ficha-tag">Preescolar</span>
+        <span class="ficha-tag morado">Regulación Emocional</span>
+        <span class="ficha-tag verde">30-40 min</span>
+      </div>
+      <div class="ficha-body">
+        <p><strong>Propósito:</strong> Que las niñas y los niños aprendan a regular sus emociones de miedo, tristeza y enojo.</p>
+        <p style="margin-top:.6rem"><strong>Actividad:</strong> Con piedras decoradas y un laberinto impreso, los alumnos practican la técnica de respiración: inhalan sosteniendo la piedra, recorren el laberinto y exhalan al llegar a la meta. Esto genera calma antes de actuar por impulso. También se usa el cuento "La tortuga": cuando estamos a punto de explotar, nos detenemos, respiramos y buscamos soluciones sin dañarnos a nosotros ni a los demás.</p>
+      </div>
+    </div>
+
+    <div class="ficha-card">
+      <div class="ficha-header">
+        <div class="ficha-num">3</div>
+        <div class="ficha-title">🤔 Adivina qué siento (Empatía)</div>
+      </div>
+      <div class="ficha-meta">
+        <span class="ficha-tag">Preescolar</span>
+        <span class="ficha-tag morado">Empatía</span>
+        <span class="ficha-tag verde">30-40 min</span>
+      </div>
+      <div class="ficha-body">
+        <p><strong>Propósito:</strong> Que las niñas y los niños identifiquen el concepto de empatía y aprendan a usarlo en su vida cotidiana.</p>
+        <p style="margin-top:.6rem"><strong>Actividad:</strong> Los alumnos tocan con los ojos vendados diferentes texturas, alimentos y objetos, y comparten lo que sienten. Luego se trabaja la "segunda variante": los niños llevan ropa de un familiar mayor, la visten durante unos minutos y reflexionan sobre cómo se siente la persona a quien pertenece. Se conecta con el cuento "El enfado de Roqui".</p>
+      </div>
+    </div>
+
+    <div class="ficha-card">
+      <div class="ficha-header">
+        <div class="ficha-num">4</div>
+        <div class="ficha-title">✋ La Carita Sí y la Carita No (Asertividad)</div>
+      </div>
+      <div class="ficha-meta">
+        <span class="ficha-tag">Preescolar</span>
+        <span class="ficha-tag morado">Asertividad</span>
+        <span class="ficha-tag verde">30 min</span>
+      </div>
+      <div class="ficha-body">
+        <p><strong>Propósito:</strong> Que las niñas y los niños reconozcan la importancia de decir Sí o No, atendiendo a sus necesidades y dependiendo de las circunstancias.</p>
+        <p style="margin-top:.6rem"><strong>Actividad:</strong> Con dos carteles (uno de "Sí" y uno de "No"), los alumnos responden a situaciones cotidianas de convivencia y toman decisiones asertivas, entendiendo que apoyarse en sus ideas y decisiones también significa respetar al otro sin afectar sus derechos.</p>
+      </div>
+    </div>
+
+    <div class="ficha-card">
+      <div class="ficha-header">
+        <div class="ficha-num">5</div>
+        <div class="ficha-title">☮️ Los Cinco Pasos para la Paz</div>
+      </div>
+      <div class="ficha-meta">
+        <span class="ficha-tag">Preescolar</span>
+        <span class="ficha-tag morado">Resolución de Conflictos</span>
+        <span class="ficha-tag verde">30-40 min</span>
+      </div>
+      <div class="ficha-body">
+        <p><strong>Propósito:</strong> Que las niñas y los niños reconozcan una situación de conflicto y utilicen el diálogo para resolverlo.</p>
+        <p style="margin-top:.6rem"><strong>Los 5 pasos:</strong> A) Respirar y recobrar la calma → B) Buscar ayuda de una persona adulta → C) Usar el diálogo para escucharse entre sí → D) Proponer soluciones → E) Elegir la solución más conveniente para todos los involucrados.</p>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(3)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(5)">Siguiente: Participación →</button>
+    </div>
+  </div>
+
+  <!-- ══ 5: PARTICIPACIÓN ══ -->
+  <div class="section" id="sec5">
+    <div class="sec-badge">🙋 Sección 6 de 7</div>
+    <h2 class="sec-title">Participación Infantil y Adolescente</h2>
+    <p class="sec-desc">El derecho de NNA a opinar, decidir y ser tomados en cuenta en la vida escolar y comunitaria.</p>
+
+    <div class="card card-rojo">
+      <h2>🏛️ Es un Derecho</h2>
+      <p>La participación de niñas, niños y adolescentes (NNA) es un derecho reconocido en tratados nacionales e internacionales: los artículos 3, 13, 18, 59, 71 y 126 de la Ley General de Educación; los artículos 57, 58, 71 al 75 de la Ley General de los Derechos de NNA; los artículos 12 al 17 de la Convención de los Derechos del Niño.</p>
+    </div>
+
+    <div class="card">
+      <h3>🪜 La "Escalera de la Participación" (Robert Hart, 1992)</h3>
+      <p style="margin-bottom:1rem;font-size:.95rem">Establece 8 niveles que van desde la participación simbólica hasta la plena. Los tres primeros <strong>no se consideran</strong> participación auténtica:</p>
+      <div class="escalera">
+        <div class="esc-item"><div class="esc-num">1</div><div class="esc-bar" style="width:35%">Manipulación ❌</div></div>
+        <div class="esc-item"><div class="esc-num">2</div><div class="esc-bar" style="width:42%">Decoración ❌</div></div>
+        <div class="esc-item"><div class="esc-num">3</div><div class="esc-bar" style="width:49%">Participación simbólica ❌</div></div>
+        <div class="esc-item"><div class="esc-num">4</div><div class="esc-bar" style="width:56%;background:linear-gradient(90deg,#fef9e7,#fdecea)">Asignada e informada ✔</div></div>
+        <div class="esc-item"><div class="esc-num">5</div><div class="esc-bar" style="width:63%;background:linear-gradient(90deg,#fdecea,#f9c9c5)">Consultada e informada ✔</div></div>
+        <div class="esc-item"><div class="esc-num">6</div><div class="esc-bar" style="width:72%;background:linear-gradient(90deg,#f9c9c5,#f5a9a5)">Iniciada por adultos, decisiones compartidas ✔</div></div>
+        <div class="esc-item"><div class="esc-num">7</div><div class="esc-bar" style="width:84%;background:linear-gradient(90deg,#f5a9a5,#e74c3c);color:#fff">Iniciada y dirigida por el alumnado ✔✔</div></div>
+        <div class="esc-item"><div class="esc-num">8</div><div class="esc-bar" style="width:100%;background:linear-gradient(90deg,#e74c3c,#c0392b);color:#fff">Iniciada por NNA, decisiones compartidas con adultos 🏆</div></div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">🏫 La participación en la escuela incluye... <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <ul style="padding-left:1.2rem;line-height:2.1">
+          <li>Derecho a opinar y ser escuchado (Consulta, encuesta)</li>
+          <li>Organizarse para participar en la escuela (Asamblea)</li>
+          <li>Participar para mejorar el entorno escolar (Proyectos)</li>
+          <li>Aprender a decidir en colectivo (Toma de decisiones)</li>
+          <li>Escuchar la voz de NNA en casa (Proyectos comunitarios)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-hdr" onclick="toggleAcc(this)">🏡 La participación en el espacio comunitario <span class="acc-icon">+</span></button>
+      <div class="acc-body">
+        <p>El espacio comunitario y la participación de NNA incluye: la identificación de sus necesidades en los espacios comunitarios, la atención a sus necesidades (Proyectos comunitarios), la convivencia entre pares (reglas de participación), la autonomía (lo que puedo decidir y organizar con mis amigos), y la inclusión y respeto a las diferencias y valoración entre pares.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      "Promover la participación de NNA en la escuela es una oportunidad para que la escuela se reinvente: escuchar y tomar en cuenta sus necesidades e intereses con ideas y acciones innovadoras, cercanas y pertinentes."
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="goTo(4)">← Anterior</button>
+      <button class="btn btn-primary" onclick="goTo(6)">Siguiente: Práctica →</button>
+    </div>
+  </div>
+
+  <!-- ══ 6: PRÁCTICA ══ -->
+  <div class="section" id="sec6">
+    <div class="sec-badge">✅ Sección 7 de 7</div>
+    <h2 class="sec-title">Actividades de Práctica</h2>
+    <p class="sec-desc">Pon a prueba lo que aprendiste respondiendo estas preguntas.</p>
+
+    <div class="card">
+      <h3>🧠 Opción Múltiple</h3>
+
+      <div class="quiz-q">
+        <p>1. ¿Cuántas fichas contiene el fichero "Promover la Cultura de Paz"?</p>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','No es correcta. El fichero contiene 64 fichas en total.')">A) 32 fichas</button>
+          <button class="quiz-opt" onclick="checkQ(this,'correct','¡Exacto! El fichero contiene 64 fichas distribuidas en preescolar, primaria y secundaria.')">B) 64 fichas</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','No es correcta. El fichero contiene 64 fichas en total.')">C) 100 fichas</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','No es correcta. El fichero contiene 64 fichas en total.')">D) 48 fichas</button>
+        </div>
+        <div class="quiz-fb"></div>
+      </div>
+
+      <div class="quiz-q">
+        <p>2. ¿Qué diferencia existe entre SEXO y GÉNERO?</p>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Son dos conceptos distintos con definiciones diferentes.')">A) Son sinónimos que significan lo mismo</button>
+          <button class="quiz-opt" onclick="checkQ(this,'correct','¡Correcto! El sexo son diferencias biológicas; el género es una construcción social y cultural.')">B) El sexo es biológico; el género es una construcción social y cultural</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Es al revés: el sexo es biológico y el género es la construcción social.')">C) El género es biológico; el sexo es una construcción social</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Ambos son conceptos que la comunidad científica sí distingue claramente.')">D) Ninguno tiene relevancia en el ámbito educativo</button>
+        </div>
+        <div class="quiz-fb"></div>
+      </div>
+
+      <div class="quiz-q">
+        <p>3. En la "Escalera de la Participación", ¿cuál es el nivel MÁS ALTO de participación auténtica de NNA?</p>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','La decoración es uno de los niveles más bajos y NO se considera participación auténtica.')">A) Decoración</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','La participación simbólica tampoco es considerada participación auténtica.')">B) Participación simbólica</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Es un nivel alto, pero no el máximo de la escalera.')">C) Iniciada y dirigida por el alumnado</button>
+          <button class="quiz-opt" onclick="checkQ(this,'correct','¡Excelente! El nivel 8 es el más alto: iniciada por NNA con decisiones compartidas con adultos.')">D) Iniciada por NNA con decisiones compartidas con adultos</button>
+        </div>
+        <div class="quiz-fb"></div>
+      </div>
+
+      <div class="quiz-q">
+        <p>4. ¿Cuál es la "Regulación Emocional"?</p>
+        <div class="quiz-opts">
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','No, la autoestima es la valoración de uno mismo.')">A) La valoración positiva de uno mismo</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Eso describe la empatía, no la regulación emocional.')">B) Comprender las emociones de otras personas</button>
+          <button class="quiz-opt" onclick="checkQ(this,'correct','¡Correcto! Es la capacidad de modificar la intensidad y duración de las emociones para tener autocontrol de la impulsividad.')">C) Modificar la intensidad y duración de las emociones para tener autocontrol</button>
+          <button class="quiz-opt" onclick="checkQ(this,'wrong','Eso describe la asertividad, no la regulación emocional.')">D) Expresar los pensamientos de forma directa sin agredir a nadie</button>
+        </div>
+        <div class="quiz-fb"></div>
+      </div>
+    </div>
+
+    <!-- VERDADERO / FALSO -->
+    <div class="card">
+      <h3>⚡ Verdadero o Falso</h3>
+
+      <div class="tf-item">
+        <p>La competencia socioemocional de "Asertividad" implica agredir a quien no está de acuerdo con nosotros.</p>
+        <div class="tf-btns">
+          <button class="tf-btn v" onclick="checkTF(this,false,'La asertividad es expresarse de forma clara y directa SIN agredir. No implica violencia.')">✔ Verdadero</button>
+          <button class="tf-btn f" onclick="checkTF(this,true,'¡Correcto! La asertividad implica expresarse sin agredir ni reprimir los propios derechos.')">✘ Falso</button>
+        </div>
+        <div class="tf-res"></div>
+      </div>
+
+      <div class="tf-item">
+        <p>Las competencias socioemocionales solas son suficientes para eliminar la discriminación y la violencia estructural en la sociedad.</p>
+        <div class="tf-btns">
+          <button class="tf-btn v" onclick="checkTF(this,false,'Las CSE no son suficientes solas. También se necesita trabajar aspectos estructurales de desigualdad.')">✔ Verdadero</button>
+          <button class="tf-btn f" onclick="checkTF(this,true,'¡Correcto! Las CSE no son suficientes para eliminar condiciones de pobreza, violencia y discriminación preexistentes.')">✘ Falso</button>
+        </div>
+        <div class="tf-res"></div>
+      </div>
+
+      <div class="tf-item">
+        <p>Los "Cinco Pasos para la Paz" incluyen el diálogo, proponer soluciones y elegir la más conveniente para todos.</p>
+        <div class="tf-btns">
+          <button class="tf-btn v" onclick="checkTF(this,true,'¡Correcto! Los 5 pasos son: calma, buscar adulto, dialogar, proponer soluciones y elegir la mejor para todos.')">✔ Verdadero</button>
+          <button class="tf-btn f" onclick="checkTF(this,false,'Sí es verdadero. Los 5 pasos incluyen: calma, adulto, diálogo, soluciones y elegir la mejor opción.')">✘ Falso</button>
+        </div>
+        <div class="tf-res"></div>
+      </div>
+
+      <div class="tf-item">
+        <p>La participación simbólica es considerada el nivel más alto de participación auténtica según la escalera de Hart.</p>
+        <div class="tf-btns">
+          <button class="tf-btn v" onclick="checkTF(this,false,'La participación simbólica es el nivel 3 y NO se considera participación auténtica.')">✔ Verdadero</button>
+          <button class="tf-btn f" onclick="checkTF(this,true,'¡Correcto! La participación simbólica es solo el nivel 3 y no se considera auténtica participación.')">✘ Falso</button>
+        </div>
+        <div class="tf-res"></div>
+      </div>
+    </div>
+
+    <!-- SCORE -->
+    <div class="score-box" id="scoreBox">
+      <div class="score-num" id="scoreNum">—</div>
+      <div class="score-lbl" id="scoreLbl">Responde las preguntas para ver tu resultado</div>
+    </div>
+    <button class="btn btn-gold" style="width:100%;justify-content:center;font-size:1rem" onclick="calcScore()">📊 Ver mi puntaje final</button>
+
+    <div class="nav-btns" style="margin-top:1.5rem">
+      <button class="btn btn-outline" onclick="goTo(5)">← Anterior</button>
+      <button class="btn btn-morado" onclick="goTo(0)">🔁 Repasar desde el inicio</button>
+    </div>
+  </div>
+
+</div><!-- /sec-wrap -->
+
+<script>
+/* ── NAVEGACIÓN ── */
+const tabs=document.querySelectorAll('.nav-tab');
+const secs=document.querySelectorAll('.section');
+const visited=new Set([0]);
+
+function goTo(i){
+  tabs.forEach(t=>t.classList.remove('active'));
+  secs.forEach(s=>s.classList.remove('active'));
+  tabs[i].classList.add('active');
+  secs[i].classList.add('active');
+  visited.add(i);
+  updateProg();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+tabs.forEach((t,i)=>t.addEventListener('click',()=>goTo(i)));
+
+function updateProg(){
+  const p=Math.round((visited.size/tabs.length)*100);
+  document.getElementById('progBar').style.width=p+'%';
+  document.getElementById('progPct').textContent=p+'%';
+}
+
+/* ── ACORDEÓN ── */
+function toggleAcc(btn){
+  const body=btn.nextElementSibling;
+  const open=btn.classList.contains('open');
+  btn.closest('.section').querySelectorAll('.acc-hdr').forEach(h=>{
+    h.classList.remove('open');h.nextElementSibling.classList.remove('open');
+  });
+  if(!open){btn.classList.add('open');body.classList.add('open');}
+}
+
+/* ── QUIZ ── */
+function checkQ(btn,res,msg){
+  const q=btn.closest('.quiz-q');
+  if(q.dataset.answered)return;
+  q.dataset.answered='true';
+  const fb=q.querySelector('.quiz-fb');
+  q.querySelectorAll('.quiz-opt').forEach(b=>b.style.pointerEvents='none');
+  if(res==='correct'){btn.classList.add('correct');fb.textContent='✅ '+msg;fb.className='quiz-fb show ok';}
+  else{btn.classList.add('wrong');fb.textContent='❌ '+msg;fb.className='quiz-fb show fail';}
+}
+
+/* ── TF ── */
+function checkTF(btn,isOk,msg){
+  const item=btn.closest('.tf-item');
+  if(item.dataset.answered)return;
+  item.dataset.answered='true';
+  item.querySelectorAll('.tf-btn').forEach(b=>b.style.pointerEvents='none');
+  btn.classList.add('sel');
+  const r=item.querySelector('.tf-res');
+  r.textContent=(isOk?'✅ ':'❌ ')+msg;
+  r.className='tf-res show';
+  r.style.background=isOk?'#d4edda':'#f8d7da';
+  r.style.color=isOk?'#155724':'#721c24';
+}
+
+/* ── SCORE ── */
+function calcScore(){
+  let ok=0,tot=0;
+  document.querySelectorAll('.quiz-q').forEach(q=>{tot++;if(q.querySelector('.quiz-opt.correct'))ok++;});
+  document.querySelectorAll('.tf-item').forEach(item=>{tot++;const r=item.querySelector('.tf-res');if(r&&r.textContent.startsWith('✅'))ok++;});
+  document.getElementById('scoreNum').textContent=ok+'/'+tot;
+  const p=Math.round((ok/tot)*100);
+  document.getElementById('scoreLbl').textContent=
+    p>=75?'🎉 ¡Excelente dominio del tema! ('+p+'%)':
+    p>=50?'📚 Buen intento. Repasa las secciones y vuelve a intentarlo. ('+p+'%)':
+    '💪 Sigue estudiando el material. ¡Tú puedes lograrlo! ('+p+'%)';
+}
+
+updateProg();
+</script>
+</body>
+</html>

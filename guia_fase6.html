@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guía de Estudio Interactiva – Fase 6</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap');
+
+  :root {
+    --primary:   #1a6b5a;
+    --primary-l: #22927a;
+    --accent:    #f06c2a;
+    --accent-l:  #f9a26b;
+    --yellow:    #f9c846;
+    --bg:        #f4f7f5;
+    --card:      #ffffff;
+    --text:      #1e2d2a;
+    --muted:     #6b8a80;
+    --border:    #d4e8e0;
+    --red:       #e03e3e;
+    --purple:    #7c4dcc;
+    --blue:      #2563eb;
+    --radius:    14px;
+    --shadow:    0 4px 24px rgba(26,107,90,.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ─────────────────────────────────── */
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, #0d4a3b 60%, #13614f 100%);
+    padding: 32px 20px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5vw, 2.8rem);
+    color: #fff;
+    line-height: 1.2;
+    position: relative;
+  }
+  header h1 span { color: var(--yellow); }
+  .header-sub {
+    color: rgba(255,255,255,.75);
+    font-size: clamp(.85rem, 2.5vw, 1rem);
+    margin-top: 6px;
+    position: relative;
+  }
+  .prof-credit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 50px;
+    margin-top: 16px;
+    position: relative;
+    backdrop-filter: blur(4px);
+  }
+  .prof-credit::before { content: '👨‍🏫'; font-size: 1.1rem; }
+
+  /* ── NAV ──────────────────────────────────────── */
+  nav {
+    background: var(--card);
+    border-bottom: 2px solid var(--border);
+    padding: 0 12px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 14px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all .25s;
+    white-space: nowrap;
+  }
+  .nav-btn:hover { color: var(--primary); }
+  .nav-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── MAIN ─────────────────────────────────────── */
+  main { flex: 1; padding: 24px 16px 40px; max-width: 960px; margin: 0 auto; width: 100%; }
+
+  .section { display: none; animation: fadeIn .35s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── CARDS ────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+    border-left: 5px solid var(--primary);
+  }
+  .card.accent  { border-left-color: var(--accent); }
+  .card.yellow  { border-left-color: var(--yellow); }
+  .card.purple  { border-left-color: var(--purple); }
+  .card.blue    { border-left-color: var(--blue); }
+  .card.red     { border-left-color: var(--red); }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  .card.accent h2 { color: var(--accent); }
+  .card.yellow h2 { color: #b58800; }
+  .card.purple h2 { color: var(--purple); }
+  .card.blue   h2 { color: var(--blue); }
+  .card.red    h2 { color: var(--red); }
+
+  .card p { font-size: 1.05rem; line-height: 1.7; color: #374b45; }
+  .card p + p { margin-top: 10px; }
+
+  /* ── SECTION TITLE ────────────────────────────── */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .section-title .icon {
+    width: 46px; height: 46px;
+    background: var(--primary);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .section-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 4vw, 1.65rem);
+    color: var(--primary);
+    line-height: 1.25;
+  }
+  .section-title p { font-size: .9rem; color: var(--muted); margin-top: 2px; }
+
+  /* ── GRID ─────────────────────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+  @media(max-width:720px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; } }
+  @media(max-width:480px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+  /* ── FIELD CARDS ──────────────────────────────── */
+  .field-card {
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: transform .2s, box-shadow .2s;
+    cursor: default;
+  }
+  .field-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,.13); }
+  .field-card .emoji { font-size: 2rem; display: block; margin-bottom: 10px; }
+  .field-card h3 { font-size: 1rem; font-weight: 800; line-height: 1.3; margin-bottom: 8px; }
+  .field-card p  { font-size: .87rem; line-height: 1.55; opacity: .9; }
+
+  .fc-1 { background: linear-gradient(135deg,#c0392b,#e74c3c); color:#fff; }
+  .fc-2 { background: linear-gradient(135deg,#1565c0,#1e88e5); color:#fff; }
+  .fc-3 { background: linear-gradient(135deg,#2e7d32,#43a047); color:#fff; }
+  .fc-4 { background: linear-gradient(135deg,#6a1b9a,#8e24aa); color:#fff; }
+
+  /* ── ACCORDION ────────────────────────────────── */
+  .accordion { margin-bottom: 12px; border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+  .acc-header {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary);
+    transition: background .2s;
+    user-select: none;
+  }
+  .acc-header:hover { background: #edf5f2; }
+  .acc-header.open  { background: var(--primary); color: #fff; border-radius: var(--radius) var(--radius) 0 0; }
+  .acc-icon { font-size: 1.2rem; transition: transform .3s; }
+  .acc-header.open .acc-icon { transform: rotate(180deg); }
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  .acc-body.open { max-height: 600px; }
+  .acc-content { padding: 18px 20px; font-size: 1rem; line-height: 1.7; color: #374b45; }
+
+  /* ── PLANO STEPS ──────────────────────────────── */
+  .plano-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    transition: transform .2s;
+  }
+  .plano-step:hover { transform: translateX(4px); }
+  .plano-num {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 900;
+    flex-shrink: 0;
+    color: #fff;
+  }
+  .pn-1 { background: var(--accent); }
+  .pn-2 { background: var(--blue); }
+  .pn-3 { background: var(--purple); }
+  .plano-info h3 { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .plano-info p  { font-size: .97rem; line-height: 1.65; color: #4a6760; }
+
+  /* ── TAGS ─────────────────────────────────────── */
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: .82rem;
+    font-weight: 700;
+    margin: 3px 3px 3px 0;
+  }
+  .tag-green  { background: #d4edda; color: #155724; }
+  .tag-blue   { background: #cce5ff; color: #004085; }
+  .tag-orange { background: #ffe8d0; color: #7c3a00; }
+  .tag-purple { background: #e8d5f5; color: #4a148c; }
+  .tag-red    { background: #f8d7da; color: #721c24; }
+
+  /* ── CONTENIDOS TYPE ──────────────────────────── */
+  .content-type {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    border-top: 4px solid;
+    margin-bottom: 14px;
+  }
+  .ct-1 { border-top-color: var(--primary); }
+  .ct-2 { border-top-color: var(--accent); }
+  .ct-3 { border-top-color: var(--purple); }
+  .content-type h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 8px; }
+  .ct-1 h3 { color: var(--primary); }
+  .ct-2 h3 { color: var(--accent); }
+  .ct-3 h3 { color: var(--purple); }
+  .content-type p { font-size: .95rem; line-height: 1.65; color: #4a6760; }
+
+  /* ── TOGGLE REVEAL ────────────────────────────── */
+  .reveal-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-family: 'Nunito', sans-serif;
+    font-size: .95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+    margin-top: 12px;
+  }
+  .reveal-btn:hover { background: var(--primary-l); transform: scale(1.03); }
+  .reveal-content {
+    display: none;
+    margin-top: 14px;
+    background: #edf5f2;
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #2d4a43;
+    border-left: 4px solid var(--primary);
+    animation: fadeIn .3s ease;
+  }
+  .reveal-content.show { display: block; }
+
+  /* ── QUIZ ─────────────────────────────────────── */
+  .quiz-wrap { max-width: 680px; margin: 0 auto; }
+  .quiz-progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 10px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 10px;
+    transition: width .4s ease;
+  }
+  .quiz-q-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    display: none;
+  }
+  .quiz-q-card.active { display: block; animation: fadeIn .3s; }
+  .quiz-counter { font-size: .85rem; font-weight: 700; color: var(--muted); margin-bottom: 10px; }
+  .quiz-q-text { font-size: 1.15rem; font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 20px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all .2s;
+    color: var(--text);
+  }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: #edf5f2; }
+  .quiz-opt.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+  .quiz-opt.wrong   { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-feedback {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: .97rem;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; animation: fadeIn .2s; }
+  .quiz-feedback.ok  { background: #d4edda; color: #155724; }
+  .quiz-feedback.err { background: #f8d7da; color: #721c24; }
+  .quiz-next-btn {
+    margin-top: 16px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 11px 26px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: none;
+    transition: background .2s, transform .15s;
+  }
+  .quiz-next-btn:hover { background: #d45b1e; transform: scale(1.03); }
+  .quiz-next-btn.show { display: inline-block; }
+  .quiz-result {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 36px 24px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    display: none;
+  }
+  .quiz-result.show { display: block; animation: fadeIn .4s; }
+  .quiz-result .score { font-size: 3.5rem; font-weight: 900; font-family: 'Playfair Display', serif; color: var(--primary); }
+  .quiz-result .msg   { font-size: 1.1rem; font-weight: 700; color: var(--text); margin: 8px 0 20px; }
+  .quiz-restart-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .quiz-restart-btn:hover { background: var(--primary-l); }
+
+  /* ── EVAL BOX ─────────────────────────────────── */
+  .eval-pill {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+  }
+  .eval-pill .ep-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .eval-pill h3 { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+  .eval-pill p  { font-size: .93rem; line-height: 1.6; color: #4a6760; }
+
+  /* ── INFO HIGHLIGHT ───────────────────────────── */
+  .info-box {
+    background: linear-gradient(135deg, #e8f5e9, #e0f2f1);
+    border: 1px solid #b2dfdb;
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+  .info-box p { font-size: 1rem; line-height: 1.7; color: #1b4a43; font-weight: 600; }
+
+  /* ── BOTTOM NAV ───────────────────────────────── */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 2px dashed var(--border);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .bnav-btn {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-family: 'Nunito', sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--primary);
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bnav-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .bnav-btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .bnav-btn.primary:hover { background: var(--primary-l); }
+
+  /* ── FOOTER ───────────────────────────────────── */
+  footer {
+    background: var(--primary);
+    color: rgba(255,255,255,.7);
+    text-align: center;
+    padding: 16px;
+    font-size: .85rem;
+  }
+  footer strong { color: #fff; }
+
+  /* ── LIST STYLE ───────────────────────────────── */
+  .nice-list { padding-left: 0; list-style: none; margin-top: 10px; }
+  .nice-list li {
+    padding: 7px 0 7px 28px;
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.6;
+    border-bottom: 1px dashed var(--border);
+    color: #374b45;
+  }
+  .nice-list li:last-child { border-bottom: none; }
+  .nice-list li::before {
+    content: '✦';
+    position: absolute; left: 0;
+    color: var(--accent);
+    font-size: .8rem;
+    top: 10px;
+  }
+
+  /* ── DIAGRAM ──────────────────────────────────── */
+  .diagram {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .diag-top {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 28px;
+    font-weight: 800;
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+  .diag-arrow { font-size: 1.5rem; color: var(--muted); display: block; margin: 4px 0; }
+  .diag-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .diag-box {
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 700;
+    font-size: .87rem;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .db-r  { background: #c0392b; }
+  .db-b  { background: #1565c0; }
+  .db-g  { background: #2e7d32; }
+  .db-p  { background: #6a1b9a; }
+  .db-or { background: var(--accent); }
+  .db-teal { background: var(--primary); }
+
+  ul.check-list { list-style: none; padding: 0; }
+  ul.check-list li { padding: 6px 0 6px 30px; position: relative; font-size: 1rem; line-height: 1.6; color: #374b45; }
+  ul.check-list li::before { content: '✅'; position: absolute; left: 0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-badge">📚 Educación Secundaria</div>
+  <h1>Guía de Estudio <span>Interactiva</span></h1>
+  <p class="header-sub">Programa Sintético · Fase 6 · Nueva Escuela Mexicana</p>
+  <div class="prof-credit">Prof. Francisco De Jesus Luna Benitez</div>
+</header>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <button class="nav-btn active" onclick="showSection('intro',this)">🏠 Inicio</button>
+  <button class="nav-btn" onclick="showSection('campos',this)">📗 Campos Formativos</button>
+  <button class="nav-btn" onclick="showSection('sintetico',this)">📋 Programa Sintético</button>
+  <button class="nav-btn" onclick="showSection('analitico',this)">🔍 Programa Analítico</button>
+  <button class="nav-btn" onclick="showSection('contenidos',this)">📦 Contenidos</button>
+  <button class="nav-btn" onclick="showSection('evaluacion',this)">📊 Evaluación</button>
+  <button class="nav-btn" onclick="showSection('quiz',this)">🧩 Quiz</button>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ══════════ SECCIÓN 1: INICIO ══════════ -->
+  <section id="intro" class="section active">
+    <div class="section-title">
+      <div class="icon">🏠</div>
+      <div><h2>Bienvenida a la Guía</h2><p>Programa Sintético de la Fase 6 – Educación Secundaria</p></div>
+    </div>
+
+    <div class="info-box">
+      <p>🎯 Esta guía te ayudará a comprender los elementos clave del <strong>Programa de Estudio para la Educación Secundaria: Programa Sintético de la Fase 6</strong>, enmarcado en la <strong>Nueva Escuela Mexicana (NEM)</strong>.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card accent">
+        <h2>¿Qué es la Fase 6?</h2>
+        <p>Es el tramo educativo que corresponde a la <strong>Educación Secundaria</strong> (1.°, 2.° y 3.° grado). En ella se consolidan aprendizajes y se promueve la autonomía de los estudiantes.</p>
+      </div>
+      <div class="card blue">
+        <h2>¿Qué es el Programa Sintético?</h2>
+        <p>Es el documento curricular nacional que <strong>organiza los contenidos</strong> y los Procesos de desarrollo de aprendizaje para cada Campo formativo, sirviendo como punto de partida para el Programa Analítico.</p>
+      </div>
+    </div>
+
+    <div class="card yellow">
+      <h2>⚡ Propósito central de la NEM</h2>
+      <p>Formar estudiantes con pensamiento crítico, capacidad de intervención en su entorno y valores ciudadanos, a través de una educación <strong>contextualizada, inclusiva e integral</strong>.</p>
+    </div>
+
+    <div class="card">
+      <h2>¿Cómo usar esta guía?</h2>
+      <ul class="check-list">
+        <li>Navega entre las secciones usando el menú superior.</li>
+        <li>Despliega los acordeones para profundizar en cada concepto.</li>
+        <li>Usa los botones de "Mostrar / Ocultar" para auto-evaluarte.</li>
+        <li>Pon a prueba tu conocimiento en la sección <strong>Quiz</strong>.</li>
+        <li>Avanza con los botones de la parte inferior.</li>
+      </ul>
+    </div>
+
+    <div class="bottom-nav">
+      <span></span>
+      <button class="bnav-btn primary" onclick="showSection('campos',document.querySelectorAll('.nav-btn')[1])">Siguiente: Campos Formativos →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ SECCIÓN 2: CAMPOS FORMATIVOS ══════════ -->
+  <section id="campos" class="section">
+    <div class="section-title">
+      <div class="icon">📗</div>
+      <div><h2>Campos Formativos</h2><p>Cuatro grandes áreas del conocimiento integradas en el currículo</p></div>
+    </div>
+
+    <div class="info-box">
+      <p>📌 Los <strong>Campos formativos</strong> son las grandes áreas del saber y del quehacer humano que agrupan los aprendizajes. Cada campo tiene sus propias <em>finalidades</em>, <em>contenidos</em> y <em>procesos de desarrollo de aprendizaje</em>.</p>
+    </div>
+
+    <div class="diagram">
+      <div class="diag-top">📚 Campos Formativos</div>
+      <span class="diag-arrow">⬇</span>
+      <div class="diag-row">
+        <div class="diag-box db-r">Lenguajes</div>
+        <div class="diag-box db-b">Saberes y Pensamiento Científico</div>
+        <div class="diag-box db-g">Ética, Naturaleza y Sociedades</div>
+        <div class="diag-box db-p">De lo Humano y lo Comunitario</div>
+      </div>
+      <span class="diag-arrow">⬇</span>
+      <div class="diag-row">
+        <div class="diag-box db-or">Contenidos</div>
+        <div class="diag-box db-teal">Procesos de desarrollo de aprendizaje</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field-card fc-1">
+        <span class="emoji">💬</span>
+        <h3>Lenguajes</h3>
+        <p>Desarrolla la comunicación oral, escrita y artística. Incluye la lengua materna, lenguas adicionales y lenguajes artísticos para expresarse e interactuar con el mundo.</p>
+      </div>
+      <div class="field-card fc-2">
+        <span class="emoji">🔬</span>
+        <h3>Saberes y Pensamiento Científico</h3>
+        <p>Promueve la indagación, el razonamiento matemático y científico para comprender fenómenos naturales y sociales, y desarrollar soluciones a problemas del entorno.</p>
+      </div>
+      <div class="field-card fc-3">
+        <span class="emoji">🌍</span>
+        <h3>Ética, Naturaleza y Sociedades</h3>
+        <p>Integra saberes de historia, geografía, educación cívica y ciencias naturales para formar ciudadanos responsables, éticos y comprometidos con su entorno natural y social.</p>
+      </div>
+      <div class="field-card fc-4">
+        <span class="emoji">🤝</span>
+        <h3>De lo Humano y lo Comunitario</h3>
+        <p>Reconoce la dimensión humana y comunitaria del aprendizaje: identidad, salud integral, vida socioemocional, deportes y vinculación con la comunidad.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔗 Articulación de los Campos</h2>
+      <p>Los campos <strong>no trabajan de forma aislada</strong>. Se articulan a través de los <strong>Ejes articuladores</strong> del Plan de Estudio 2022, como la interculturalidad, la perspectiva de género, el pensamiento crítico, y la educación para la sustentabilidad, entre otros.</p>
+      <button class="reveal-btn" onclick="toggleReveal(this)">Ver los Ejes Articuladores</button>
+      <div class="reveal-content">
+        <ul class="nice-list">
+          <li>Inclusión</li>
+          <li>Pensamiento crítico</li>
+          <li>Interculturalidad crítica</li>
+          <li>Igualdad de género</li>
+          <li>Vida saludable</li>
+          <li>Apropiación de las culturas a través de la lectura y la escritura</li>
+          <li>Educación estética</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="bnav-btn" onclick="showSection('intro',document.querySelectorAll('.nav-btn')[0])">← Anterior</button>
+      <button class="bnav-btn primary" onclick="showSection('sintetico',document.querySelectorAll('.nav-btn')[2])">Siguiente: Programa Sintético →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ SECCIÓN 3: PROGRAMA SINTÉTICO ══════════ -->
+  <section id="sintetico" class="section">
+    <div class="section-title">
+      <div class="icon">📋</div>
+      <div><h2>Programa Sintético</h2><p>El punto de partida curricular nacional</p></div>
+    </div>
+
+    <div class="card">
+      <h2>¿Qué es el Programa Sintético?</h2>
+      <p>Es el <strong>documento curricular nacional</strong> que establece los aprendizajes fundamentales que todos los estudiantes de la Fase 6 deben alcanzar. Funciona como base para que los docentes elaboren su Programa Analítico.</p>
+      <p>No establece una secuencia rígida, sino que <strong>otorga autonomía profesional</strong> al colectivo docente para diseñar propuestas contextualizadas.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card accent">
+        <h2>📦 Contenidos</h2>
+        <p>Son los saberes, conocimientos, habilidades y actitudes organizados por Campo formativo. Se seleccionan y contextualizan según las necesidades de cada comunidad escolar.</p>
+      </div>
+      <div class="card blue">
+        <h2>🔄 Procesos de Desarrollo de Aprendizaje</h2>
+        <p>Son <strong>recorridos o rutas posibles</strong> que muestran cómo los estudiantes se apropian del aprendizaje. Permiten comprender el mundo e intervenir en distintas situaciones.</p>
+      </div>
+    </div>
+
+    <div class="card yellow">
+      <h2>🎯 Autonomía profesional docente</h2>
+      <p>El Programa Sintético fomenta que los docentes diseñen propuestas <strong>contextualizadas</strong> en las que se problematice la realidad y se atiendan las características, necesidades e intereses de niñas, niños y adolescentes.</p>
+    </div>
+
+    <h3 style="font-size:1.15rem;font-weight:800;color:var(--primary);margin:20px 0 10px">📖 Conceptos Clave — Despliega para aprender</h3>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>📚 ¿Qué son los Contenidos Curriculares?</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          Los <strong>contenidos curriculares</strong> son los saberes, conocimientos, habilidades, actitudes y valores que deben trabajarse en la escuela. Se organizan dentro de cada Campo formativo y deben ser <em>pertinentes, relevantes y significativos</em> para los estudiantes. No son fijos: pueden contextualizarse o ampliarse según el contexto de cada escuela.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>🔄 ¿Qué son los Procesos de Desarrollo de Aprendizaje?</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          Son <strong>recorridos o rutas posibles</strong> que dan cuenta de las formas en las que niñas, niños y adolescentes se apropian de aprendizajes para comprender el mundo y actuar en él. No son pasos rígidos ni secuencias obligatorias, sino referencias que orientan la práctica docente y permiten identificar el avance de los estudiantes.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>🏫 ¿Qué rol tiene el colectivo docente?</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          El <strong>colectivo docente</strong> es el conjunto de maestros y directivos de una escuela que trabaja colaborativamente. En el nuevo modelo, este colectivo es responsable de analizar el contexto escolar y comunitario, seleccionar y contextualizar los contenidos, y elaborar el Programa Analítico. Se impulsa así su <em>autonomía profesional</em> y su papel como diseñadores del currículo local.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>🌐 ¿Cómo se relaciona con el Plan de Estudio 2022?</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          El Programa Sintético de la Fase 6 se enmarca en el <strong>Plan de Estudio 2022</strong>. Para elaborar el Programa Analítico, el colectivo docente debe identificar las relaciones entre: el <em>Perfil de egreso</em>, los <em>Ejes articuladores</em>, las <em>Finalidades de los Campos formativos</em>, las <em>Especificidades de la Fase</em>, y la organización y alcance de los Contenidos y Procesos de desarrollo de aprendizaje.
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="bnav-btn" onclick="showSection('campos',document.querySelectorAll('.nav-btn')[1])">← Anterior</button>
+      <button class="bnav-btn primary" onclick="showSection('analitico',document.querySelectorAll('.nav-btn')[3])">Siguiente: Programa Analítico →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ SECCIÓN 4: PROGRAMA ANALÍTICO ══════════ -->
+  <section id="analitico" class="section">
+    <div class="section-title">
+      <div class="icon">🔍</div>
+      <div><h2>Programa Analítico</h2><p>Los tres planos para su elaboración</p></div>
+    </div>
+
+    <div class="info-box">
+      <p>📌 El <strong>Programa Analítico</strong> es la concreción del currículo para cada escuela. Se elabora a partir del Programa Sintético y consta de <strong>tres planos o momentos</strong> de construcción.</p>
+    </div>
+
+    <div class="plano-step">
+      <div class="plano-num pn-1">1</div>
+      <div class="plano-info">
+        <h3>Primer Plano: Diagnóstico del contexto escolar</h3>
+        <p>El colectivo docente analiza el <strong>contexto social, económico y cultural</strong> de la comunidad, así como las condiciones que afectan positiva o negativamente a la escuela en la consecución de sus propósitos. También considera el impacto de elementos del mundo, el país, la entidad federativa y la localidad en la vida escolar.</p>
+        <div style="margin-top:10px">
+          <span class="tag tag-orange">Contexto social</span>
+          <span class="tag tag-blue">Contexto económico</span>
+          <span class="tag tag-green">Contexto cultural</span>
+          <span class="tag tag-purple">Necesidades escolares</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="plano-step">
+      <div class="plano-num pn-2">2</div>
+      <div class="plano-info">
+        <h3>Segundo Plano: Contextualización</h3>
+        <p>Permite al colectivo escolar <strong>interpretar y resignificar</strong> los Contenidos del Programa Sintético, desde sus propios términos y referencias, para promover un <em>aprendizaje situacional</em>. Lo nacional es punto de partida, no contenido universal aplicable a cualquier contexto.</p>
+        <p style="margin-top:8px">Los contenidos adquieren sentido y significado particular al responder a las necesidades, intereses y capacidades del colectivo docente y sus estudiantes.</p>
+        <div style="margin-top:10px">
+          <span class="tag tag-blue">Resignificación curricular</span>
+          <span class="tag tag-orange">Aprendizaje situacional</span>
+          <span class="tag tag-green">Pertinencia local</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="plano-step">
+      <div class="plano-num pn-3">3</div>
+      <div class="plano-info">
+        <h3>Tercer Plano: Formulación del Programa Analítico</h3>
+        <p>Una vez delimitados los Contenidos, el colectivo docente <strong>organiza la secuenciación y la temporalidad</strong> para definir cómo se abordarán los contenidos a lo largo del ciclo escolar. Asimismo, enuncia vinculaciones y metodologías como proyectos, aprendizaje basado en problemas, entre otros.</p>
+        <div style="margin-top:10px">
+          <span class="tag tag-purple">Secuenciación</span>
+          <span class="tag tag-orange">Temporalidad</span>
+          <span class="tag tag-green">Metodologías</span>
+          <span class="tag tag-blue">Vinculaciones</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card yellow">
+      <h2>💡 Ideas clave de la Contextualización</h2>
+      <p>La contextualización puede desarrollarse a partir de contenidos afines de un Campo formativo o varios; un tema, concepto o problema de interés escolar o local; relaciones socioafectivas, acontecimietos históricos, espacios geográficos, descubrimientos o inventos tanto locales como globales.</p>
+      <button class="reveal-btn" onclick="toggleReveal(this)">Ver los puntos esenciales</button>
+      <div class="reveal-content">
+        <ul class="nice-list">
+          <li>Lo nacional es <strong>punto de partida</strong>, no contenido universal.</li>
+          <li>No existe un formato único para llevar a cabo la contextualización.</li>
+          <li>Los contenidos se relacionan con las situaciones cotidianas de los estudiantes.</li>
+          <li>Se observan de manera clara las interconexiones entre distintos conocimientos y saberes.</li>
+          <li>Se reconocen saberes y conocimientos locales y comunitarios.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="bnav-btn" onclick="showSection('sintetico',document.querySelectorAll('.nav-btn')[2])">← Anterior</button>
+      <button class="bnav-btn primary" onclick="showSection('contenidos',document.querySelectorAll('.nav-btn')[4])">Siguiente: Tipos de Contenidos →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ SECCIÓN 5: TIPOS DE CONTENIDOS ══════════ -->
+  <section id="contenidos" class="section">
+    <div class="section-title">
+      <div class="icon">📦</div>
+      <div><h2>Tipos de Contenidos</h2><p>Decisiones del colectivo docente al elaborar el Programa Analítico</p></div>
+    </div>
+
+    <div class="info-box">
+      <p>📌 Como resultado del análisis del contexto, el colectivo docente decide qué tipo de contenidos formarán parte del Programa Analítico. Existen <strong>tres tipos</strong>:</p>
+    </div>
+
+    <div class="content-type ct-1">
+      <h3>1️⃣ Contenidos sin ajustes</h3>
+      <p>Se incorporan al Programa Analítico <strong>tal como aparecen en el Programa Sintético</strong>. No requieren modificaciones porque ya responden a las necesidades del contexto escolar.</p>
+      <div style="margin-top:10px"><span class="tag tag-green">Sin modificación</span><span class="tag tag-blue">Directamente aplicables</span></div>
+    </div>
+
+    <div class="content-type ct-2">
+      <h3>2️⃣ Contenidos contextualizados</h3>
+      <p>Son aquellos que, <strong>manteniendo su esencia</strong>, requieren ser adaptados de manera más pertinente a las condiciones particulares de los estudiantes y del contexto. Se retoman saberes y conocimientos locales y comunitarios, así como otras formas de aproximarse a determinadas temáticas; por ejemplo, el aprendizaje de la <em>Lengua de Señas Mexicana</em>, o la inclusión de variantes lingüísticas.</p>
+      <div style="margin-top:10px"><span class="tag tag-orange">Adaptación pertinente</span><span class="tag tag-blue">Saberes locales</span><span class="tag tag-purple">Inclusión lingüística</span></div>
+    </div>
+
+    <div class="content-type ct-3">
+      <h3>3️⃣ Contenidos nuevos</h3>
+      <p>Son aquellos que <strong>no están presentes en el Programa Sintético</strong>, pero corresponden a contenidos locales o regionales que el colectivo docente identifica como necesarios para incorporar al Programa Analítico, a partir de su análisis del contexto.</p>
+      <div style="margin-top:10px"><span class="tag tag-purple">No están en el P. Sintético</span><span class="tag tag-orange">Necesidades locales</span><span class="tag tag-red">Decisión del colectivo</span></div>
+    </div>
+
+    <div class="card">
+      <h2>🗂️ Organización de los Contenidos</h2>
+      <p>Los contenidos se organizan en función de las necesidades de la escuela. No todos tienen que contextualizarse ni articularse al mismo tiempo en una situación, tema o problema. Más bien, se pueden abordar en <strong>múltiples oportunidades, desde varias dimensiones y momentos</strong>.</p>
+    </div>
+
+    <div class="card accent">
+      <h2>❓ ¿Cómo se vinculan los contenidos?</h2>
+      <p>Para contextualizar, el colectivo docente puede relacionar contenidos a partir de:</p>
+      <ul class="nice-list" style="margin-top:12px">
+        <li>Contenidos afines de un Campo formativo específico o de varios.</li>
+        <li>Un tema, concepto, situación o problema de interés escolar o local.</li>
+        <li>Relaciones socioafectivas de los estudiantes.</li>
+        <li>Acontecimientos históricos o espacios geográficos cercanos.</li>
+        <li>Descubrimientos o inventos tanto locales como globales.</li>
+      </ul>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="bnav-btn" onclick="showSection('analitico',document.querySelectorAll('.nav-btn')[3])">← Anterior</button>
+      <button class="bnav-btn primary" onclick="showSection('evaluacion',document.querySelectorAll('.nav-btn')[5])">Siguiente: Evaluación Formativa →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ SECCIÓN 6: EVALUACIÓN ══════════ -->
+  <section id="evaluacion" class="section">
+    <div class="section-title">
+      <div class="icon">📊</div>
+      <div><h2>Evaluación Formativa</h2><p>Retroalimentación continua del proceso educativo</p></div>
+    </div>
+
+    <div class="card">
+      <h2>¿Qué es la Evaluación Formativa?</h2>
+      <p>Tiene como función principal <strong>retroalimentar el proceso educativo</strong> a través de la autorreflexión de estudiantes y docentes. Su objetivo es identificar tanto los logros y fortalezas como los aspectos que se requieren reforzar, y definir acciones para superarlos.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="eval-pill">
+        <div class="ep-icon">🔄</div>
+        <div>
+          <h3>Proceso constante y continuo</h3>
+          <p>No busca medir el conocimiento memorístico ni calificar de forma definitiva el trayecto escolar de los estudiantes.</p>
+        </div>
+      </div>
+      <div class="eval-pill">
+        <div class="ep-icon">⏩</div>
+        <div>
+          <h3>Favorece el avance propio</h3>
+          <p>Respeta las condiciones, tiempos y formas de aprendizaje de cada estudiante. No tiene carácter conclusivo ni sumativo.</p>
+        </div>
+      </div>
+      <div class="eval-pill">
+        <div class="ep-icon">📝</div>
+        <div>
+          <h3>Registro de observación docente</h3>
+          <p>Los docentes llevan un registro que acompaña la observación del acercamiento de estudiantes con el saber, con qué actitud lo hacen y qué espacios les son favorables.</p>
+        </div>
+      </div>
+      <div class="eval-pill">
+        <div class="ep-icon">🎯</div>
+        <div>
+          <h3>Estrategias variadas</h3>
+          <p>Requiere criterios e instrumentos de evaluación acordes al propósito, la situación a evaluar y las necesidades, intereses y condiciones de los estudiantes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card purple">
+      <h2>🚫 Lo que NO es la Evaluación Formativa</h2>
+      <ul class="nice-list" style="margin-top:12px">
+        <li>No mide conocimiento memorístico.</li>
+        <li>No califica ni determina el trayecto escolar de manera definitiva.</li>
+        <li>No tiene carácter conclusivo ni sumativo.</li>
+        <li>No es una sola forma o un solo instrumento fijo.</li>
+      </ul>
+    </div>
+
+    <div class="card yellow">
+      <h2>✅ Compromisos que genera</h2>
+      <p>La evaluación formativa establece <strong>compromisos personales y grupales</strong> para continuar trabajando. La resignificación curricular que docentes y estudiantes realicen concretará nuevas formas de enseñanza y aprendizaje, reconociendo y promoviendo las que ya están presentes en la vida cotidiana de las escuelas.</p>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>📋 ¿Qué observan los docentes durante la evaluación?</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          Los docentes observan y registran: el <strong>acercamiento de los estudiantes con el saber y el conocimiento</strong> de los Campos formativos, <strong>con qué actitud</strong> se relacionan con ese saber, y <strong>qué espacios</strong> les son más favorables para aprender. Esta información orienta las decisiones pedagógicas futuras.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <span>🤔 ¿Cuál es el papel del estudiante en la evaluación formativa?</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-content">
+          El estudiante participa activamente en la <strong>autorreflexión</strong> sobre su propio proceso de aprendizaje. Identifica sus logros, sus fortalezas y los aspectos que necesita mejorar. Establece compromisos personales para avanzar, convirtiendo la evaluación en una herramienta de autoconocimiento y crecimiento, no solo de medición.
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="bnav-btn" onclick="showSection('contenidos',document.querySelectorAll('.nav-btn')[4])">← Anterior</button>
+      <button class="bnav-btn primary" onclick="showSection('quiz',document.querySelectorAll('.nav-btn')[6])">¡A practicar! → Quiz 🧩</button>
+    </div>
+  </section>
+
+  <!-- ══════════ SECCIÓN 7: QUIZ ══════════ -->
+  <section id="quiz" class="section">
+    <div class="section-title">
+      <div class="icon">🧩</div>
+      <div><h2>Quiz de Repaso</h2><p>Pon a prueba lo que aprendiste</p></div>
+    </div>
+
+    <div class="quiz-wrap">
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="qProgress" style="width:0%"></div></div>
+
+      <!-- Q1 -->
+      <div class="quiz-q-card active" id="q1">
+        <div class="quiz-counter">Pregunta 1 de 8</div>
+        <div class="quiz-q-text">¿Cuántos Campos formativos integran el currículo de la Fase 6?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q1')">Tres</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,true,'q1')">Cuatro</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q1')">Cinco</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q1')">Seis</button>
+        </div>
+        <div class="quiz-feedback" id="fb1"></div>
+        <button class="quiz-next-btn" id="next1" onclick="nextQ(1)">Siguiente →</button>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-q-card" id="q2">
+        <div class="quiz-counter">Pregunta 2 de 8</div>
+        <div class="quiz-q-text">¿Cuál es el Campo formativo que desarrolla la comunicación oral, escrita y artística?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q2')">Saberes y Pensamiento Científico</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,true,'q2')">Lenguajes</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q2')">De lo Humano y lo Comunitario</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q2')">Ética, Naturaleza y Sociedades</button>
+        </div>
+        <div class="quiz-feedback" id="fb2"></div>
+        <button class="quiz-next-btn" id="next2" onclick="nextQ(2)">Siguiente →</button>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-q-card" id="q3">
+        <div class="quiz-counter">Pregunta 3 de 8</div>
+        <div class="quiz-q-text">¿Qué son los "Procesos de desarrollo de aprendizaje" en el Programa Sintético?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q3')">Pasos fijos y obligatorios que el docente debe seguir.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q3')">Exámenes para medir el aprendizaje.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,true,'q3')">Recorridos o rutas posibles de apropiación del aprendizaje.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q3')">Materiales de estudio para los estudiantes.</button>
+        </div>
+        <div class="quiz-feedback" id="fb3"></div>
+        <button class="quiz-next-btn" id="next3" onclick="nextQ(3)">Siguiente →</button>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-q-card" id="q4">
+        <div class="quiz-counter">Pregunta 4 de 8</div>
+        <div class="quiz-q-text">¿Cuántos planos o momentos tiene la elaboración del Programa Analítico?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q4')">Dos</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,true,'q4')">Tres</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q4')">Cuatro</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q4')">Uno</button>
+        </div>
+        <div class="quiz-feedback" id="fb4"></div>
+        <button class="quiz-next-btn" id="next4" onclick="nextQ(4)">Siguiente →</button>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-q-card" id="q5">
+        <div class="quiz-counter">Pregunta 5 de 8</div>
+        <div class="quiz-q-text">La contextualización implica que lo nacional es:</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q5')">El único contenido válido para todos.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q5')">Un contenido universal y acabado.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,true,'q5')">Un punto de partida, no un contenido aplicable a cualquier contexto.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q5')">Contenido que no puede modificarse.</button>
+        </div>
+        <div class="quiz-feedback" id="fb5"></div>
+        <button class="quiz-next-btn" id="next5" onclick="nextQ(5)">Siguiente →</button>
+      </div>
+
+      <!-- Q6 -->
+      <div class="quiz-q-card" id="q6">
+        <div class="quiz-counter">Pregunta 6 de 8</div>
+        <div class="quiz-q-text">¿Cuál tipo de contenido se incorpora al Programa Analítico tal como aparece en el Programa Sintético?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q6')">Contenidos nuevos</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q6')">Contenidos contextualizados</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,true,'q6')">Contenidos sin ajustes</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q6')">Contenidos locales</button>
+        </div>
+        <div class="quiz-feedback" id="fb6"></div>
+        <button class="quiz-next-btn" id="next6" onclick="nextQ(6)">Siguiente →</button>
+      </div>
+
+      <!-- Q7 -->
+      <div class="quiz-q-card" id="q7">
+        <div class="quiz-counter">Pregunta 7 de 8</div>
+        <div class="quiz-q-text">¿Qué característica distingue a la evaluación formativa?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q7')">Mide el conocimiento memorístico al final del año.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q7')">Califica y determina definitivamente el trayecto escolar.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,true,'q7')">Retroalimenta el proceso educativo de forma continua y no tiene carácter sumativo.</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q7')">Solo la aplica el docente sin participación del estudiante.</button>
+        </div>
+        <div class="quiz-feedback" id="fb7"></div>
+        <button class="quiz-next-btn" id="next7" onclick="nextQ(7)">Siguiente →</button>
+      </div>
+
+      <!-- Q8 -->
+      <div class="quiz-q-card" id="q8">
+        <div class="quiz-counter">Pregunta 8 de 8</div>
+        <div class="quiz-q-text">¿Cuál es el primer plano del Programa Analítico?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q8')">Formulación del Programa Analítico</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q8')">Contextualización</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,true,'q8')">Diagnóstico del contexto escolar</button>
+          <button class="quiz-opt" onclick="checkAnswer(this,false,'q8')">Evaluación formativa</button>
+        </div>
+        <div class="quiz-feedback" id="fb8"></div>
+        <button class="quiz-next-btn" id="next8" onclick="showResult()">Ver resultados 🎉</button>
+      </div>
+
+      <!-- RESULT -->
+      <div class="quiz-result" id="quizResult">
+        <div class="score" id="scoreDisplay"></div>
+        <div class="msg" id="scoreMsg"></div>
+        <p style="color:var(--muted);font-size:.95rem;margin-bottom:20px">Revisa las secciones de la guía para reforzar los temas que necesitas mejorar.</p>
+        <button class="quiz-restart-btn" onclick="restartQuiz()">🔄 Repetir Quiz</button>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="bnav-btn" onclick="showSection('evaluacion',document.querySelectorAll('.nav-btn')[5])">← Volver a Evaluación</button>
+      <button class="bnav-btn primary" onclick="showSection('intro',document.querySelectorAll('.nav-btn')[0])">🏠 Inicio</button>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>Guía de Estudio Interactiva · Programa Sintético Fase 6</strong><br>
+  Prof. Francisco De Jesus Luna Benitez · Nueva Escuela Mexicana 2022
+</footer>
+
+<script>
+  // ── NAV ────────────────────────────────────────
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (btn) btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── ACCORDION ──────────────────────────────────
+  function toggleAcc(header) {
+    const body = header.nextElementSibling;
+    const isOpen = header.classList.contains('open');
+    // close all
+    document.querySelectorAll('.acc-header').forEach(h => {
+      h.classList.remove('open');
+      h.nextElementSibling.classList.remove('open');
+    });
+    if (!isOpen) {
+      header.classList.add('open');
+      body.classList.add('open');
+    }
+  }
+
+  // ── REVEAL ─────────────────────────────────────
+  function toggleReveal(btn) {
+    const content = btn.nextElementSibling;
+    const isShown = content.classList.contains('show');
+    content.classList.toggle('show');
+    btn.textContent = isShown ? 'Ver más ▼' : 'Ocultar ▲';
+  }
+
+  // ── QUIZ ───────────────────────────────────────
+  let score = 0;
+  const total = 8;
+  const feedbacks = {
+    q1: { ok: '✅ ¡Correcto! Son cuatro Campos formativos: Lenguajes, Saberes y Pensamiento Científico, Ética Naturaleza y Sociedades, y De lo Humano y lo Comunitario.', err: '❌ Incorrecto. Son cuatro Campos formativos.' },
+    q2: { ok: '✅ ¡Exacto! El campo "Lenguajes" desarrolla la comunicación en todas sus formas.', err: '❌ Incorrecto. Es el campo "Lenguajes" el que abarca la comunicación oral, escrita y artística.' },
+    q3: { ok: '✅ ¡Muy bien! Son recorridos o rutas posibles de apropiación del aprendizaje, no pasos fijos.', err: '❌ No es correcto. Los Procesos de desarrollo de aprendizaje son recorridos o rutas posibles, no pasos obligatorios.' },
+    q4: { ok: '✅ ¡Correcto! Los tres planos son: Diagnóstico, Contextualización y Formulación.', err: '❌ Incorrecto. Son tres planos: diagnóstico del contexto, contextualización y formulación del programa.' },
+    q5: { ok: '✅ ¡Excelente! Lo nacional es el punto de partida, permitiendo que los contenidos se contextualicen.', err: '❌ Incorrecto. Lo nacional es punto de partida, no un contenido universal ni inamovible.' },
+    q6: { ok: '✅ ¡Correcto! Los contenidos "sin ajustes" se toman directamente del Programa Sintético.', err: '❌ Incorrecto. Los "contenidos sin ajustes" se incorporan tal como aparecen en el Programa Sintético.' },
+    q7: { ok: '✅ ¡Muy bien! La evaluación formativa es continua, retroalimentadora y no sumativa.', err: '❌ No es correcto. La evaluación formativa no es sumativa; retroalimenta de forma continua el aprendizaje.' },
+    q8: { ok: '✅ ¡Correcto! El primer plano es el diagnóstico del contexto social, económico y cultural de la comunidad.', err: '❌ Incorrecto. El primer plano es el diagnóstico del contexto escolar.' }
+  };
+
+  function checkAnswer(btn, correct, qId) {
+    const card = document.getElementById(qId);
+    card.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+    const fb = document.getElementById('fb' + qId.slice(1));
+    const nextBtn = document.getElementById('next' + qId.slice(1));
+    if (correct) {
+      btn.classList.add('correct');
+      fb.textContent = feedbacks[qId].ok;
+      fb.className = 'quiz-feedback show ok';
+      score++;
+    } else {
+      btn.classList.add('wrong');
+      fb.textContent = feedbacks[qId].err;
+      fb.className = 'quiz-feedback show err';
+      // highlight correct
+      card.querySelectorAll('.quiz-opt').forEach(b => {
+        if (!b.classList.contains('wrong')) b.style.opacity = '.45';
+      });
+    }
+    nextBtn.classList.add('show');
+    updateProgress(parseInt(qId.slice(1)));
+  }
+
+  function nextQ(n) {
+    document.getElementById('q' + n).classList.remove('active');
+    document.getElementById('q' + (n + 1)).classList.add('active');
+  }
+
+  function updateProgress(n) {
+    document.getElementById('qProgress').style.width = (n / total * 100) + '%';
+  }
+
+  function showResult() {
+    document.getElementById('q8').classList.remove('active');
+    document.getElementById('quizResult').classList.add('show');
+    document.getElementById('scoreDisplay').textContent = score + ' / ' + total;
+    const pct = score / total;
+    let msg = '';
+    if (pct === 1) msg = '🏆 ¡Perfecto! Dominas todos los conceptos.';
+    else if (pct >= .75) msg = '🎉 ¡Muy bien! Tienes un buen manejo del tema.';
+    else if (pct >= .5) msg = '📚 Bien, pero repasa algunos conceptos.';
+    else msg = '💪 Necesitas repasar la guía. ¡Tú puedes!';
+    document.getElementById('scoreMsg').textContent = msg;
+    document.getElementById('qProgress').style.width = '100%';
+  }
+
+  function restartQuiz() {
+    score = 0;
+    document.getElementById('quizResult').classList.remove('show');
+    document.getElementById('qProgress').style.width = '0%';
+    for (let i = 1; i <= total; i++) {
+      const card = document.getElementById('q' + i);
+      card.classList.remove('active');
+      card.querySelectorAll('.quiz-opt').forEach(b => {
+        b.disabled = false;
+        b.classList.remove('correct', 'wrong');
+        b.style.opacity = '';
+      });
+      document.getElementById('fb' + i).className = 'quiz-feedback';
+      document.getElementById('next' + i).classList.remove('show');
+    }
+    document.getElementById('q1').classList.add('active');
+  }
+</script>
+</body>
+</html>

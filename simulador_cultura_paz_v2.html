@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador – Promover la Cultura de Paz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+  :root{
+    --azul:#1565C0;--azul-medio:#1E88E5;--azul-claro:#BBDEFB;--azul-suave:#E3F2FD;
+    --teal:#00695C;--teal-claro:#E0F2F1;
+    --verde:#2E7D32;--verde-suave:#E8F5E9;
+    --naranja:#E65100;--naranja-claro:#FFF3E0;
+    --gris:#37474F;--gris-medio:#607D8B;--gris-claro:#ECEFF1;
+    --blanco:#FFFFFF;
+    --sombra:0 4px 20px rgba(0,0,0,.10);--sombra-lg:0 8px 32px rgba(0,0,0,.14);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#E3F2FD 0%,#E0F2F1 50%,#F1F8E9 100%);min-height:100vh;color:var(--gris)}
+  #pantalla-inicio{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .tarjeta-inicio{background:var(--blanco);border-radius:24px;box-shadow:var(--sombra-lg);padding:48px 40px 40px;max-width:520px;width:100%;text-align:center;animation:aparecer .6s ease}
+  .icono-inicio{width:80px;height:80px;background:linear-gradient(135deg,var(--azul),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px}
+  .tarjeta-inicio h1{font-family:'Merriweather',serif;font-size:1.65rem;color:var(--azul);line-height:1.3;margin-bottom:8px}
+  .tarjeta-inicio .subtitulo{color:var(--gris-medio);font-size:.95rem;margin-bottom:28px}
+  .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+  .badge{background:var(--azul-suave);color:var(--azul);border:1px solid var(--azul-claro);border-radius:20px;padding:6px 14px;font-size:.82rem;font-weight:700}
+  .campo-nombre label{display:block;font-weight:700;color:var(--gris);margin-bottom:8px;font-size:.95rem;text-align:left}
+  .campo-nombre input{width:100%;padding:14px 18px;border:2px solid var(--gris-claro);border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;color:var(--gris);outline:none;transition:border-color .2s}
+  .campo-nombre input:focus{border-color:var(--azul-medio)}
+  .btn-primario{display:block;width:100%;margin-top:20px;padding:16px;background:linear-gradient(135deg,var(--azul),var(--teal));color:var(--blanco);border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(21,101,192,.35)}
+  .btn-primario:hover{transform:translateY(-2px)}
+  #pantalla-examen{display:none;min-height:100vh;padding:20px}
+  .examen-contenedor{max-width:720px;margin:0 auto}
+  .cabecera-examen{background:var(--blanco);border-radius:18px;box-shadow:var(--sombra);padding:18px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .info-alumno{font-weight:700;color:var(--azul);font-size:.95rem}
+  .info-alumno span{color:var(--gris);font-weight:400;font-size:.85rem;display:block}
+  .progreso-texto{font-weight:800;color:var(--teal);font-size:1rem}
+  .barra-progreso-wrap{width:100%;background:var(--gris-claro);border-radius:10px;height:8px;overflow:hidden;margin-top:10px}
+  .barra-progreso-fill{height:100%;background:linear-gradient(90deg,var(--azul),var(--teal));border-radius:10px;transition:width .4s ease}
+  .tarjeta-pregunta{background:var(--blanco);border-radius:20px;box-shadow:var(--sombra-lg);padding:36px 32px 28px;animation:deslizar .4s ease}
+  .etiqueta-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .etiqueta-formato{display:inline-block;background:var(--azul-suave);color:var(--azul);border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .etiqueta-situacion{display:inline-block;background:#FFF8E1;color:#F57F17;border:1px solid #FFE082;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .num-pregunta{font-size:.82rem;color:var(--gris-medio);font-weight:700;margin-bottom:6px}
+  .texto-pregunta{font-family:'Merriweather',serif;font-size:1.02rem;color:var(--gris);line-height:1.75;margin-bottom:20px}
+  .situacion-box{background:var(--teal-claro);border-left:4px solid var(--teal);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:20px;font-size:.92rem;line-height:1.65;color:#00352E}
+  .situacion-box strong{color:var(--teal)}
+  .opciones{display:flex;flex-direction:column;gap:12px}
+  .opcion{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border:2px solid var(--gris-claro);border-radius:14px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;background:#FAFAFA}
+  .opcion:hover:not(.bloqueada){border-color:var(--azul-medio);background:var(--azul-suave);transform:translateX(4px)}
+  .letra-opcion{min-width:32px;height:32px;border-radius:50%;background:var(--gris-claro);color:var(--gris-medio);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.88rem;flex-shrink:0;transition:background .2s,color .2s}
+  .texto-opcion{font-size:.94rem;line-height:1.5;padding-top:5px}
+  .opcion.correcta{border-color:#43A047;background:var(--verde-suave)}
+  .opcion.correcta .letra-opcion{background:#43A047;color:#fff}
+  .opcion.incorrecta{border-color:#EF5350;background:#FFEBEE}
+  .opcion.incorrecta .letra-opcion{background:#EF5350;color:#fff}
+  .opcion.bloqueada{cursor:default}
+  .feedback{margin-top:20px;padding:16px 20px;border-radius:14px;font-size:.92rem;line-height:1.6;display:none;animation:aparecer .3s ease}
+  .feedback.correcto{background:var(--verde-suave);border-left:4px solid #43A047;color:var(--verde)}
+  .feedback.incorrecto{background:var(--naranja-claro);border-left:4px solid var(--naranja);color:var(--naranja)}
+  .btn-siguiente{display:none;margin-top:24px;padding:15px 32px;background:linear-gradient(135deg,var(--teal),var(--azul));color:var(--blanco);border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(0,105,92,.35);float:right}
+  .btn-siguiente:hover{transform:translateY(-2px)}
+  .clearfix::after{content:'';display:table;clear:both}
+  #pantalla-resultados{display:none;min-height:100vh;padding:20px}
+  .resultados-contenedor{max-width:580px;margin:0 auto;animation:aparecer .6s ease}
+  .tarjeta-resultado{background:var(--blanco);border-radius:24px;box-shadow:var(--sombra-lg);padding:44px 36px 36px;text-align:center}
+  .emoji-resultado{font-size:64px;margin-bottom:16px;display:block}
+  .tarjeta-resultado h2{font-family:'Merriweather',serif;color:var(--azul);font-size:1.6rem;margin-bottom:6px}
+  .nombre-resultado{color:var(--teal);font-size:1.1rem;font-weight:700;margin-bottom:28px}
+  .estadisticas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+  .stat-card{border-radius:16px;padding:18px 10px;text-align:center}
+  .stat-card.correctas{background:var(--verde-suave)}
+  .stat-card.incorrectas{background:#FFEBEE}
+  .stat-card.porcentaje{background:var(--azul-suave)}
+  .stat-numero{font-size:2rem;font-weight:900;display:block;line-height:1;margin-bottom:4px}
+  .stat-card.correctas .stat-numero{color:var(--verde)}
+  .stat-card.incorrectas .stat-numero{color:#EF5350}
+  .stat-card.porcentaje .stat-numero{color:var(--azul)}
+  .stat-label{font-size:.8rem;font-weight:700;color:var(--gris-medio);text-transform:uppercase;letter-spacing:.4px}
+  .barra-resultado-wrap{background:var(--gris-claro);border-radius:10px;height:14px;overflow:hidden;margin-bottom:6px}
+  .barra-resultado-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--azul),var(--teal));transition:width 1s ease}
+  .porcentaje-label{font-size:.82rem;color:var(--gris-medio);text-align:right;margin-bottom:24px}
+  .mensaje-motivador{background:linear-gradient(135deg,var(--azul-suave),var(--teal-claro));border-radius:14px;padding:18px 22px;font-size:.97rem;font-weight:700;color:var(--teal);margin-bottom:24px;line-height:1.5}
+  .btn-reiniciar{display:inline-block;padding:14px 36px;background:linear-gradient(135deg,var(--azul),var(--teal));color:var(--blanco);border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:transform .15s;box-shadow:0 4px 14px rgba(21,101,192,.35)}
+  .btn-reiniciar:hover{transform:translateY(-2px)}
+  @keyframes aparecer{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes deslizar{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+  @media(max-width:520px){
+    .tarjeta-inicio,.tarjeta-pregunta,.tarjeta-resultado{padding:28px 20px 22px}
+    .tarjeta-inicio h1{font-size:1.35rem}
+    .estadisticas{grid-template-columns:1fr 1fr}
+    .stat-card.porcentaje{grid-column:span 2}
+    .cabecera-examen{flex-direction:column;align-items:flex-start}
+    .btn-siguiente{float:none;width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div id="pantalla-inicio">
+  <div class="tarjeta-inicio">
+    <div class="icono-inicio">☮️</div>
+    <h1>Promover la Cultura de Paz</h1>
+    <p class="subtitulo">Simulador de evaluación de conocimientos</p>
+    <div class="badges">
+      <span class="badge">📋 40 preguntas</span>
+      <span class="badge">🏫 Situaciones de aula</span>
+      <span class="badge">📊 Resultados al final</span>
+    </div>
+    <div class="campo-nombre">
+      <label for="input-nombre">👤 Nombre del estudiante</label>
+      <input type="text" id="input-nombre" placeholder="Escribe tu nombre completo…" autocomplete="off">
+    </div>
+    <button class="btn-primario" onclick="iniciarSimulador()">🚀 Iniciar simulador</button>
+  </div>
+</div>
+
+<div id="pantalla-examen">
+  <div class="examen-contenedor">
+    <div class="cabecera-examen">
+      <div>
+        <div class="info-alumno" id="cab-nombre">Estudiante</div>
+        <span id="cab-sub">Simulador · Cultura de Paz</span>
+      </div>
+      <div class="progreso-texto" id="cab-progreso">Pregunta 1 / 40</div>
+      <div class="barra-progreso-wrap" style="flex-basis:100%">
+        <div class="barra-progreso-fill" id="barra" style="width:2.5%"></div>
+      </div>
+    </div>
+    <div class="tarjeta-pregunta" id="tarjeta-pregunta">
+      <div class="etiqueta-wrap" id="etiqueta-wrap"></div>
+      <div class="num-pregunta" id="num-pregunta"></div>
+      <div class="texto-pregunta" id="texto-pregunta"></div>
+      <div class="situacion-box" id="situacion-box" style="display:none"></div>
+      <div class="opciones" id="opciones"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="clearfix">
+        <button class="btn-siguiente" id="btn-siguiente" onclick="siguientePregunta()">Siguiente pregunta →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pantalla-resultados">
+  <div class="resultados-contenedor">
+    <div class="tarjeta-resultado">
+      <span class="emoji-resultado" id="emoji-res">🏆</span>
+      <h2>¡Examen completado!</h2>
+      <div class="nombre-resultado" id="res-nombre"></div>
+      <div class="estadisticas">
+        <div class="stat-card correctas"><span class="stat-numero" id="res-correctas">0</span><div class="stat-label">✅ Correctas</div></div>
+        <div class="stat-card incorrectas"><span class="stat-numero" id="res-incorrectas">0</span><div class="stat-label">❌ Incorrectas</div></div>
+        <div class="stat-card porcentaje"><span class="stat-numero" id="res-pct">0%</span><div class="stat-label">🎯 Aciertos</div></div>
+      </div>
+      <div class="barra-resultado-wrap"><div class="barra-resultado-fill" id="barra-res" style="width:0%"></div></div>
+      <div class="porcentaje-label" id="pct-label"></div>
+      <div class="mensaje-motivador" id="mensaje-motivador"></div>
+      <button class="btn-reiniciar" onclick="reiniciar()">🔄 Volver a intentar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Correctas: A=10, B=10, C=10, D=10
+const preguntas=[
+  // 1 correcta C
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál de las siguientes afirmaciones describe con mayor precisión el propósito del fichero 'Promover la Cultura de Paz'?",
+   ops:["Proporcionar a los docentes estrategias para aumentar el rendimiento académico en matemáticas y español.",
+        "Ofrecer actividades recreativas para ocupar el tiempo libre del alumnado y reducir conflictos.",
+        "Desarrollar en las personas conocimientos, capacidades, actitudes y valores que les permitan resolver conflictos de manera pacífica y rechazar cualquier tipo de violencia.",
+        "Establecer sanciones claras para quienes incumplan las normas de convivencia escolar."],
+   ok:2,fb:"El fichero fue elaborado de acuerdo con la UNICEF como un proceso que permite el desarrollo de conocimientos, capacidades, actitudes y valores en las personas para resolver conflictos de manera pacífica, rechazar cualquier tipo de violencia y tratar de generar condiciones hacia la paz, tanto a nivel personal como social."},
+
+  // 2 SITUACIÓN correcta D
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la respuesta más precisa:",
+   stxt:"La maestra Adriana nota que sus alumnos de 1.° grado no tienen palabras para describir lo que sienten. Diseña una actividad: muestra recortes de rostros con diferentes expresiones (enojo, alegría, tristeza, miedo) y pide a cada alumno que señale el que se parece a cómo se siente hoy, que lo nombre y que diga algo que lo haga sentir así.",
+   ops:["La maestra realiza una actividad de arte visual sin propósito pedagógico definido.",
+        "La maestra evalúa el estado emocional de sus alumnos para elaborar un reporte para los padres.",
+        "La maestra aplica estrategias para identificar problemas de salud mental en el grupo.",
+        "La maestra desarrolla la autoconciencia emocional: ayuda a los alumnos a reconocer qué sienten en cada momento y por qué, lo que es el primer paso para adquirir otras competencias socioemocionales."],
+   ok:3,fb:"La autoconciencia emocional es la capacidad para reconocer qué se siente en cada momento y por qué se siente eso. Es fundamental para la adquisición de otras competencias socioemocionales. Un primer paso para desarrollar estas competencias es que los alumnos tengan conciencia de sus emociones, las reconozcan y aprendan a expresarlas de forma asertiva."},
+
+  // 3 correcta A
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Qué diferencia hay entre el 'sexo' y el 'género' según el documento?",
+   ops:["El sexo refiere las diferencias biológicas entre mujeres y hombres; el género es una construcción social y cultural que asigna roles, funciones y características según el sexo de la persona.",
+        "El sexo es una construcción cultural variable y el género es la diferencia biológica inmutable entre las personas.",
+        "Ambos conceptos son sinónimos que hacen referencia a las mismas características de las personas.",
+        "El sexo determina las capacidades intelectuales y el género determina las habilidades físicas de cada persona."],
+   ok:0,fb:"El concepto de género y roles hace referencia a las diferencias biológicas entre mujeres y hombres (sexo), en tanto que el género es lo que el género ha construido social y culturalmente, asignando funciones y características consideradas 'apropiadas' por la sociedad de acuerdo al sexo de la persona."},
+
+  // 4 SITUACIÓN correcta B
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y selecciona la interpretación más adecuada:",
+   stxt:"El maestro Omar trabaja con su grupo de 5.° grado los estereotipos de género. Divide al grupo en equipos y les entrega tarjetas con profesiones (médico, enfermera, piloto, secretaria, ingeniero, maestra). Pide que las clasifiquen como 'de hombre' o 'de mujer'. Luego reflexionan: ¿por qué clasificamos así?, ¿las personas nacen sabiendo qué profesión deben tener?, ¿estas ideas limitan o amplían las posibilidades de las personas?",
+   ops:["El maestro refuerza los estereotipos de género al pedirles que los clasifiquen como 'de hombre' o 'de mujer'.",
+        "El maestro trabaja correctamente los estereotipos de género: al hacer visible la clasificación social y reflexionar sobre ella, promueve que los alumnos cuestionen roles construidos culturalmente que obstaculizan el desarrollo de sus potencialidades.",
+        "El maestro introduce contenidos ideológicos que no le corresponde abordar en educación primaria.",
+        "El maestro debe esperar que los alumnos lleguen a secundaria para trabajar estos temas con madurez suficiente."],
+   ok:1,fb:"Los estereotipos de género son las características y actividades asignadas a cada persona dependiendo de su sexo; son una construcción social y cultural. Son un problema porque obstaculizan el desarrollo de las potencialidades de las personas al predeterminar lo que se espera de ellas. La escuela es el espacio idóneo para reflexionar críticamente sobre ellos."},
+
+  // 5 correcta D
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál es la principal razón por la que el trabajo en competencias socioemocionales no es suficiente por sí solo para eliminar la discriminación y la violencia, según el documento?",
+   ops:["Porque las competencias socioemocionales solo se desarrollan efectivamente en la adolescencia y no en la infancia.",
+        "Porque los docentes no tienen la formación adecuada para enseñar competencias socioemocionales.",
+        "Porque las familias se oponen a que la escuela aborde temas socioemocionales con sus hijos.",
+        "Porque la discriminación y la violencia se originan en condiciones de pobreza y desigualdad social que la escuela no puede resolver sola, aunque puede trabajar otros aspectos que la contrarresten."],
+   ok:3,fb:"Es importante reconocer que el trabajo con las competencias socioemocionales no es suficiente para eliminar la discriminación. La violencia origina en las condiciones de pobreza y de discriminación sufrida por distintos grupos de población, cuyas condiciones familiares los colocan en situaciones de vulnerabilidad. Ante esto, la escuela también tiene que trabajar en otros aspectos que los contrarresten."},
+
+  // 6 SITUACIÓN correcta A
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la respuesta correcta:",
+   stxt:"La maestra Fernanda trabaja con alumnos de preescolar la ficha 'Inhalo y exhalo'. Pide a sus alumnos que tomen una piedra decorada, se sienten en círculo y practiquen: inhalan mientras sostienen la piedra, la colocan en la entrada de un laberinto, exhalan avanzando lentamente hacia la meta. Repiten el ejercicio tres veces. Luego reflexionan: '¿Cómo se sienten ahora comparado con antes?'",
+   ops:["La maestra aplica correctamente la técnica de respiración para la regulación emocional: esta permite a los alumnos aprender que sentir emociones intensas es inevitable, pero que pueden elegir cómo reaccionar; la respiración reduce la impulsividad y les da tiempo para pensar antes de actuar.",
+        "La maestra realiza una actividad de meditación espiritual inadecuada para el contexto educativo.",
+        "La maestra utiliza material costoso (piedras) que no todos los docentes pueden conseguir fácilmente.",
+        "La maestra solo hace una actividad de relajación sin relación con las competencias socioemocionales."],
+   ok:0,fb:"La regulación emocional es la capacidad de modificar la intensidad y duración de las emociones para tener autocontrol de la impulsividad. Se recomienda que el personal docente ayude al alumnado a aprender a identificar, comprender y regular sus emociones de forma progresiva. Sentir las emociones es inevitable, sino que puedan elegir cómo reaccionar: no gritando, empujando ni insultando a alguien."},
+
+  // 7 correcta C
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"Según el INEE 2018, ¿qué porcentaje de estudiantes de primaria y secundaria declararon haber participado en situaciones de violencia escolar?",
+   ops:["El 12.3% en primaria y el 8.9% en secundaria.",
+        "El 5.7% en primaria y el 8.7% en secundaria.",
+        "El 8.7% en primaria y el 5.7% en secundaria.",
+        "El 15.2% en primaria y el 10.4% en secundaria."],
+   ok:2,fb:"De acuerdo con el Instituto Nacional para la Evaluación de la Educación (INEE), en promedio el 8.7% de los estudiantes de primaria y el 5.7% de secundaria declararon haber participado en situaciones de robo, daño a las instalaciones, intimidación, acoso escolar o peleas a compañeros."},
+
+  // 8 SITUACIÓN correcta D
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y selecciona la respuesta más adecuada:",
+   stxt:"Dos alumnos de 3.° grado tienen un conflicto porque uno rompió accidentalmente el trabajo del otro. La maestra Claudia interviene así: les pide que respiren profundo, los sienta juntos con ella como adulta de apoyo, les da turnos para hablar sin interrumpirse, luego les pregunta qué soluciones proponen cada uno, y finalmente les ayuda a elegir la solución que beneficie a ambos.",
+   ops:["La maestra tarda demasiado en resolver el conflicto, perdiendo tiempo valioso de clase.",
+        "La maestra comete un error al no sancionar al alumno que rompió el trabajo.",
+        "La maestra aplica solo los primeros pasos, pero omite el más importante: proponer soluciones.",
+        "La maestra aplica correctamente los cinco pasos para resolver un conflicto de forma pacífica: calma, ayuda adulta, diálogo, propuesta de soluciones y elección de la más conveniente para todos."],
+   ok:3,fb:"Educar en una cultura de paz implica practicar habilidades y valores que ayuden a los niños a enfrentar los conflictos de forma pacífica y no actos de violencia. Los cinco pasos son: A) Respirar y recobrar la calma, B) Buscar ayuda de una persona adulta, C) Usar el diálogo para escucharse entre sí, D) Proponer soluciones, E) Elegir la solución más conveniente para todos."},
+
+  // 9 correcta B
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Qué distingue a la 'empatía' de la 'simpatía' como competencia socioemocional?",
+   ops:["La simpatía implica sentir lo mismo que el otro, mientras que la empatía es solo fingir comprensión.",
+        "La empatía implica percibir, entender e incluso sentir las emociones y pensamientos de otra persona; la simpatía es una reacción afectiva superficial que no requiere comprender la perspectiva del otro.",
+        "La empatía se desarrolla exclusivamente en la adolescencia, mientras que la simpatía se desarrolla desde la infancia.",
+        "La simpatía es una competencia más avanzada que la empatía porque requiere mayor madurez emocional."],
+   ok:1,fb:"La empatía como la capacidad para percibir, entender e incluso sentir las emociones y pensamientos de otra persona, es una competencia social básica enseñada primeramente por las familias y posteriormente por las personas responsables del cuidado de las niñas y los niños. Es una condición indispensable para facilitar las actividades de aprendizaje."},
+
+  // 10 SITUACIÓN correcta A
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la interpretación correcta:",
+   stxt:"El maestro Samuel trabaja con alumnos de 6.° grado el tema de discriminación. Muestra datos de la Encuesta Nacional sobre Discriminación (ENADIS 2017): el 40.3% de la población indígena ha experimentado discriminación por su condición; el 58.3% por su apariencia. Luego pide a los alumnos que reflexionen: ¿cuándo han visto o experimentado discriminación?, ¿qué consecuencias tiene para quien la sufre?",
+   ops:["El maestro trabaja correctamente la valoración de la diversidad: la discriminación consiste en dar un trato desfavorable a una persona por sus características. La escuela debe ser un instrumento para transformar la sociedad positivamente, reduciendo situaciones de desventaja que existen previamente.",
+        "El maestro genera angustia en los alumnos al exponer datos sobre problemas sociales graves.",
+        "El maestro introduce estadísticas gubernamentales que pueden ser cuestionadas por su parcialidad.",
+        "El maestro debe evitar que los alumnos comenten experiencias personales de discriminación en clase."],
+   ok:0,fb:"Sabemos que la sociedad que la educación es un instrumento para transformar de manera positiva a la sociedad; sin embargo, a veces se trata de un instrumento de desventaja. Ante esto, la escuela también tiene que trabajar en otros aspectos que contrarresten las desigualdades preexistentes, promoviendo la valoración de la diversidad."},
+
+  // 11 correcta C
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál es la diferencia entre la 'igualdad de género' y la 'equidad de género'?",
+   ops:["Son conceptos sinónimos que describen el mismo objetivo educativo y social.",
+        "La igualdad de género ya se alcanzó en México; la equidad de género es el siguiente paso a lograr.",
+        "La igualdad de género busca que no exista discriminación por sexo; la equidad de género busca realizar acciones para compensar las desventajas sociales, afectivas y económicas que impiden que exista esa igualdad.",
+        "La igualdad aplica solo al ámbito laboral y la equidad se aplica únicamente al ámbito educativo."],
+   ok:2,fb:"La igualdad de género busca que no exista la discriminación en función del sexo de las personas, mientras que la equidad de género busca realizar acciones para compensar las desventajas sociales, afectivas y económicas que impiden que exista la igualdad entre mujeres y los hombres."},
+
+  // 12 SITUACIÓN correcta D
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y selecciona la respuesta correcta:",
+   stxt:"La maestra Pilar trabaja con su grupo de 4.° grado la asertividad. Usa la actividad 'La carita Sí y la carita No'. Presenta situaciones: 'Un compañero te pide que hagas su tarea', 'Tu amiga quiere que falten a clase juntas', 'Un adulto desconocido quiere que lo acompañes'. Los alumnos levantan la tarjeta y explican por qué, practicando decir 'No' con firmeza pero sin agresión.",
+   ops:["La maestra enseña a los alumnos a desconfiar de todas las personas, lo que puede afectar sus relaciones sociales.",
+        "La maestra enseña desobediencia al alentar a los alumnos a decir 'No' a los adultos.",
+        "La maestra aplica una actividad de entretenimiento sin fundamento pedagógico.",
+        "La maestra trabaja correctamente la asertividad: enseña a los alumnos que pueden expresar sus deseos y derechos de forma clara y respetuosa, y que aprender a decir 'Sí o No' les permite tomar decisiones sin sentirse mal, respetando a los demás sin afectarlos física o emocionalmente."],
+   ok:3,fb:"La asertividad implica que las niñas y los niños puedan aprender a decir 'Sí o No' cuando ellos así lo deseen, por medio de la toma de decisiones sin que se sientan mal, que puedan expresar sus actitudes, deseos, opiniones y derechos. También podrán poner en práctica el reconocimiento del respeto del otro, entendiendo que todos podemos opinar y ser escuchados, sin afectar física o emocionalmente a los demás."},
+
+  // 13 correcta A
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Qué son los Acuerdos de Convivencia y en qué se diferencian de un reglamento impuesto?",
+   ops:["Los Acuerdos de Convivencia son creados y validados por los propios involucrados, lo que evita la imposición; asumen la convivencia con responsabilidad y son la base para una disciplina formativa que usa los reglamentos como recurso para gestionar una convivencia pacífica y democrática.",
+        "Los Acuerdos de Convivencia son un documento elaborado por la dirección escolar que los alumnos firman como señal de aceptación.",
+        "Los Acuerdos de Convivencia son idénticos a un reglamento, con la diferencia de que se redactan en lenguaje más accesible para los alumnos.",
+        "Los Acuerdos de Convivencia son acuerdos informales entre alumnos que no tienen ningún valor normativo en la escuela."],
+   ok:0,fb:"Crear acuerdos de convivencia y ser validados por los involucrados evita que un reglamento se convierta en una imposición sin que ello signifique que no se asume con responsabilidad la convivencia. Asimismo, los acuerdos de convivencia son la base para una disciplina formativa que valora la importancia de los reglamentos escolares como recurso para gestionar una convivencia pacífica y democrática."},
+
+  // 14 SITUACIÓN correcta B
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la interpretación más adecuada:",
+   stxt:"Al inicio del ciclo escolar, el maestro Bernardo reúne a su grupo de 2.° grado y les explica que juntos van a construir las reglas del salón. Cada alumno propone una regla, el grupo las discute, identifican las más importantes y las escriben en un cartel. Todos las firman. El maestro las coloca en un lugar visible y las revisan cuando surge algún conflicto.",
+   ops:["El maestro viola el reglamento escolar al no aplicar las normas oficiales establecidas por la dirección.",
+        "El maestro construye correctamente los Acuerdos de Convivencia: al ser elaborados por los propios involucrados evitan ser una imposición; los alumnos asumen la convivencia con responsabilidad, practicando la deliberación y la toma de decisiones como ejercicio democrático.",
+        "El maestro pierde tiempo valioso porque los alumnos de 2.° grado no tienen la madurez para proponer reglas.",
+        "El maestro genera confusión al dar la misma autoridad a los alumnos que al docente en la definición de normas."],
+   ok:1,fb:"Crear acuerdos de convivencia y ser validados por los involucrados evita que un reglamento se convierta en una imposición. Los alumnos asumen la convivencia con responsabilidad. Practicar el diálogo, la deliberación y la toma de decisiones es fundamental para resolver conflictos de organización social y es un ejercicio democrático valioso desde la primera infancia."},
+
+  // 15 correcta C
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál de los siguientes niveles de la 'escalera de la participación' de Robert Hart corresponde a la participación más genuina y autónoma de las NNA?",
+   ops:["Nivel 5: Participación consultada, con decisiones compartidas con las NNA.",
+        "Nivel 6: Participación iniciada por adultos, con decisiones compartidas con las NNA.",
+        "Nivel 8: Participación iniciada por el alumnado, con decisiones compartidas con los adultos.",
+        "Nivel 7: Participación iniciada y dirigida únicamente por la población estudiantil."],
+   ok:2,fb:"Robert Hart (1992) establece ocho niveles en la 'escalera de la participación', donde los tres primeros (manipulación, decoración y participación simbólica) no se consideran participación auténtica. El nivel más alto es el 8: Participación iniciada por el alumnado, con decisiones compartidas con los adultos, que es el ejercicio de participación más autónomo y genuino."},
+
+  // 16 SITUACIÓN correcta D
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la respuesta que mejor la explica:",
+   stxt:"El maestro Tomás trabaja con alumnos de 6.° grado la participación infantil. Propone que el grupo organice una asamblea escolar para presentar al director sus propuestas para mejorar los espacios de recreo. Los alumnos forman comisiones, definen el orden del día, eligen representantes y conducen la asamblea. El maestro acompaña pero no dirige.",
+   ops:["El maestro comete un error al delegar responsabilidades de adultos a los alumnos.",
+        "El maestro realiza una actividad sin respaldo legal porque los alumnos no tienen derecho a opinar sobre la escuela.",
+        "El maestro solo consigue desorganizar la escuela al permitir que los alumnos tomen decisiones sobre los espacios.",
+        "El maestro promueve el nivel más alto de participación genuina: los alumnos inician y dirigen el proceso con apoyo adulto. La participación es un derecho reconocido en la Constitución y en la Convención de los Derechos del Niño, y la escuela debe ser un espacio formativo para ejercerla."],
+   ok:3,fb:"La participación es un derecho de todas las niñas, niños y adolescentes, reconocido en tratados nacionales e internacionales. Es fundamental considerarla además de un derecho, como un proceso de aprendizaje. Para promoverla, es esencial que el personal docente se forme en ella y apoye a los diferentes niveles educativos a implementar las implicaciones de la participación genuina."},
+
+  // 17 correcta A
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Qué es la resolución de conflictos como competencia socioemocional?",
+   ops:["La capacidad de afrontar de forma pacífica y constructiva los conflictos, con la intención de que las partes involucradas lleguen a acuerdos a fin de obtener beneficios de manera equitativa y superar las diferencias.",
+        "La habilidad de evitar cualquier tipo de conflicto manteniendo una postura pasiva y conciliadora.",
+        "La técnica de ceder siempre ante las demandas del otro para preservar la armonía en el grupo.",
+        "La destreza para imponer soluciones de forma autoritaria cuando los conflictos no se resuelven por sí solos."],
+   ok:0,fb:"La resolución de conflictos hace referencia a la capacidad de afrontar de forma pacífica y constructiva los conflictos, para que las partes involucradas lleguen a acuerdos a fin de obtener beneficios de manera equitativa y superar las diferencias. Desde el punto de vista de la sociedad, el conflicto es una parte inherente de las relaciones entre las personas."},
+
+  // 18 SITUACIÓN correcta B
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la interpretación más precisa:",
+   stxt:"La maestra Valeria trabaja con su grupo de 3.° grado el tema de los derechos humanos. Invita a los alumnos a pensar en un derecho que conocen y a dibujar una situación donde ese derecho no se respeta y otra donde sí se respeta. Luego reflexionan: ¿qué podemos hacer nosotros para que estos derechos se cumplan en nuestra escuela y en nuestra familia?",
+   ops:["La maestra introduce temas políticos complejos que pueden generar confusión en alumnos de 3.° grado.",
+        "La maestra trabaja correctamente el conocimiento y ejercicio de los derechos humanos: incluirlos en la educación da sentido a los esfuerzos educativos, lleva a las comunidades escolares a construir una nación más justa, y los alumnos comprenden que tienen tanto el derecho como la responsabilidad de promoverlos.",
+        "La maestra solo aborda los derechos humanos como contenido informativo sin relación con la vida cotidiana.",
+        "La maestra debe limitar el tema a los derechos que aparecen explícitamente en el libro de texto oficial."],
+   ok:1,fb:"Incluir la perspectiva de derechos humanos en las escuelas da sentido a los esfuerzos educativos, lleva a las comunidades escolares a construir una nación más justa y segura. Con el propósito de favorecer entornos escolares libres de derechos humanos, se impulsa el conocimiento y ejercicio libre de los derechos humanos, para que las NNA sepan que sus opiniones son escuchadas y tomadas en cuenta."},
+
+  // 19 correcta C
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál de los siguientes elementos NO es parte de la estructura de las fichas del fichero?",
+   ops:["El nivel educativo y la línea temática.",
+        "El propósito y los apuntes para el personal docente.",
+        "La rúbrica de evaluación del desempeño del alumno y los criterios de acreditación.",
+        "Los recursos necesarios y el tiempo estimado."],
+   ok:2,fb:"La estructura de las fichas incluye: nivel, línea temática, propósito, apuntes para el personal docente, recursos, tiempo estimado y pasos a seguir (con el alumnado, entre el colectivo docente y con las familias). Las rúbricas de evaluación y criterios de acreditación no forman parte de la estructura de las fichas."},
+
+  // 20 SITUACIÓN correcta A
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la respuesta correcta:",
+   stxt:"El maestro Horacio trabaja con alumnos de 5.° grado los 'nuevas masculinidades'. Organiza un debate sobre situaciones cotidianas: '¿Un hombre puede llorar?', '¿Un hombre puede cuidar a sus hijos en casa?', '¿Un hombre que cocina es menos masculino?'. Reflexionan juntos sobre qué consecuencias tienen estas ideas para los hombres y para las mujeres.",
+   ops:["El maestro promueve correctamente las nuevas masculinidades: la educación con perspectiva de género debe incorporar nuevos modelos donde el docente trabaje actitudes sobre las distintas formas de ser hombre, incluyendo la tolerancia, la expresividad emocional, las relaciones de compañerismo y la reflexión sobre cómo estas formas de pensar afectan a toda la sociedad.",
+        "El maestro introduce estereotipos inversos al cuestionar el modelo de masculinidad tradicional.",
+        "El maestro genera confusión en los alumnos al contradecir los valores que aprenden en sus familias.",
+        "El maestro solo puede abordar estos temas con los alumnos hombres, no con todo el grupo mixto."],
+   ok:0,fb:"Las nuevas masculinidades en la enseñanza consisten en actividades que van desde la perspectiva de ser hombre, donde el docente incorpora a las NNA actitudes sobre las formas de ser hombre y las formas de relacionarse entre el alumnado como compañerismo, ya sea desde el tema de la relación entre hombres y mujeres, la historia de la humanidad o cualquier otro tema relevante."},
+
+  // 21 correcta D
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"Según el documento, ¿cuáles son las siete líneas temáticas del fichero 'Promover la Cultura de Paz'?",
+   ops:["Autoestima, empatía, asertividad, resolución de conflictos, derechos, tolerancia y solidaridad.",
+        "Violencia, bullying, discriminación, género, derechos, paz y participación.",
+        "Educación sexual, prevención de adicciones, seguridad vial, nutrición, derechos, convivencia y paz.",
+        "Conocimiento de derechos humanos, competencias socioemocionales, igualdad de género, valoración de la diversidad, toma de decisiones para la vida, entornos escolares seguros y participación infantil y adolescente."],
+   ok:3,fb:"Las siete líneas temáticas son: 1) Conocimiento, ejercicio y respeto a los derechos humanos, 2) Desarrollo de competencias socioemocionales, 3) Promoción de la igualdad de género, 4) Valoración de la diversidad, 5) Toma de decisiones para la vida (autocuidado), 6) Desarrollo de habilidades para la vida (Entornos escolares seguros), 7) Participación infantil y adolescente."},
+
+  // 22 SITUACIÓN correcta C
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y selecciona la interpretación más adecuada:",
+   stxt:"La maestra Elena trabaja con alumnos de 4.° grado el autocuidado. Presenta situaciones de riesgo: un compañero les pide que prueben una sustancia desconocida; un adulto les pide guardar un secreto que les incomoda. Para cada situación, pide que identifiquen cuál es el riesgo, qué derecho se está vulnerando y qué decisión tomarían para cuidarse.",
+   ops:["La maestra genera angustia al exponer situaciones de riesgo a niños de esta edad.",
+        "La maestra solo trabaja educación para la salud sin relación con los derechos del niño.",
+        "La maestra trabaja correctamente el autocuidado: promueve que los alumnos identifiquen situaciones de riesgo vinculadas a sus derechos, reflexionen sobre ellas y formen la perspectiva del sujeto autónomo que toma decisiones responsables sobre su cuerpo, su salud emocional y su integridad.",
+        "La maestra debe dejar estos temas a los padres de familia porque corresponden al ámbito privado."],
+   ok:2,fb:"El eje de toma de decisiones para el autocuidado busca promover una educación integral que favorezca la formación de un sujeto autónomo, autorregulado y convencido del bien común, de los valores que rigen la vida en sociedad y la cultura de paz, mediante el aprendizaje de la toma de decisiones responsables en cuanto a la seguridad y cuidado de sí mismo y de los otros."},
+
+  // 23 correcta B
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Qué distingue la 'inclusión' de la simple 'integración' en el contexto educativo?",
+   ops:["La integración es el proceso más avanzado; la inclusión es apenas el primer paso hacia la diversidad.",
+        "La inclusión es un proceso orientado a eliminar o minimizar las barreras que limitan el aprendizaje y la participación de todo el alumnado, permitiendo que cada persona valore su propia identidad; la integración solo incorpora físicamente a los alumnos sin modificar barreras.",
+        "La inclusión aplica únicamente a alumnos con discapacidad; la integración aplica a todos los alumnos.",
+        "Ambos conceptos son sinónimos que describen el mismo proceso educativo con nombres distintos."],
+   ok:1,fb:"La inclusión es definida como un conjunto de procesos orientados a eliminar o minimizar las barreras que limitan el aprendizaje y la participación de todo el alumnado. Tiene que ver con el reconocimiento y la valoración de la propia identidad y permite a las personas saberse igualmente valiosas, comprender y valorar a las personas distintas a ellas."},
+
+  // 24 SITUACIÓN correcta A
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la respuesta más precisa:",
+   stxt:"La maestra Gloria, junto con sus alumnos de 5.° grado, construye los Acuerdos de Convivencia del salón. Cada alumno sugiere una regla, las discuten y acuerdan las más importantes. Las escriben, todos las firman y las colocan en el pizarrón. Cuando surge un conflicto, la maestra los refiere: '¿Recuerdan lo que acordamos sobre esto?'",
+   ops:["La maestra construye correctamente los Acuerdos de Convivencia: al ser elaborados y validados por los propios involucrados, evitan ser una imposición; los alumnos asumen la convivencia con responsabilidad y se sientan las bases de una disciplina formativa que valora los reglamentos como recurso para una convivencia pacífica y democrática.",
+        "La maestra comete un error al no consultar con la dirección antes de elaborar las reglas del salón.",
+        "La maestra pierde tiempo porque los alumnos no tienen la autoridad para definir normas escolares.",
+        "La maestra debería elaborar los acuerdos con los padres de familia, no solo con los alumnos."],
+   ok:0,fb:"Crear acuerdos de convivencia y ser validados por los involucrados evita que un reglamento se convierta en una imposición. Asimismo, los acuerdos de convivencia son la base para una disciplina formativa que al valorar la importancia de los reglamentos escolares como un recurso para gestionar una convivencia pacífica, inclusiva y democrática en la comunidad escolar."},
+
+  // 25 correcta D
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál es el propósito principal de las 'asambleas escolares' como herramienta pedagógica?",
+   ops:["Resolver exclusivamente los problemas de disciplina que no pudieron solucionarse en el aula.",
+        "Informar a los alumnos sobre las reglas y sanciones del plantel de forma participativa.",
+        "Organizar los festivales y eventos culturales del ciclo escolar con la participación del alumnado.",
+        "Favorecer la formación integral y participativa de los derechos de las NNA, promoviendo una cultura vivencial de convivencia democrática y estrechando lazos entre la escuela y la comunidad."],
+   ok:3,fb:"Las asambleas escolares son una herramienta pedagógica que permite favorecer la formación integral y participativa de la de los derechos de los niñas, niños y adolescentes, como para promover una cultura vivencial participativa de la comunidad escolar y promover una cultura vivencial democrática, así como estrechar lazos entre la escuela y la comunidad."},
+
+  // 26 SITUACIÓN correcta B
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y selecciona la respuesta correcta:",
+   stxt:"El maestro Andrés trabaja con alumnos de 4.° grado la valoración de la diversidad. Muestra imágenes de personas de distintas etnias, edades, capacidades y contextos. Pide a los alumnos que identifiquen qué tienen en común y qué los diferencia. Luego reflexionan: ¿alguna diferencia hace a alguien más o menos valioso?, ¿cuándo las diferencias enriquecen y cuándo dañan?",
+   ops:["El maestro enseña a los alumnos a clasificar a las personas según sus características físicas.",
+        "El maestro trabaja correctamente la valoración de la diversidad: contribuye a gestionar una convivencia pacífica e inclusiva, orientando a los alumnos a verse como únicos, a valorar la relación con los otros y a comprender las diferencias como riqueza, no como obstáculo.",
+        "El maestro introduce un tema que puede generar discriminación al hacer visibles las diferencias.",
+        "El maestro debe evitar mostrar imágenes de personas con discapacidad para no generar lástima."],
+   ok:1,fb:"La valoración de la diversidad contribuye a gestionar una convivencia pacífica e inclusiva, proponiendo actividades para que los docentes orienten a los estudiantes hacia el análisis y valoración de las diferencias. El alumnado aprende a verse como único y a valorar la relación con los otros, así como otras características personales, culturales y otras que deben ser igualmente reconocidas."},
+
+  // 27 correcta C
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Qué es la autoestima como competencia socioemocional, según el documento?",
+   ops:["La capacidad de imponerse ante los demás con seguridad y confianza en todo tipo de situaciones.",
+        "La tendencia a valorarse positivamente por encima de los demás para fortalecer la identidad personal.",
+        "La valoración de sí mismo de acuerdo con la influencia de la historia familiar, su entorno, su autoconcepto, la opinión de los demás y sus experiencias de éxito o fracaso.",
+        "La habilidad de ignorar las críticas externas para mantener una imagen positiva de uno mismo."],
+   ok:2,fb:"La autoestima es la valoración de sí mismo que cada individuo tiene, y que tiene la influencia de la historia familiar, su entorno, su autoconcepto, la opinión de los demás y sus experiencias de éxito o fracaso. Trabajarla en la escuela contribuye a la disminución de problemas de conducta y al logro académico, consiguiendo estudiantes más autónomos."},
+
+  // 28 SITUACIÓN correcta D
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la interpretación más adecuada:",
+   stxt:"La maestra Rocío trabaja con alumnos de 3.° grado el tema de derechos humanos. Pide a cada alumno que dibuje un derecho que le gustaría ejercer mejor en su escuela y uno que quisiera defender para sus compañeros. Luego presentan sus dibujos al grupo y reflexionan: ¿qué podemos hacer nosotros, como comunidad, para que estos derechos se respeten?",
+   ops:["La maestra introduce contenidos demasiado abstractos para la edad de los alumnos de 3.° grado.",
+        "La maestra realiza solo una actividad de expresión artística sin relación con los derechos.",
+        "La maestra evalúa el nivel de comprensión de los derechos humanos de forma diagnóstica.",
+        "La maestra promueve correctamente el conocimiento y ejercicio de los derechos: incluirlos en la educación da sentido a los esfuerzos educativos, lleva a las comunidades escolares a construir una nación más justa y segura, y forma en los alumnos la responsabilidad de ejercerlos y defenderlos."],
+   ok:3,fb:"Incluir la perspectiva de derechos humanos en las escuelas da sentido a los esfuerzos educativos, lleva a las comunidades escolares a construir una nación más justa y segura. Con el propósito de favorecer entornos escolares libres de violencia, se impulsa el conocimiento y ejercicio libre de los derechos humanos, para que las NNA sepan que sus opiniones son escuchadas y tomadas en cuenta."},
+
+  // 29 correcta A
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Qué son las 'prácticas coeducativas' y cuál es su función en la escuela?",
+   ops:["Son acciones realizadas por las escuelas que promueven habilidades de igualdad de género en el alumnado, que van desde el uso del lenguaje no sexista hasta la visibilización de las aportaciones de las mujeres en todos los ámbitos del conocimiento de la humanidad.",
+        "Son actividades exclusivas para alumnas que buscan compensar desventajas históricas acumuladas.",
+        "Son prácticas deportivas mixtas para fomentar la convivencia entre géneros en el recreo.",
+        "Son metodologías de evaluación que eliminan diferencias de rendimiento entre alumnos de distintos géneros."],
+   ok:0,fb:"Las prácticas coeducativas son aquellas acciones realizadas por las escuelas que promueven en el alumnado habilidades de la igualdad de género, que van desde el uso de la palabra hasta la visibilización de las aportaciones de las mujeres en todos los ámbitos del conocimiento, extracurriculares tales como deportes, arte, música, etc., la forma de relacionarse entre el alumnado."},
+
+  // 30 SITUACIÓN correcta C
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la respuesta que mejor la explica:",
+   stxt:"La maestra Sandra trabaja con alumnos de 2.° grado la ficha 'Adivina qué siento'. Forma un círculo, venda los ojos a un alumno y le entrega objetos con diferentes texturas. El alumno describe la sensación y qué emoción le genera. El grupo adivina la emoción. Al finalizar, reflexionan: '¿Cómo sabemos lo que siente alguien más?, ¿qué podemos hacer cuando alguien siente algo desagradable?'",
+   ops:["La maestra realiza un juego sensorial sin relación con las emociones o con la cultura de paz.",
+        "La maestra evalúa las capacidades sensoriales de sus alumnos con fines de diagnóstico especial.",
+        "La maestra trabaja correctamente la empatía: enseña a los alumnos a percibir y entender las emociones propias y ajenas. La empatía es una condición indispensable para facilitar el aprendizaje, desarrollar vínculos afectivos sanos y actuar en solidaridad con los demás.",
+        "La maestra aplica una técnica de meditación espiritual inadecuada para el nivel primaria."],
+   ok:2,fb:"La empatía es la capacidad para percibir, entender e incluso sentir las emociones y pensamientos de otra persona. La empatía puede enseñarse desde el nivel preescolar. Trabajar la empatía en el nivel preescolar permite desarrollar vínculos afectivos sanos y duraderos, colaborar en equipo y comunicar sus ideas y sentimientos. Es una condición indispensable para facilitar las actividades de aprendizaje."},
+
+  // 31 correcta D
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál de las siguientes afirmaciones describe mejor la relación entre conflicto y cultura de paz?",
+   ops:["Una cultura de paz implica eliminar completamente los conflictos del entorno escolar.",
+        "Los conflictos son siempre negativos y deben evitarse mediante la aplicación estricta de normas.",
+        "Los conflictos solo deben resolverse cuando involucran a personas con igual poder e influencia.",
+        "El conflicto es una parte inherente de las relaciones entre personas; la cultura de paz no busca evitarlo sino afrontarlo con habilidades pacíficas, pues resolverlo de forma no violenta es una oportunidad de aprendizaje."],
+   ok:3,fb:"Desde el punto de vista de la sociedad, el conflicto es una parte inherente de las relaciones entre las personas. Sin embargo, es una parte inherente que desde edades muy tempranas se busca enseñar a los niños y niñas a enfrentar los conflictos de forma pacífica y no actos de violencia. Para ello es importante que se les enseñen los pasos sencillos y se los ejercite para resolver los conflictos de manera pacífica."},
+
+  // 32 SITUACIÓN correcta A
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la interpretación más precisa:",
+   stxt:"El maestro Ricardo trabaja con alumnos de 6.° grado el derecho a participar. Les explica que la Constitución Mexicana reconoce este derecho en los artículos 3, 13, 18, 59, 71 y 126. Luego propone que el grupo diseñe una propuesta para mejorar la biblioteca escolar y la presenten ante el director. Los alumnos elaboran la propuesta, la fundamentan con argumentos y la presentan.",
+   ops:["El maestro promueve correctamente el derecho a la participación: es un derecho reconocido en la Constitución y en la Convención sobre los Derechos del Niño. La escuela debe ser un espacio formativo para ejercerlo genuinamente; los alumnos aprenden que sus opiniones cuentan y que pueden incidir en decisiones que les afectan.",
+        "El maestro comete un error al vincular el derecho a participar con actividades de gestión escolar.",
+        "El maestro introduce un tema político que puede generar falsas expectativas en los alumnos.",
+        "El maestro debería limitar la participación a temas del aula y no involucrar a las autoridades escolares."],
+   ok:0,fb:"La participación es un derecho de todas las niñas, niños y adolescentes, reconocido en tratados nacionales e internacionales. En las escuelas se ha limitado por una visión adultocéntrica. Por ello, es fundamental considerar la participación además de un derecho, como un proceso de aprendizaje, para toda la comunidad escolar, donde se forme y se ejercite genuinamente."},
+
+  // 33 correcta C
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál de las siguientes competencias socioemocionales describe con mayor precisión la 'asertividad'?",
+   ops:["La capacidad de ceder ante las demandas de los demás para preservar la armonía del grupo.",
+        "La habilidad de expresar las emociones de forma intensa para que los demás comprendan la gravedad del problema.",
+        "La capacidad para expresar lo que se piensa y siente de forma clara, respetuosa y directa, sin agredir a nadie pero sin reprimir los propios sentimientos, respetando los derechos propios y de los demás.",
+        "La destreza para evitar expresar desacuerdos y mantener una postura neutral en situaciones conflictivas."],
+   ok:2,fb:"La asertividad es la capacidad para expresar lo que se piensa y siente de forma clara, respetuosa y directa, sin agredir a nadie, pero sin reprimir los sentimientos propios, al ser vivenciadas como propias o ajenas. Además de respetar los derechos propios, también implica respetar los derechos de los demás y los nuestros."},
+
+  // 34 SITUACIÓN correcta B
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la respuesta correcta:",
+   stxt:"La maestra Patricia trabaja con alumnos de 5.° grado los entornos escolares seguros. Muestra datos: en México el UNICEF reporta discriminación, exclusión y violencia como problemas en los centros educativos. Luego pide a los alumnos que identifiquen una situación de su propia escuela que los haga sentir inseguros y propongan acciones concretas para mejorarla.",
+   ops:["La maestra genera angustia al exponer datos sobre violencia escolar a sus alumnos.",
+        "La maestra trabaja correctamente los entornos escolares seguros: la educación puede contribuir a generar mejores ambientes de convivencia y seguridad. Identificar las situaciones de riesgo y proponer soluciones forma alumnos que desarrollan habilidades para enfrentarse a los factores de riesgo de su entorno.",
+        "La maestra debería esperar instrucciones de la dirección antes de abordar temas de seguridad escolar.",
+        "La maestra introduce un tema que corresponde exclusivamente al área de orientación y psicología escolar."],
+   ok:1,fb:"La educación puede contribuir a generar mejores ambientes de convivencia y seguridad en el aula, por lo anterior, el fichero aporta información y actividades didácticas para que el personal docente se introduzca al tema de la cultura de paz, promueva la conciencia acerca de los prejuicios y estereotipos sexistas y hacia los estudiantes que reflexionen sobre cómo se han justificado socialmente."},
+
+  // 35 correcta D
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál de las siguientes describe con mayor precisión la 'discriminación' según el documento?",
+   ops:["La discriminación es la capacidad de diferenciar entre conductas adecuadas e inadecuadas en el aula.",
+        "La discriminación es la selección de candidatos con base en criterios de mérito y desempeño académico.",
+        "La discriminación es la evaluación crítica de comportamientos que no se ajustan a las normas sociales.",
+        "La discriminación es el trato inmerecido, desfavorable o de desprecio hacia una persona o grupo por características como la condición física, social, cultural, género, edad, discapacidad u otras."],
+   ok:3,fb:"Para Prevenir la Discriminación (CONAPRED), la discriminación es una práctica cotidiana que consiste en dar un trato desfavorable o de desprecio inmerecido a determinada persona o grupo, que a veces no percibimos, pero que en algún momento la mayoría ha contribuido a realizar. Se manifiesta como actitudes, trato o situaciones donde existe una molestia o daño a la persona."},
+
+  // 36 SITUACIÓN correcta A
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la interpretación más adecuada:",
+   stxt:"El maestro Gabriel trabaja con alumnos de 6.° grado el tema de la igualdad de género. Muestra datos: en 2016 la tasa de participación en educación superior era de 4.3 mujeres por cada 10 hombres. Luego reflexionan: ¿a qué se deben estas diferencias?, ¿son diferencias biológicas o sociales?, ¿qué podría hacerse para cambiarlas?",
+   ops:["El maestro trabaja correctamente la igualdad de género: estas desigualdades están asociadas a estereotipos y roles de género que han limitado el desarrollo personal y social de las mujeres. La escuela puede contribuir a cambiarlas promoviendo reflexión crítica y habilidades de igualdad.",
+        "El maestro introduce datos estadísticos que pueden ser desalentadores para las alumnas del grupo.",
+        "El maestro debe limitar el debate a las causas biológicas de las diferencias entre hombres y mujeres.",
+        "El maestro introduce un tema político que no corresponde abordarse en educación primaria."],
+   ok:0,fb:"Las desigualdades entre mujeres y hombres son una realidad vigente y están asociadas a los estereotipos y roles de género, los cuales han limitado el desarrollo personal y social de las mujeres. En este marco, la escuela es un espacio idóneo para que las NNA reflexionen, así como para desarrollar habilidades de igualdad y equidad de género."},
+
+  // 37 correcta C
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Cuál es la función específica que la Agenda 2030 de las Naciones Unidas asigna a la educación en relación con los entornos seguros?",
+   ops:["Garantizar que el 100% de los alumnos tengan acceso a instalaciones escolares con seguridad física.",
+        "Eliminar el uso de dispositivos digitales en los centros escolares para prevenir el ciberacoso.",
+        "En el Objetivo 4 (Educación de Calidad), construir y adecuar instalaciones educativas que sean inclusivas y seguras, tomando en cuenta las necesidades de NNA, género y discapacidad, y ofreciendo entornos de aprendizaje seguros, no violentos e inclusivos para todos.",
+        "Crear programas de vigilancia escolar con participación obligatoria de los padres de familia."],
+   ok:2,fb:"La Organización de las Naciones Unidas, en la Agenda 2030, en su Objetivo 4 'Educación de Calidad' planteó 'construir y adecuar instalaciones educativas que tengan en cuenta las necesidades de los niños y las personas con discapacidad y las diferencias de género, y que ofrezcan entornos de aprendizaje seguros, no violentos, inclusivos y eficaces para todos'."},
+
+  // 38 SITUACIÓN correcta D
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y elige la respuesta más precisa:",
+   stxt:"La maestra Yolanda trabaja con alumnos de preescolar la ficha 'Semáforo de las emociones'. Al inicio de cada día, pide a cada niño que coloque su nombre junto al color que representa cómo se siente: rojo (enojo/tristeza intensa), amarillo (un poco inquieto), verde (bien). La maestra observa los resultados y, si un niño está en rojo varios días, se acerca a hablar con él.",
+   ops:["La maestra usa el semáforo como un mecanismo de control disciplinario para premiar o castigar conductas.",
+        "La maestra realiza una actividad de diagnóstico psicológico que debería corresponder al área de apoyo especializado.",
+        "La maestra aplica el semáforo como evaluación del comportamiento, lo que puede generar estigmatización.",
+        "La maestra aplica correctamente la autoconciencia emocional: ayuda a los alumnos a reconocer qué sienten en cada momento y por qué, primer paso para desarrollar competencias socioemocionales. La observación del docente le permite acercarse a los alumnos que muestran necesidad de apoyo."],
+   ok:3,fb:"Para desarrollar competencias socioemocionales, un primer paso consiste en tener conciencia de las propias emociones, reconocerlas y expresarlas de forma asertiva. Un ejercicio importante es el que el alumnado reconozca en el momento en que ocurren las emociones como: enojo, miedo, alegría, tristeza, vergüenza para reconocidas para así poder expresarlas de manera apropiada."},
+
+  // 39 correcta B
+  {tipo:"Cuestionamiento directo",sit:false,
+   txt:"¿Qué implica que los derechos humanos sean 'inviolables' e 'imprescriptibles', según el documento?",
+   ops:["Que solo pueden ser limitados por el Estado en situaciones de emergencia nacional declarada.",
+        "Que nadie tiene derecho a atentar contra ellos, lesionarlos ni destruirlos; que no prescriben con el tiempo; y que por ello existen instancias para promoverlos y protegerlos ante su vulneración.",
+        "Que los derechos humanos son iguales en todos los países y no pueden interpretarse de forma diferente.",
+        "Que solo los organismos internacionales como la ONU tienen autoridad para sancionar su violación."],
+   ok:1,fb:"Los derechos tienen como característica ser inviolables; es decir, nadie tiene derecho a atentar contra ellos, lesionarlos ni destruirlos. Es por ello que existen los diferentes tipos de violencia que trae como consecuencia el aumento de los diferentes tipos de violencia en los diversos contextos, instancias para promover y proteger los derechos humanos ante la vulneración de los mismos."},
+
+  // 40 SITUACIÓN correcta C
+  {tipo:"Situación en el aula",sit:true,
+   txt:"Lee la situación y selecciona la respuesta que mejor la explica:",
+   stxt:"El colectivo docente de la Escuela Primaria 'Lazaro Cardenas' evalúa un año de trabajo con el fichero 'Promover la Cultura de Paz'. Concluyen: los alumnos resuelven conflictos con mayor calma, participan más activamente, expresan mejor sus emociones y la relación con las familias mejoró. Sin embargo, una maestra pregunta: '¿Esto realmente transforma la violencia que existe fuera de la escuela?'",
+   ops:["Sí, el fichero garantiza la eliminación total de la violencia en el entorno comunitario de la escuela.",
+        "No, el fichero solo tiene impacto dentro del salón de clases y no trasciende al entorno social.",
+        "El fichero contribuye significativamente, pero no puede resolver por sí solo los problemas sociales externos: la violencia se origina en condiciones de desigualdad que la escuela no puede eliminar sola; sin embargo, sí puede formar personas con habilidades para afrontarla, generar vínculos comunitarios y abrir caminos de esperanza.",
+        "El fichero no tiene ningún impacto porque los problemas sociales externos son demasiado grandes para que la escuela los enfrente."],
+   ok:2,fb:"Es importante reconocer que el trabajo con las competencias socioemocionales no es suficiente para eliminar la discriminación. La violencia origina en las condiciones de pobreza y de discriminación sufrida por distintos grupos de población. Ante esto, la escuela también tiene que trabajar en otros aspectos que los contrarresten y medida las desigualdades preexistentes."}
+];
+
+let nombreAlumno="",indiceActual=0,respuestasCorrectas=0,respondida=false;
+const letras=["A","B","C","D"];
+
+function iniciarSimulador(){
+  const inp=document.getElementById("input-nombre");
+  nombreAlumno=inp.value.trim();
+  if(!nombreAlumno){inp.style.borderColor="#EF5350";inp.focus();return;}
+  inp.style.borderColor="";
+  indiceActual=0;respuestasCorrectas=0;respondida=false;
+  document.getElementById("pantalla-inicio").style.display="none";
+  document.getElementById("pantalla-examen").style.display="block";
+  document.getElementById("cab-nombre").textContent=nombreAlumno;
+  mostrarPregunta();
+}
+
+function mostrarPregunta(){
+  respondida=false;
+  const p=preguntas[indiceActual],total=preguntas.length;
+  document.getElementById("cab-progreso").textContent=`Pregunta ${indiceActual+1} / ${total}`;
+  document.getElementById("barra").style.width=`${((indiceActual+1)/total)*100}%`;
+  document.getElementById("num-pregunta").textContent=`Pregunta ${indiceActual+1} de ${total}`;
+  const wrap=document.getElementById("etiqueta-wrap");
+  wrap.innerHTML=`<span class="etiqueta-formato">${p.tipo}</span>`;
+  if(p.sit) wrap.innerHTML+=`<span class="etiqueta-situacion">🏫 Situación de aula</span>`;
+  document.getElementById("texto-pregunta").innerHTML=p.txt.replace(/\n/g,"<br>");
+  const sb=document.getElementById("situacion-box");
+  if(p.sit&&p.stxt){sb.style.display="block";sb.innerHTML=`<strong>📌 Situación:</strong> ${p.stxt}`;}
+  else{sb.style.display="none";}
+  const cont=document.getElementById("opciones");cont.innerHTML="";
+  p.ops.forEach((op,i)=>{
+    const div=document.createElement("div");div.className="opcion";
+    div.innerHTML=`<div class="letra-opcion">${letras[i]}</div><div class="texto-opcion">${op}</div>`;
+    div.addEventListener("click",()=>seleccionar(i,div));
+    cont.appendChild(div);
+  });
+  const fb=document.getElementById("feedback");fb.style.display="none";fb.className="feedback";
+  document.getElementById("btn-siguiente").style.display="none";
+  const t=document.getElementById("tarjeta-pregunta");t.style.animation="none";void t.offsetWidth;t.style.animation="deslizar .4s ease";
+}
+
+function seleccionar(idx,elDiv){
+  if(respondida)return;respondida=true;
+  const p=preguntas[indiceActual];
+  document.querySelectorAll(".opcion").forEach(o=>o.classList.add("bloqueada"));
+  const fb=document.getElementById("feedback");
+  if(idx===p.ok){
+    respuestasCorrectas++;elDiv.classList.add("correcta");
+    fb.className="feedback correcto";
+    fb.innerHTML=`✅ <strong>¡Correcto!</strong> ${p.fb}`;
+  } else {
+    elDiv.classList.add("incorrecta");
+    document.querySelectorAll(".opcion")[p.ok].classList.add("correcta");
+    fb.className="feedback incorrecto";
+    fb.innerHTML=`❌ <strong>Incorrecto.</strong> ${p.fb}`;
+  }
+  fb.style.display="block";
+  const btn=document.getElementById("btn-siguiente");
+  btn.textContent=indiceActual<preguntas.length-1?"Siguiente pregunta →":"Ver mis resultados 🎯";
+  btn.style.display="inline-block";
+}
+
+function siguientePregunta(){
+  indiceActual++;
+  if(indiceActual<preguntas.length)mostrarPregunta();else mostrarResultados();
+}
+
+function mostrarResultados(){
+  document.getElementById("pantalla-examen").style.display="none";
+  document.getElementById("pantalla-resultados").style.display="block";
+  const total=preguntas.length,inc=total-respuestasCorrectas,pct=Math.round((respuestasCorrectas/total)*100);
+  document.getElementById("res-nombre").textContent=nombreAlumno;
+  document.getElementById("res-correctas").textContent=respuestasCorrectas;
+  document.getElementById("res-incorrectas").textContent=inc;
+  document.getElementById("res-pct").textContent=pct+"%";
+  document.getElementById("pct-label").textContent=`${respuestasCorrectas} de ${total} preguntas correctas`;
+  setTimeout(()=>{document.getElementById("barra-res").style.width=pct+"%";},200);
+  let e,m;
+  if(pct>=90){e="🏆";m="¡Excelente! Tienes un dominio sobresaliente sobre la cultura de paz y las competencias socioemocionales. ¡Eres un promotor(a) de paz!";}
+  else if(pct>=75){e="🌟";m="¡Muy bien! Comprendes los conceptos fundamentales de la cultura de paz. Repasa los temas donde tuviste dudas para alcanzar la excelencia.";}
+  else if(pct>=60){e="📚";m="Buen esfuerzo. Vas por buen camino. Te recomendamos repasar las líneas temáticas del fichero para reforzar tu aprendizaje.";}
+  else{e="💪";m="¡Sigue adelante! Cada intento es una oportunidad de aprendizaje. Revisa el material sobre cultura de paz y vuelve a intentarlo. ¡Tú puedes!";}
+  document.getElementById("emoji-res").textContent=e;
+  document.getElementById("mensaje-motivador").textContent=m;
+}
+
+function reiniciar(){
+  document.getElementById("pantalla-resultados").style.display="none";
+  document.getElementById("pantalla-inicio").style.display="flex";
+  document.getElementById("input-nombre").value="";
+}
+document.getElementById("input-nombre").addEventListener("keypress",e=>{if(e.key==="Enter")iniciarSimulador();});
+</script>
+</body>
+</html>
