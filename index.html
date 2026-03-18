@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Material Educativo – Prof. Francisco De Jesús Luna Benítez</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --azul:      #1565C0;
+      --azul-claro:#42A5F5;
+      --verde:     #2E7D32;
+      --verde-claro:#66BB6A;
+      --naranja:   #E65100;
+      --naranja-claro:#FF9800;
+      --amarillo:  #FDD835;
+      --rojo:      #C62828;
+      --morado:    #6A1B9A;
+      --bg:        #E3F2FD;
+      --blanco:    #FFFFFF;
+      --texto:     #1A237E;
+      --sombra:    0 4px 18px rgba(0,0,0,.18);
+      --radio:     16px;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--texto);
+      overflow-x: hidden;
+    }
+
+    /* ===== FONDO ANIMADO ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(255,235,59,.25) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(66,165,245,.25) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(102,187,106,.15) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== LAYOUT WRAPPER ===== */
+    #app {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, #1565C0 0%, #0D47A1 40%, #1B5E20 100%);
+      color: var(--blanco);
+      padding: 18px 24px 14px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+    }
+
+    header::before {
+      content: '⭐ 📚 ✏️ 🎒 🌟 📖 🎓 🖍️ ⭐ 📚 ✏️ 🎒 🌟 📖 🎓 🖍️ ⭐ 📚 ✏️ 🎒';
+      position: absolute;
+      top: 4px; left: 0; right: 0;
+      font-size: 14px;
+      letter-spacing: 6px;
+      opacity: .35;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: var(--amarillo);
+      color: var(--azul);
+      font-family: 'Fredoka One', cursive;
+      font-size: 13px;
+      font-weight: 400;
+      padding: 3px 14px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+      letter-spacing: .5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+
+    header h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(22px, 5vw, 38px);
+      letter-spacing: 1px;
+      line-height: 1.1;
+      text-shadow: 2px 3px 8px rgba(0,0,0,.3);
+    }
+
+    header h1 span { color: var(--amarillo); }
+
+    .header-sub {
+      font-size: clamp(13px, 2.5vw, 17px);
+      opacity: .9;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .header-author {
+      margin-top: 8px;
+      font-size: clamp(12px, 2vw, 15px);
+      background: rgba(255,255,255,.15);
+      display: inline-block;
+      padding: 4px 18px;
+      border-radius: 20px;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      background: linear-gradient(90deg, #0D47A1, #1565C0, #0D47A1);
+      padding: 0 12px;
+      display: flex;
+      align-items: stretch;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,.25);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* ===== DROPDOWN ===== */
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 22px;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(16px, 3vw, 20px);
+      color: var(--blanco);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      border-radius: 0;
+      transition: background .2s;
+      white-space: nowrap;
+      border-bottom: 4px solid transparent;
+    }
+
+    .dropdown-btn:hover,
+    .dropdown-btn.active {
+      background: rgba(255,255,255,.15);
+    }
+
+    .dropdown-btn .icon { font-size: 22px; }
+    .dropdown-btn .arrow { font-size: 13px; transition: transform .25s; }
+    .dropdown-btn.open .arrow { transform: rotate(180deg); }
+
+    /* Color accent per section */
+    .dropdown:nth-child(1) .dropdown-btn { border-bottom-color: var(--naranja-claro); }
+    .dropdown:nth-child(2) .dropdown-btn { border-bottom-color: var(--verde-claro); }
+    .dropdown:nth-child(3) .dropdown-btn { border-bottom-color: var(--amarillo); }
+
+    /* ===== DROPDOWN PANEL ===== */
+    .dropdown-panel {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 300px;
+      max-width: 360px;
+      max-height: 70vh;
+      overflow-y: auto;
+      background: var(--blanco);
+      border-radius: 0 0 var(--radio) var(--radio);
+      box-shadow: var(--sombra);
+      z-index: 200;
+    }
+
+    .dropdown-panel.open { display: block; animation: slideDown .2s ease; }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* keep panel inside viewport on mobile */
+    @media (max-width: 520px) {
+      .dropdown-panel { min-width: 92vw; left: 50%; transform: translateX(-50%); }
+      .dropdown-panel.open { transform: translateX(-50%); }
+    }
+
+    .panel-header {
+      padding: 12px 18px 8px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 17px;
+      border-bottom: 2px solid #EEE;
+    }
+
+    /* colors per panel */
+    .panel-sim .panel-header  { color: var(--naranja); }
+    .panel-guia .panel-header { color: var(--verde); }
+    .panel-pdf  .panel-header { color: var(--morado); }
+
+    .panel-item {
+      display: block;
+      width: 100%;
+      padding: 11px 18px;
+      text-align: left;
+      background: none;
+      border: none;
+      border-bottom: 1px solid #F0F0F0;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #333;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      line-height: 1.3;
+    }
+
+    .panel-item:last-child { border-bottom: none; }
+
+    .panel-sim  .panel-item:hover { background: #FFF3E0; color: var(--naranja); }
+    .panel-guia .panel-item:hover { background: #E8F5E9; color: var(--verde); }
+    .panel-pdf  .panel-item:hover { background: #EDE7F6; color: var(--morado); }
+
+    .panel-item .item-icon { margin-right: 8px; font-size: 16px; }
+
+    /* ===== COUNTER BADGES IN BTN ===== */
+    .count-badge {
+      background: rgba(255,255,255,.25);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 1px 8px;
+      border-radius: 12px;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px;
+      gap: 16px;
+    }
+
+    /* ===== WELCOME SCREEN ===== */
+    #welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .welcome-emoji { font-size: clamp(60px, 15vw, 100px); animation: bounce 2s infinite; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-14px); }
+    }
+
+    #welcome h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(24px, 6vw, 40px);
+      color: var(--azul);
+      line-height: 1.2;
+    }
+
+    #welcome p {
+      font-size: clamp(15px, 3vw, 19px);
+      color: #555;
+      max-width: 500px;
+      font-weight: 600;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 17px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.15);
+    }
+
+    .stat-chip.sim  { background: #FFF3E0; color: var(--naranja); border: 3px solid var(--naranja-claro); }
+    .stat-chip.guia { background: #E8F5E9; color: var(--verde);   border: 3px solid var(--verde-claro); }
+    .stat-chip.pdf  { background: #EDE7F6; color: var(--morado);  border: 3px solid #AB47BC; }
+
+    /* ===== VIEWER AREA ===== */
+    #viewer-container {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    #viewer-topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--blanco);
+      border-radius: var(--radio);
+      padding: 10px 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.12);
+      flex-wrap: wrap;
+    }
+
+    #viewer-title {
+      flex: 1;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(15px, 3vw, 20px);
+      color: var(--azul);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #btn-close {
+      background: var(--rojo);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 18px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      flex-shrink: 0;
+    }
+
+    #btn-close:hover { background: #B71C1C; transform: scale(1.05); }
+
+    #btn-new-tab {
+      background: var(--azul-claro);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background .2s;
+      flex-shrink: 0;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    #btn-new-tab:hover { background: #1E88E5; }
+
+    #viewer-frame {
+      flex: 1;
+      border: none;
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      background: white;
+      min-height: calc(100vh - 260px);
+      width: 100%;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: linear-gradient(135deg, #0D47A1, #1B5E20);
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      padding: 14px 20px;
+      font-size: clamp(12px, 2.5vw, 15px);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    footer span { color: var(--amarillo); }
+
+    /* ===== ITEM ESPECIAL ===== */
+    .item-especial {
+      background: linear-gradient(90deg, #FFF9C4, #FFFDE7) !important;
+      color: #E65100 !important;
+      font-size: 15.5px !important;
+      border-left: 5px solid #FF6F00 !important;
+      border-bottom: 2px solid #FFD54F !important;
+      animation: pulsoEspecial 2s ease-in-out infinite;
+      position: relative;
+    }
+
+    .item-especial:hover {
+      background: linear-gradient(90deg, #FFE082, #FFF9C4) !important;
+      color: #BF360C !important;
+    }
+
+    @keyframes pulsoEspecial {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,111,0,.0); }
+      50%       { box-shadow: 0 0 8px 3px rgba(255,111,0,.25); }
+    }
+
+    .badge-especial {
+      display: inline-block;
+      background: #FF6F00;
+      color: white;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin-left: 6px;
+      vertical-align: middle;
+      letter-spacing: .5px;
+    }
+
+    /* ===== NIVEL ESPECIAL ===== */
+    .nivel-especial {
+      background: linear-gradient(90deg, #FFD600, #FF6F00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: .5px;
+    }
+    .dropdown-panel::-webkit-scrollbar { width: 6px; }
+    .dropdown-panel::-webkit-scrollbar-thumb { background: #CCC; border-radius: 3px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      nav { gap: 2px; }
+      .dropdown-btn { padding: 12px 12px; font-size: 15px; }
+      .count-badge { display: none; }
+      #viewer-frame { min-height: calc(100vh - 280px); }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="header-badge">🌟 Nivel: Educación Especial</div>
+    <h1>🏫 Material <span>Educativo</span> Interactivo</h1>
+    <p class="header-sub">Simuladores · Guías · Documentos PDF</p>
+    <p class="header-author">✏️ Prof. Francisco De Jesús Luna Benítez</p>
+  </header>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav>
+
+    <!-- SIMULADORES -->
+    <div class="dropdown" id="dd-sim">
+      <button class="dropdown-btn" onclick="toggleDropdown('dd-sim')" aria-expanded="false">
+        <span class="icon">🎮</span>
+        Simuladores
+        <span class="count-badge">19</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="dropdown-panel panel-sim" id="panel-dd-sim">
+        <div class="panel-header">🎮 Simuladores (19)</div>
+        <button class="panel-item" onclick="cargarHTML('Simulador_Acoso_Escolar.html','Simulador: Acoso Escolar')"><span class="item-icon">▶</span>Acoso Escolar</button>
+        <button class="panel-item item-especial" onclick="cargarHTML('Simulador_Admision_Educacion_Especial_2026.html','Simulador: Admisión Educación Especial 2026')"><span class="item-icon">⭐</span>¡NUEVO! Admisión Ed. Especial 2026 <span class="badge-especial">2026</span></button>
+        <button class="panel-item" onclick="cargarHTML('simulador_aprendamos_comunidad.html','Simulador: Aprendamos en Comunidad')"><span class="item-icon">▶</span>Aprendamos en Comunidad</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_conflictos_escolares.html','Simulador: Conflictos Escolares')"><span class="item-icon">▶</span>Conflictos Escolares</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_cultura_paz_1.html','Simulador: Cultura de Paz (V1)')"><span class="item-icon">▶</span>Cultura de Paz V1</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_cultura_paz_v2.html','Simulador: Cultura de Paz (V2)')"><span class="item-icon">▶</span>Cultura de Paz V2</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_equidad_1.html','Simulador: Equidad (V1)')"><span class="item-icon">▶</span>Equidad V1</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_equidad_v2.html','Simulador: Equidad (V2)')"><span class="item-icon">▶</span>Equidad V2</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_fase2.html','Simulador: Fase 2')"><span class="item-icon">▶</span>Fase 2</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_fase3.html','Simulador: Fase 3')"><span class="item-icon">▶</span>Fase 3</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_fase4.html','Simulador: Fase 4')"><span class="item-icon">▶</span>Fase 4</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_fase5.html','Simulador: Fase 5')"><span class="item-icon">▶</span>Fase 5</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_fase6.html','Simulador: Fase 6')"><span class="item-icon">▶</span>Fase 6</button>
+        <button class="panel-item" onclick="cargarHTML('Simulador_Metodologias.html','Simulador: Metodologías')"><span class="item-icon">▶</span>Metodologías</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_NEM_2022.html','Simulador: NEM 2022')"><span class="item-icon">▶</span>NEM 2022</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_plan2022_V2.html','Simulador: Plan 2022 V2')"><span class="item-icon">▶</span>Plan 2022 V2</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_programa_analitico_30.html','Simulador: Programa Analítico')"><span class="item-icon">▶</span>Programa Analítico</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_red_seguridad.html','Simulador: Red de Seguridad')"><span class="item-icon">▶</span>Red de Seguridad</button>
+        <button class="panel-item" onclick="cargarHTML('simulador_vygotsky.html','Simulador: Vygotsky')"><span class="item-icon">▶</span>Vygotsky</button>
+      </div>
+    </div>
+
+    <!-- GUÍAS -->
+    <div class="dropdown" id="dd-guia">
+      <button class="dropdown-btn" onclick="toggleDropdown('dd-guia')" aria-expanded="false">
+        <span class="icon">📖</span>
+        Guías
+        <span class="count-badge">27</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="dropdown-panel panel-guia" id="panel-dd-guia">
+        <div class="panel-header">📖 Guías (27)</div>
+        <button class="panel-item" onclick="cargarHTML('acuerdo-14-12-23-acoso-escolar.html','Guía: Acuerdo 14-12-23 Acoso Escolar')"><span class="item-icon">📗</span>Acuerdo 14-12-23 Acoso Escolar</button>
+        <button class="panel-item" onclick="cargarHTML('articulo-4-cpeum-parrafos-8-9-10.html','Guía: Artículo 4 CPEUM (Párr. 8-9-10)')"><span class="item-icon">📗</span>Artículo 4 CPEUM (Párr. 8-9-10)</button>
+        <button class="panel-item" onclick="cargarHTML('CPEUM___Derechos_Fundamentales.html','Guía: CPEUM – Derechos Fundamentales')"><span class="item-icon">📗</span>CPEUM – Derechos Fundamentales</button>
+        <button class="panel-item" onclick="cargarHTML('ecosistema_equidad_educativa.html','Guía: Ecosistema de Equidad Educativa')"><span class="item-icon">📗</span>Ecosistema de Equidad Educativa</button>
+        <button class="panel-item" onclick="cargarHTML('enfoque-formativo-evaluacion.html','Guía: Enfoque Formativo de Evaluación')"><span class="item-icon">📗</span>Enfoque Formativo de Evaluación</button>
+        <button class="panel-item" onclick="cargarHTML('equidad-inclusion.html','Guía: Equidad e Inclusión')"><span class="item-icon">📗</span>Equidad e Inclusión</button>
+        <button class="panel-item" onclick="cargarHTML('guia_acoso_escolar.html','Guía: Acoso Escolar')"><span class="item-icon">📗</span>Guía – Acoso Escolar</button>
+        <button class="panel-item" onclick="cargarHTML('guia_construyendo_equidad.html','Guía: Construyendo Equidad')"><span class="item-icon">📗</span>Guía – Construyendo Equidad</button>
+        <button class="panel-item" onclick="cargarHTML('guia_cultura_de_paz.html','Guía: Cultura de Paz')"><span class="item-icon">📗</span>Guía – Cultura de Paz</button>
+        <button class="panel-item" onclick="cargarHTML('guia_entornos_escolares_seguros.html','Guía: Entornos Escolares Seguros')"><span class="item-icon">📗</span>Guía – Entornos Escolares Seguros</button>
+        <button class="panel-item" onclick="cargarHTML('guia_fase2_preescolar.html','Guía: Fase 2 (Preescolar)')"><span class="item-icon">📗</span>Guía – Fase 2 Preescolar</button>
+        <button class="panel-item" onclick="cargarHTML('guia_fase3.html','Guía: Fase 3')"><span class="item-icon">📗</span>Guía – Fase 3</button>
+        <button class="panel-item" onclick="cargarHTML('guia_fase4.html','Guía: Fase 4')"><span class="item-icon">📗</span>Guía – Fase 4</button>
+        <button class="panel-item" onclick="cargarHTML('guia_fase5.html','Guía: Fase 5')"><span class="item-icon">📗</span>Guía – Fase 5</button>
+        <button class="panel-item" onclick="cargarHTML('guia_fase6.html','Guía: Fase 6')"><span class="item-icon">📗</span>Guía – Fase 6</button>
+        <button class="panel-item" onclick="cargarHTML('guia_interdisciplina_NEM.html','Guía: Interdisciplina en la NEM')"><span class="item-icon">📗</span>Guía – Interdisciplina NEM</button>
+        <button class="panel-item" onclick="cargarHTML('guia_ley_general_educacion.html','Guía: Ley General de Educación')"><span class="item-icon">📗</span>Guía – Ley General de Educación</button>
+        <button class="panel-item" onclick="cargarHTML('guia_lgdnna.html','Guía: LGDNNA')"><span class="item-icon">📗</span>Guía – LGDNNA</button>
+        <button class="panel-item" onclick="cargarHTML('guia_metodologias_sociocriticas.html','Guía: Metodologías Sociocríticas')"><span class="item-icon">📗</span>Guía – Metodologías Sociocríticas</button>
+        <button class="panel-item" onclick="cargarHTML('guia_resolucion_conflictos.html','Guía: Resolución de Conflictos')"><span class="item-icon">📗</span>Guía – Resolución de Conflictos</button>
+        <button class="panel-item" onclick="cargarHTML('lgdna-presentacion.html','Guía: LGDNA Presentación')"><span class="item-icon">📗</span>LGDNA – Presentación</button>
+        <button class="panel-item" onclick="cargarHTML('normas-evaluacion.html','Guía: Normas de Evaluación')"><span class="item-icon">📗</span>Normas de Evaluación</button>
+        <button class="panel-item" onclick="cargarHTML('nueva-escuela-mexicana.html','Guía: Nueva Escuela Mexicana')"><span class="item-icon">📗</span>Nueva Escuela Mexicana</button>
+        <button class="panel-item" onclick="cargarHTML('piaget_construyendo_la_mente.html','Guía: Piaget – Construyendo la Mente')"><span class="item-icon">📗</span>Piaget – Construyendo la Mente</button>
+        <button class="panel-item" onclick="cargarHTML('programa-sintetico-analitico.html','Guía: Programa Sintético-Analítico')"><span class="item-icon">📗</span>Programa Sintético-Analítico</button>
+        <button class="panel-item" onclick="cargarHTML('teorias-aprendizaje.html','Guía: Teorías del Aprendizaje')"><span class="item-icon">📗</span>Teorías del Aprendizaje</button>
+        <button class="panel-item" onclick="cargarHTML('vygotsky_guia_interactiva.html','Guía: Vygotsky – Guía Interactiva')"><span class="item-icon">📗</span>Vygotsky – Guía Interactiva</button>
+      </div>
+    </div>
+
+    <!-- DOCUMENTOS PDF -->
+    <div class="dropdown" id="dd-pdf">
+      <button class="dropdown-btn" onclick="toggleDropdown('dd-pdf')" aria-expanded="false">
+        <span class="icon">📄</span>
+        Documentos PDF
+        <span class="count-badge">21</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div class="dropdown-panel panel-pdf" id="panel-dd-pdf">
+        <div class="panel-header">📄 Documentos PDF (21)</div>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/9028bcfe3f40e1653e8e35f8ab504f73c600e7fe/Gu%C3%ADa_Cultura_de_Paz.pdf','Guía Cultura de Paz')"><span class="item-icon">📕</span>Guía Cultura de Paz</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/9028bcfe3f40e1653e8e35f8ab504f73c600e7fe/LGDNNA_guia.pdf','LGDNNA – Guía')"><span class="item-icon">📕</span>LGDNNA – Guía</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/9028bcfe3f40e1653e8e35f8ab504f73c600e7fe/Ruta_del_Programa_Anal%C3%ADtico.pdf','Ruta del Programa Analítico')"><span class="item-icon">📕</span>Ruta del Programa Analítico</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/9028bcfe3f40e1653e8e35f8ab504f73c600e7fe/Teorias%20De%20Aprendizaje.pdf','Teorías de Aprendizaje')"><span class="item-icon">📕</span>Teorías de Aprendizaje</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Acuerdo_10_09_23.pdf','Acuerdo 10-09-23')"><span class="item-icon">📕</span>Acuerdo 10-09-23</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Construyendo%20equidad.pdf','Construyendo Equidad')"><span class="item-icon">📕</span>Construyendo Equidad</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Construyendo%20la%20mente.pdf','Construyendo la Mente')"><span class="item-icon">📕</span>Construyendo la Mente</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Del%20Aula%20a%20la%20comunidad.pdf','Del Aula a la Comunidad')"><span class="item-icon">📕</span>Del Aula a la Comunidad</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Ecosistema_de_Equidad_Educativa.pdf','Ecosistema de Equidad Educativa')"><span class="item-icon">📕</span>Ecosistema de Equidad Educativa</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Fase%204.pdf','Fase 4')"><span class="item-icon">📕</span>Fase 4</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Fase_5.pdf','Fase 5')"><span class="item-icon">📕</span>Fase 5</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Gu%C3%ADa_Cultura_de_Paz.pdf','Guía Cultura de Paz (v2)')"><span class="item-icon">📕</span>Guía Cultura de Paz (v2)</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Interdisciplina_en_la_NEM.pdf','Interdisciplina en la NEM')"><span class="item-icon">📕</span>Interdisciplina en la NEM</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Piaget%20y%20Vigotsky.pdf','Piaget y Vigotsky')"><span class="item-icon">📕</span>Piaget y Vigotsky</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Pilares_de_la_LGDNNA.pdf','Pilares de la LGDNNA')"><span class="item-icon">📕</span>Pilares de la LGDNNA</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Programa_Anal%C3%ADtico.pdf','Programa Analítico')"><span class="item-icon">📕</span>Programa Analítico</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Protocolo_de_Erradicaci%C3%B3n_del_Acoso_Escolar.pdf','Protocolo de Erradicación del Acoso Escolar')"><span class="item-icon">📕</span>Protocolo: Erradicación Acoso Escolar</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Protocolo_de_Prevenci%C3%B3n_y_Seguridad_Escolar.pdf','Protocolo de Prevención y Seguridad Escolar')"><span class="item-icon">📕</span>Protocolo: Prevención y Seguridad</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Teoria%20Piaget.pdf','Teoría Piaget')"><span class="item-icon">📕</span>Teoría Piaget</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Teoria%20Vygotsky%202.pdf','Teoría Vygotsky 2')"><span class="item-icon">📕</span>Teoría Vygotsky 2</button>
+        <button class="panel-item" onclick="cargarPDF('https://raw.githubusercontent.com/PacoProfeMx/Profepaco/7b6428c0f35fa020189961ae9ce815cf5914077b/Teoria%20Vygotsky.pdf','Teoría Vygotsky')"><span class="item-icon">📕</span>Teoría Vygotsky</button>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <main>
+
+    <!-- Pantalla de bienvenida -->
+    <div id="welcome">
+      <div class="welcome-emoji">🏫</div>
+      <h2>¡Bienvenido al Material Educativo!</h2>
+      <p>Selecciona una opción del menú de arriba para explorar simuladores, guías o documentos.</p>
+      <div class="stats-row">
+        <div class="stat-chip sim">🎮 19 Simuladores</div>
+        <div class="stat-chip guia">📖 27 Guías</div>
+        <div class="stat-chip pdf">📄 21 Documentos PDF</div>
+      </div>
+    </div>
+
+    <!-- Visor de contenido -->
+    <div id="viewer-container">
+      <div id="viewer-topbar">
+        <span id="viewer-title">—</span>
+        <a id="btn-new-tab" href="#" target="_blank" rel="noopener">🔗 Abrir en nueva pestaña</a>
+        <button id="btn-close" onclick="cerrarVisor()">✖ Cerrar</button>
+      </div>
+      <iframe id="viewer-frame" title="Visor de contenido" allowfullscreen></iframe>
+    </div>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div>✏️ <span>Material educativo elaborado por:</span> Prof. Francisco De Jesús Luna Benítez</div>
+    <div>🌟 <span class="nivel-especial">Nivel: Educación Especial</span> &nbsp;|&nbsp; 🏫 Nueva Escuela Mexicana</div>
+  </footer>
+
+</div><!-- /#app -->
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+  /* ----- DROPDOWN LOGIC ----- */
+  function toggleDropdown(id) {
+    const allDDs = document.querySelectorAll('.dropdown');
+    allDDs.forEach(dd => {
+      const btn   = dd.querySelector('.dropdown-btn');
+      const panel = dd.querySelector('.dropdown-panel');
+      if (dd.id === id) {
+        const isOpen = panel.classList.contains('open');
+        panel.classList.toggle('open', !isOpen);
+        btn.classList.toggle('open', !isOpen);
+        btn.setAttribute('aria-expanded', !isOpen);
+      } else {
+        panel.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // Cerrar dropdown al hacer clic fuera
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-panel').forEach(p => p.classList.remove('open'));
+      document.querySelectorAll('.dropdown-btn').forEach(b => {
+        b.classList.remove('open');
+        b.setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+
+  /* ----- CARGAR HTML ----- */
+  function cargarHTML(archivo, titulo) {
+    cerrarDropdowns();
+    document.getElementById('welcome').style.display = 'none';
+    const vc = document.getElementById('viewer-container');
+    vc.style.display = 'flex';
+    document.getElementById('viewer-title').textContent = '📄 ' + titulo;
+    const frame = document.getElementById('viewer-frame');
+    frame.src = archivo;
+    const link = document.getElementById('btn-new-tab');
+    link.href = archivo;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ----- CARGAR PDF ----- */
+  function cargarPDF(url, titulo) {
+    cerrarDropdowns();
+    document.getElementById('welcome').style.display = 'none';
+    const vc = document.getElementById('viewer-container');
+    vc.style.display = 'flex';
+    document.getElementById('viewer-title').textContent = '📕 ' + titulo;
+    const frame = document.getElementById('viewer-frame');
+    // Use Google Docs viewer as fallback for cross-origin PDFs
+    frame.src = 'https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(url);
+    const link = document.getElementById('btn-new-tab');
+    link.href = url;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ----- CERRAR VISOR ----- */
+  function cerrarVisor() {
+    document.getElementById('viewer-container').style.display = 'none';
+    document.getElementById('viewer-frame').src = '';
+    document.getElementById('welcome').style.display = 'flex';
+  }
+
+  /* ----- CERRAR TODOS LOS DROPDOWNS ----- */
+  function cerrarDropdowns() {
+    document.querySelectorAll('.dropdown-panel').forEach(p => p.classList.remove('open'));
+    document.querySelectorAll('.dropdown-btn').forEach(b => {
+      b.classList.remove('open');
+      b.setAttribute('aria-expanded', 'false');
+    });
+  }
+</script>
+</body>
+</html>
